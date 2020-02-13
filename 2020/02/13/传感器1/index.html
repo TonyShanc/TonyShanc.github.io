@@ -6,16 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://TonyShanc.github.io">
-  <title>Archives: 2019 | shanah&#39;s blog</title>
+  <title>传感器1 | shanah&#39;s blog</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta property="og:type" content="website">
-<meta property="og:title" content="shanah&#39;s blog">
-<meta property="og:url" content="http://tonyshanc.github.io/archives/2019/index.html">
+  <meta name="description" content="本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="传感器1">
+<meta property="og:url" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/index.html">
 <meta property="og:site_name" content="shanah&#39;s blog">
+<meta property="og:description" content="本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/1.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/2.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/3.png">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/4.jpg">
+<meta property="article:published_time" content="2020-02-13T08:58:47.000Z">
+<meta property="article:modified_time" content="2020-02-13T09:58:34.757Z">
 <meta property="article:author" content="shanah">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Crypto">
+<meta property="article:tag" content="曼切斯特编码">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="shanah&#39;s blog" type="application/atom+xml">
   
@@ -197,41 +209,138 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-传感器1" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2019/05/27/%E6%95%B0%E8%AE%BA%EF%BC%9A%E6%A8%A1p%E5%B9%B3%E6%96%B9%E6%A0%B9%E7%AE%97%E6%B3%95/" class="archive-article-date">
-        <time datetime="2019-05-27T04:53:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
-</a>
-
-        </div>
-    	 
+      <header class="article-header">
   
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2019/05/27/%E6%95%B0%E8%AE%BA%EF%BC%9A%E6%A8%A1p%E5%B9%B3%E6%96%B9%E6%A0%B9%E7%AE%97%E6%B3%95/" target="_blank">数论 模p平方根算法（C）</a>
   
+    <h1 class="article-title" itemprop="name">
+      传感器1
     </h1>
   
 
 
-        <div class="article-info info-on-right">
+  
+  
+        
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
+<a href="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/" class="archive-article-date">
+        <time datetime="2020-02-13T08:58:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-02-13</time>
+</a>
+
+  
+  
+    
+<div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <!-- fonts.scss -->
+      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
+      <i class="icon-statistics"></i>
+      <span class="post-meta-item-text"> 字数统计:</span>
+      <span class="post-count">790字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="icon-book icon"></i>
+      <span class="post-meta-item-text"> 阅读时长≈</span>
+      <span class="post-count">3分</span>
+    </span>
+  </span>
+</div>
+
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p><img src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/1.jpg" alt="传感器1"><br>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。</p>
+<a id="more"></a>
+<p>题目出自 <a href="https://www.ichunqiu.com/battalion?t=1&r=58837" target="_blank" rel="noopener">i春秋CTF大本营: 2017届全国大学生信息安全竞赛</a></p>
+<p>已知 A传感器的ID和它的输出， 以及B的输出。<br>求另一个传感器B的ID。</p>
+<p>大致思路是从输出中寻找输出和ID的联系，而A的ID和输出就是线索。</p>
+<p>发现输出是16进制，遇到进制问题首先做的肯定是比对进制转换后的数字。</p>
+<p>先用在线工具转换一下A的输出：<br><img src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/2.jpg" alt="传感器1"></p>
+<p>发现最有规律的是2进制和8进制数据<br>但是考虑到8进制不常用，并且它的规律集中在52上，没法利用<br>所以接下来看2进制：<br>2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合<br>我们需要的是有规律的数，<br>所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中)<br>继续观察余下的二进制数<br>发现很像数字逻辑中的电平跳变，0代表低位，1代表高位<br>该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码<br>查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律</p>
+<h6 id="曼切斯特编码："><a href="#曼切斯特编码：" class="headerlink" title="曼切斯特编码："></a>曼切斯特编码：</h6><p>data用跳变表示，0和1对应01和10<br>至于谁对应谁有两种标准：<br><img src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/3.png" alt="传感器1"></p>
+<h6 id="差分曼切斯特编码："><a href="#差分曼切斯特编码：" class="headerlink" title="差分曼切斯特编码："></a>差分曼切斯特编码：</h6><p>数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。<br><img src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/4.jpg" alt="传感器1"></p>
+<p>知识回顾的差不多了，回到题目，开始撸代码<br>由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。<br>思路很简单 直接贴代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bintohex</span><span class="params">(s1)</span>:</span></span><br><span class="line">    s = re.findall(<span class="string">'.&#123;4&#125;'</span>, s1)</span><br><span class="line">    s2 = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> s:</span><br><span class="line">        s2 += str(hex(int(i, <span class="number">2</span>))).replace(<span class="string">'0x'</span>,<span class="string">''</span>)</span><br><span class="line">    <span class="keyword">return</span> s2</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">diffmqst</span><span class="params">(s1)</span>:</span> <span class="comment">#差分曼切斯特</span></span><br><span class="line">    pre = <span class="string">'01'</span></span><br><span class="line">    rst = <span class="string">''</span></span><br><span class="line">    s = re.findall(<span class="string">'.&#123;2&#125;'</span>,s1)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> s:</span><br><span class="line">        <span class="keyword">if</span> i==pre:</span><br><span class="line">            rst += <span class="string">'0'</span></span><br><span class="line">        <span class="keyword">else</span> : rst+=<span class="string">'1'</span></span><br><span class="line">        pre = i</span><br><span class="line">    <span class="keyword">return</span> rst</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    hex1 = <span class="string">'AAAAA56A69AA55A95995A569AA95565556'</span></span><br><span class="line">    hex2 = <span class="string">'0x8893CA58'</span></span><br><span class="line">    bin1 = bin(int(hex1, <span class="number">16</span>)).replace(<span class="string">'0b'</span>, <span class="string">''</span>)</span><br><span class="line">    bin2 = re.findall(<span class="string">'.&#123;4&#125;'</span>, bin(int(hex1, <span class="number">16</span>)).replace(<span class="string">'0b'</span>, <span class="string">''</span>))</span><br><span class="line">    dict1 = &#123;<span class="string">'0101'</span>: <span class="string">'11'</span>, <span class="string">'1010'</span>:<span class="string">'00'</span>, <span class="string">'1001'</span>:<span class="string">'01'</span>, <span class="string">'0110'</span>: <span class="string">'10'</span>&#125; <span class="comment">#曼切斯特编码1 Thomas</span></span><br><span class="line">    dict2 = &#123;<span class="string">'0101'</span>: <span class="string">'00'</span>, <span class="string">'1010'</span>:<span class="string">'11'</span>, <span class="string">'1001'</span>:<span class="string">'10'</span>, <span class="string">'0110'</span>: <span class="string">'01'</span>&#125; <span class="comment">#曼切斯特编码2 IEEE802.3</span></span><br><span class="line">    m1 = <span class="string">''</span>.join(dict1[_] <span class="keyword">for</span> _ <span class="keyword">in</span> bin2)</span><br><span class="line">    m2 = <span class="string">''</span>.join(dict2[_] <span class="keyword">for</span> _ <span class="keyword">in</span> bin2)</span><br><span class="line">    print(<span class="string">"曼切斯特编码1 id1: "</span>, bintohex(m1))</span><br><span class="line">    print(<span class="string">"曼切斯特编码2 id2: "</span>, bintohex(m2))</span><br><span class="line">    print(<span class="string">"差分曼切斯特编码 id3: "</span>, bintohex(diffmqst(bin1)))</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">曼切斯特编码1 id1:  003890f1d73907efe</span><br><span class="line">曼切斯特编码2 id2:  ffc76f0e28c6f8101</span><br><span class="line">差分曼切斯特编码 id3:  8024d8893ca584181</span><br></pre></td></tr></table></figure>
+<p>发现差分曼切斯特中包含传感器A的ID<br>沿这个思路， 不难找到传感器B的ID</p>
+<p>flag=8845abf3</p>
+
+    
+
+    
+    <div class="page-reward">
+      <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+        <div class="tooltip tooltip-east">
+          <span class="tooltip-item">
+            赏
+          </span>
+          <span class="tooltip-content">
+            <span class="tooltip-text">
+              <span class="tooltip-inner">
+                <p class="reward-p"><i class="icon icon-quo-left"></i>阿里嘎多<i
+                    class="icon icon-quo-right"></i></p>
+                <div class="reward-box">
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/alipay.jpg">
+                    <span class="reward-type">支付宝</span>
+                  </div>
+                  
+                  
+                  <div class="reward-box-item">
+                    <img class="reward-img" src="/img/weixin.png">
+                    <span class="reward-type">微信</span>
+                  </div>
+                  
+                </div>
+              </span>
+            </span>
+          </span>
+        </div>
+      </a>
+    </div>
+    
+
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          shanah
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="http://TonyShanc.github.io/2020/02/13/传感器1/" title="传感器1" target="_blank">http://TonyShanc.github.io/2020/02/13/传感器1/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
           
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -241,25 +350,140 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">数论</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Crypto</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">曼切斯特编码</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+    
 
     
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/2019/05/27/%E6%95%B0%E8%AE%BA%EF%BC%9A%E6%A8%A1p%E5%B9%B3%E6%96%B9%E6%A0%B9%E7%AE%97%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">数论 模p平方根算法（C）</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+
+
+
+
+
+
+
+  
+  <div id="gitment-ctn"></div>
+  
+    <!-- 中文 -->
+    <link rel="stylesheet" href="/lib/gitment.css">
+    <script src="/lib/gitment.js"></script>
+  
+  <script>
+    <!-- id: "传感器1" -->
+    var gitment = new Gitment({
+      id: "20200213165847",
+      owner: 'TonyShanc',
+      repo: 'Comment',
+      oauth: {
+        client_id: '89b8486f79bb9afcd52a',
+        client_secret: '6405d00f8e17dfcc3f648673d0c82fe0e7a74a5a',
+      },
+    })
+    gitment.render('gitment-ctn')
+  </script>
+
+
+  
+
 
 
           </div>
@@ -300,8 +524,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
