@@ -18,7 +18,7 @@
 <meta property="og:description" content="纯pwn小白在疫情期间无聊，于是开始玩起了pwn。期间在i春秋,freebuf，知乎上随便看了几篇入门手册，难受的是技术活什么都看不懂。。距离上次接触汇编是大一下学期吧，当时计算机系统的实践课程要求做某常青藤的bomblab,当时跟着大佬的步骤勉强完成三关。探索的过程很累，尤其是在汇编知识还没消化完，就去做ret2somefunc的题，一个字：难，两个字：难顶。废话不多说，下面记录配pwntool">
 <meta property="og:image" content="http://tonyshanc.github.io/2020/02/25/pwn%E5%BA%93%E4%B8%8B%E7%9A%84%E8%80%BB%E8%BE%B1/1.jpg">
 <meta property="article:published_time" content="2020-02-25T11:03:01.000Z">
-<meta property="article:modified_time" content="2020-03-02T17:42:11.712Z">
+<meta property="article:modified_time" content="2020-03-02T17:46:48.556Z">
 <meta property="article:author" content="shanah">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="pwn">
@@ -260,6 +260,7 @@
   <div class="article-entry" itemprop="articleBody">
     
     <p>纯pwn小白在疫情期间无聊，于是开始玩起了pwn。期间在i春秋,freebuf，知乎上随便看了几篇入门手册，难受的是技术活什么都看不懂。。距离上次接触汇编是大一下学期吧，当时计算机系统的实践课程要求做某常青藤的bomblab,当时跟着大佬的步骤勉强完成三关。探索的过程很累，尤其是在汇编知识还没消化完，就去做ret2somefunc的题，一个字：难，两个字：难顶。废话不多说，下面记录配pwntools环境踩的坑。当然踩坑还是因为没有先好好读官方文档。</p>
+<a id="more"></a>
 <p><strong>0x00 介绍</strong><br>pwntools(v2.0)是编写漏洞利用脚本的python库，设计者将它分为两个模块：pwnlib与pwn。 pwnlib是个干净的模块，适合初学者快速入门。而pwn是打CTF专用的工具箱，是pwnlib的超集，功能更多，也更难入门。具体介绍请看<a href="http://docs.pwntools.com/en/stable/about.html" target="_blank" rel="noopener">pwntools文档</a>。</p>
 <p><strong>0x01</strong><br><strong>pwntools不适配windows中的python</strong>。<br>我先尝试在windows环境下pip install pwn。很快就装好了，本以为直接运行python脚本就大功告成了，结果编译器告诉我：<br><img src="/2020/02/25/pwn%E5%BA%93%E4%B8%8B%E7%9A%84%E8%80%BB%E8%BE%B1/1.jpg" alt="figure1"><br>行吧，缺东西，咱用pip补上，但是发现_curses仅支持linux，巧的是在win平台上有对应轮子。然后还是会有问题，就开始无限打补丁。。当然最后脑子没抽到底，换到了<strong>linux</strong>内,这里推荐ubuntu linux 64。</p>
 <p><strong>0x02</strong><br><strong>要想方便流畅写exp，最好装在python2内</strong>。<br>为什么？因为从python3开始，str和bytes的边界不再模糊。python2中 str+bytes能合并成bytes，默认将str以ascii编码解码，而python3中，除非加法重定向，否则无法合并成统一格式。所以在python3中要想合并str和bytes。只能<code>str.encode(&#39;ascii&#39;)+bytes</code>或者<code>str.encode+bytes.decode(&#39;ascii&#39;)</code></p>
