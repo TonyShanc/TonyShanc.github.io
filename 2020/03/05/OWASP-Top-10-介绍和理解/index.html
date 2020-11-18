@@ -536,9 +536,8 @@
 <p>–反序列化有什么安全问题？<br>尽管反序列化最严重可导致远程代码执行（RCE，Remote Code Execution），但最常见的反序列化安全问题却是通过修改序列化之后的数据字段，从而进行提权或越权操作。</p>
 <p>举例来说，服务器端为了能快速横向扩展而被设计成了后端无服务状态架构，这也就意味着用户登陆后，其身份信息（例如用户ID，姓名，角色，登陆时间戳等）被保存到了浏览器cookie当中，在后续的请求里将会被自动发往服务器。</p>
 <p>存储于cookie中的这份数据的格式是应用程序自定义的，但攻击者通过探索尝试后发现，修改其中的某个字段就能将用户从普通用户修改为管理员。</p>
-<p>存储于cookie中的原始数据：</p>
-<figure class="highlight plain"><figcaption><span>3844998|AliceM|y|27|*NU*|active|null|201809```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">经过修改后的数据：</span><br><span class="line">&#96;&#96;&#96;Cookie: 3844998|AliceM|y|27|*ADMIN*|active|null|201809</span><br></pre></td></tr></table></figure>
-<p>由于缺乏对数据完整性的校验，服务器端在收到被修改过的这段数据后，就把当前用户当作ADMIN用户来处理了。<br>当然，现在的服务器都会对cookie进行加密，攻击者修改成想要的序列化数据有一定难度。</p>
+<p>存储于cookie中的原始数据：<br><code>Cookie: 3844998|AliceM|y|27|*NU*|active|null|201809</code></p>
+<p>经过修改后的数据：<br><code>Cookie: 3844998|AliceM|y|27|*ADMIN*|active|null|201809</code><br>由于缺乏对数据完整性的校验，服务器端在收到被修改过的这段数据后，就把当前用户当作ADMIN用户来处理了。<br>当然，现在的服务器都会对cookie进行加密，攻击者修改成想要的序列化数据有一定难度。</p>
 <p><strong>Top 9使用含有已知漏洞的组件</strong><br>组件（例如：库、框架和其他软件模块）拥有和应用程序相同的权限。如果应用程序中含有已知漏洞的组件被攻击者利用，可能会造成严重的数据丢失或服务器接管。同时，使用含有已知漏洞的组件的应用程序和API可能会破坏应用程序防御、造成各种攻击并产生严重影响。</p>
 <p><strong>Top 10不足的日志记录和监控</strong><br>不足的日志记录和监控，以及事件响应缺失或无效的集成，使攻击者能够进一步攻击系统、保持持续性或转向更多系统，以及篡改、提取或销毁数据。大多数缺陷研究显示，缺陷被检测出的时间超过200天，且通常通过外部检测方检测，而不是通过内部流程或监控检测。</p>
 <p>引用资料：<br><a href="https://blog.csdn.net/wang_624/article/details/89683571" target="_blank" rel="noopener">OWASP Top 10 简单介绍</a><br><a href="https://zhuanlan.zhihu.com/p/46505934" target="_blank" rel="noopener">知乎专栏-什么是 owasp 10?</a><br><a href="https://www.jianshu.com/p/fa912ce0426f" target="_blank" rel="noopener">简书-不安的反序列化</a></p>
