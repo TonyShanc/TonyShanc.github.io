@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="自动驾驶模拟平台carla（一）安装, shanah&#39;s blog">
+    <meta name="keywords" content="网关kong 中的概念consumer service route plugin实践与理解, shanah&#39;s blog">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>自动驾驶模拟平台carla（一）安装 | shanah&#39;s blog</title>
+    <title>网关kong 中的概念consumer service route plugin实践与理解 | shanah&#39;s blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -323,12 +323,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">自动驾驶模拟平台carla（一）安装</h1>
+                    <h1 class="description center-align post-title">网关kong 中的概念consumer service route plugin实践与理解</h1>
                 </div>
             </div>
         </div>
@@ -443,9 +443,21 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">No tag</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E7%BD%91%E5%85%B3/">
+                                <span class="chip bg-color">网关</span>
+                            </a>
+                        
+                            <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
+                                <span class="chip bg-color">微服务</span>
+                            </a>
+                        
+                            <a href="/tags/k8s/">
+                                <span class="chip bg-color">k8s</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -457,7 +469,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2020-11-18
+                    2020-11-22
                 </div>
                 
 
@@ -473,43 +485,115 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>大四了，论文/毕设 选了能落地的方向，课题为《智能网联汽车数字孪生》</p>
-<h1 id="平台选择"><a href="#平台选择" class="headerlink" title="平台选择"></a>平台选择</h1><h2 id="Linux-ubuntu18-04（基于vmware）"><a href="#Linux-ubuntu18-04（基于vmware）" class="headerlink" title="Linux-ubuntu18.04（基于vmware）"></a>Linux-ubuntu18.04（基于vmware）</h2><p>参考carla的 <a href="https://github.com/carla-simulator/carla" target="_blank" rel="noopener">GitHub</a>，以及<a href="https://carla.readthedocs.io/en/latest/" target="_blank" rel="noopener">官方文档</a>，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用<strong>ubuntu</strong>安装：</p>
-<h3 id="A-简易安装"><a href="#A-简易安装" class="headerlink" title="A 简易安装"></a>A 简易安装</h3><pre class=" language-shell"><code class="language-shell">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
-sudo add-apt-repository "deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main"
+                <p>传送门：</p>
+<p><a href="https://github.com/qianyugang/kong-docs-cn" target="_blank" rel="noopener">kong网关中文文档</a></p>
+<p><a href="https://konghq.com/" target="_blank" rel="noopener">kong官网</a></p>
+<p><a href="https://docs.konghq.com/" target="_blank" rel="noopener">kong官方文档</a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
+<h1 id="理论"><a href="#理论" class="headerlink" title="理论"></a>理论</h1><h2 id="consumer"><a href="#consumer" class="headerlink" title="consumer"></a>consumer</h2><blockquote>
+<p>The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.</p>
+</blockquote>
+<p>（官方原文解释中的消费者和数据库的映射这里暂时不涉及）</p>
+<p>consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。</p>
+<p>Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。</p>
+<p>请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。</p>
+<p>kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT</p>
+<p>他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT</p>
+<p>（这里使用kong图形界面KONGA实践）</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/1.PNG" style="zoom:67%;">
 
-sudo apt-get update # Update the Debian package index
-sudo apt-get install carla-simulator # Install the latest CARLA version, or update the current installation
-cd /opt/carla-simulator # Open the folder where CARLA is installed
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/2.PNG" style="zoom: 33%;">
 
-sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to a CARLA version, and "1" to the Debian revision</code></pre>
-<p>注： 国内下载非常慢，资源在 <a href="http://dist.carla.org/carla" target="_blank" rel="noopener">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
-<h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG" alt="figure1"></p>
-<p>执行CarlaUE4.sh:</p>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/2.PNG" alt></p>
-<p>报错： 驱动或硬件不支持OpenGL4.3以上版本。</p>
-<p>openGL为开源图形库，和显卡息息相关，这里有个问题：<strong>到底是因为宿主机的显卡带不动（MX150 2G显存，carla要求的最低显存为4G）还是虚拟机使用宿主机显卡的权限很低，需要调整权限</strong>。</p>
-<p>这里我先放下linux环境的安装，进行windows环境下的carla安装。</p>
-<p>最后结果是，win10下可以以10FPS运行carla，GPU使用率80%，因此最终结论是vmware创建的虚拟机需要调整显卡的资源配置，以满足OpenGL 4.3的硬件驱动需求。</p>
-<h2 id="windows-10"><a href="#windows-10" class="headerlink" title="windows 10"></a>windows 10</h2><p>一样，前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择windows的软件包下载，解压后如下：</p>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/3.PNG" alt="figure1"></p>
-<p>直接运行CarlaUE4:</p>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/4.PNG" alt="figure1"></p>
-<p>会有一些场景，但是没车，没人，没关系，用自带的python脚本创建出来：</p>
-<p>前提要装好pygame numpy</p>
-<p>这里有个<strong>坑</strong>，需要安装精确到小版本的python，不然会导致carla模块找不到的问题，看源码会发现carla模块是引用egg文件导入的，egg文件上有具体的python版本要求，该文件在PythonAPI/carla/dist目录下，我的是 <strong>carla-0.9.9-py3.7-win-amd64.egg</strong>，所以我需要使用python3.7运行carla的脚本。</p>
-<p>接下来启动脚本添加npc，npc数量用 -n 指定</p>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/5.PNG" alt="figure1"></p>
-<p>（ERROR应该是因为npc未初始化在道路上导致碰撞，没关系，会重新初始化的）</p>
-<p>结果：</p>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/6.PNG" alt="figure1"></p>
-<p>下面执行控制脚本：</p>
-<pre class=" language-shell"><code class="language-shell">python manual_control.py</code></pre>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/7.PNG" alt="figure1"></p>
-<p>终止控制脚本会返回给你操作命令说明：</p>
-<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/8.PNG" alt="figure1"></p>
-<p>下一篇将尝试写一些自动驾驶车辆脚本</p>
+<p>JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</p>
+<p>JWT最终的格式简化为三段式： base64「algorithm」. base64「payload」. base64「最终签名」 。</p>
+<p>payload中存放key以及一些不敏感信息 username, expire time等，最终签名是使用第一段的hash算法对第二段的payload哈希后的base64值。</p>
+<p>JWT token 可以在JWT 官网去生成，当然最好是使用JWT库封装接口传参生成JWT token。</p>
+<p>请求时，我们使用生成的JWT token加入请求头Authorization中, 这边提一句，请求kong的路由需要先用JWT插件开启JWT验证，这样kong才能主动检查JWT token，JWT验证的粒度可以为全局，可以负载在route上，也可以在service上（对route service不清晰的同学可以看关于他们的解释），这里我们在请求的route ping上开启JWT验证：</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/4.PNG" style="zoom: 50%;">
+
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/3.PNG" style="zoom: 50%;">
+
+<p>这里保持所有为默认设置就可以了。其中迷惑性较大的是consumer 参数，参数下面的解释意思是所有匿名请求来源都会被标记为user， 该参数留白的话会将所有user标记为consumer, 也就是说请求头必须带上JWT token 否则不能被识别为consumer，请求会被kong拦截，<strong>如果填上了consumer_id，并且身份验证开启了才会奏效，说的人很懵，经过一番测试下来，发现填和不填，效果是一样的</strong>。</p>
+<p>上面的consumer参数我设置成留白了，看看会发生什么：</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/7.PNG" style="zoom: 45%;">
+
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/6.PNG" style="zoom: 42%;">
+
+<p>未带上JWT token的请求被拦截，返回401鉴权失败，带上JWT token的请求被放行，请求到了网页</p>
+<p>我们把test route上的JWT插件consumer填上一个consumer_id， 看看会发生什么：</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/8.PNG" style="zoom: 42%;">
+
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/9.PNG" style="zoom: 42%;">
+
+<p>第一个token是被放行的consumer的JWT token</p>
+<p>第二个token是其他consumer的JWT token</p>
+<p>不传token:</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/10.PNG" style="zoom: 42%;">
+
+<p>传第一个token:</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/11.PNG" style="zoom: 42%;">
+
+<p>传第二个token:</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/14.PNG" style="zoom: 42%;">
+
+<p>可见，即使填入了consumer_id, 其他consumer照样会被放行，和留白是一样的效果，唯一区别是带上其他consumer的token的user是否会被标记为其他consumer?</p>
+<p>下面继续实践：</p>
+<p>开启Acl，把被放行的consumer所在组(admin)标记为allow， 其他consumer的所在组（user）标记为deny</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/12.PNG" style="zoom: 42%;">
+
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/13.PNG" style="zoom: 42%;">
+
+<p>这时候用第二个token继续请求，</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/15.PNG" style="zoom: 42%;">
+
+<p>发现其他consumer被拦截了，也就是说其他consumer的身份被识别出来了。这就证明即使JWT插件填上了consumer_id，该插件并不会针对这个consumer进行身份识别，其他consumer不进行身份识别，而是和留白情况下的逻辑是一样的，所以这个参数是多余的，建议KONGA删除。因为consumer_id只会在「在consumer下创建JWT验证插件时生成，用于consumer的身份验证」，在一个route的JWT插件中设置consumer_id不符合逻辑。</p>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><blockquote>
+<p>Service entities, as the name implies, are abstractions of each of your own upstream services. Examples of Services would be a data transformation microservice, a billing API, etc.</p>
+</blockquote>
+<p>Service译作服务，不同于kubernetes的service, k8s的service是一个实体服务，里面包括实体pod进行逻辑处理，而kong的服务属于逻辑上的概念，要知道，kong是个api网关，大多数情况下在进行流量转发，因此kong的service 引用的是其他实体服务访问url，这里创建一个testApi service:</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/16.PNG" style="zoom: 42%;">
+
+
+
+<p>这个service配置了访问链接的host, protocol, port, path等资源定位参数，做了个套娃，形成了自己的东西，美其名曰流量转发。当然这个是有好处的哈，不是每个实体服务都在公网上。现有一种情况：kong 和 其他实体服务位于同一内网内，路由器网关只允许公网请求访问kong, 其他实体服务访问不到，这样一来就只暴露了网关kong，保护了内部服务。针对多个同名服务，kong还能进行负载均衡，kong这个功能特别强大，之前我们说到consumer能用来对请求分门别类，kong同样可以根据consumer做负载均衡限制，例如第一版api请求标记为consumer v1, 经过route负载均衡后会访问v1 api的service, consumer v2 访问同样route会打到提供v2api服务的service，各种功能结合起来非常有意思。</p>
+<h2 id="Route"><a href="#Route" class="headerlink" title="Route"></a>Route</h2><blockquote>
+<p>The Route entities defines rules to match client requests. Each Route is associated with a Service, and a Service may have multiple Routes associated to it. Every request matching a given Route will be proxied to its associated Service.</p>
+</blockquote>
+<p>route顾名思义，路由，提供流量入口。kong的路由形式挺多的，有host path method可供设置：</p>
+<img src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/17.PNG" style="zoom: 42%;">
+
+<p>他们是逻辑and的关系，只有全满足时才会访问到route，如果一个请求有多个route可以满足，kong会计算路由的优先级，优先级越高就访问哪个route，优先级的计算也比较简单，就是看请求命中route的配置的个数，个数越多，优先级越高。例如请求命中host和path的路由的优先级比只命中path的优先级高。</p>
+<p>route可以提供负载均衡，就是说一个route可以对应多个service。</p>
+<p>当然route的配置还有很多，供大家一一挖掘，这里不展开了。</p>
+<h2 id="Plugin"><a href="#Plugin" class="headerlink" title="Plugin"></a>Plugin</h2><blockquote>
+<p>A Plugin entity represents a plugin configuration that will be executed during the HTTP request/response workflow, and it’s how you can add functionalities to APIs that run behind Kong, like Authentication or Rate Limiting for example.</p>
+</blockquote>
+<p>plugin即插件，主流使用lua开发（kong是openResty项目 nginx+lua），插件开发非常灵活，首先因为openresty提供了非常多的第三方库供使用，并且可以触及kong接收到的请求的生命周期，基于生命周期开发，可细粒度控制各个环节，几乎任何功能都能做到。</p>
+<p>具体可以查看中文文档中的kong开发套件。</p>
+<ul>
+<li><ul>
+<li><ul>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-client.md" target="_blank" rel="noopener">kong.client</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ctx.md" target="_blank" rel="noopener">kong.ctx</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ip.md" target="_blank" rel="noopener">kong.ip</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-log.md" target="_blank" rel="noopener">kong.log</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-node.md" target="_blank" rel="noopener">kong.node</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-request.md" target="_blank" rel="noopener">kong.request</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-response.md" target="_blank" rel="noopener">kong.response</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-router.md" target="_blank" rel="noopener">kong.router</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service.md" target="_blank" rel="noopener">kong.service</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-request.md" target="_blank" rel="noopener">kong.service.request</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-response.md" target="_blank" rel="noopener">kong.service.response</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-table.md" target="_blank" rel="noopener">kong.table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Upstream"><a href="#Upstream" class="headerlink" title="Upstream"></a>Upstream</h2><blockquote>
+<p> The upstream object represents a virtual hostname and can be used to loadbalance incoming requests over multiple services (targets). So for example an upstream named <code>service.v1.xyz</code> with an API object created with an <code>upstream_url=https://service.v1.xyz/some/path</code>. Requests for this API would be proxied to the targets defined within the upstream.</p>
+</blockquote>
+<p>很抽象的概念，其实也很好理解，类比http中的Host请求头（和route中的host一样），这个host可以理解为一个虚拟主机，Upstream中的实体和host值同名，创建Upstream，是为了控制向同名host发起的请求，或者对同名host的route做一些配置，健康检查之类的。</p>
 
             </div>
             <hr/>
@@ -535,7 +619,7 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://TonyShanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/">http://TonyShanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/</a>
+                    <a href="http://TonyShanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/">http://TonyShanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -572,7 +656,19 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">No tag</span>
+                            
+                                <a href="/tags/%E7%BD%91%E5%85%B3/">
+                                    <span class="chip bg-color">网关</span>
+                                </a>
+                            
+                                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
+                                    <span class="chip bg-color">微服务</span>
+                                </a>
+                            
+                                <a href="/tags/k8s/">
+                                    <span class="chip bg-color">k8s</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -740,9 +836,10 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
                 <a href="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/">
                     <div class="card-image">
@@ -760,9 +857,9 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-11-22
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-11-22
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -771,6 +868,7 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -797,24 +895,24 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">
+                <a href="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="pwn实践记录--rop入门">
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="自动驾驶模拟平台carla（一）安装">
                         
-                        <span class="card-title">pwn实践记录--rop入门</span>
+                        <span class="card-title">自动驾驶模拟平台carla（一）安装</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请
+                            
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-07
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-11-18
                             </span>
                         <span class="publish-author">
                             
@@ -823,22 +921,6 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/CTF/">
-                        <span class="chip bg-color">CTF</span>
-                    </a>
-                    
-                    <a href="/tags/pwn/">
-                        <span class="chip bg-color">pwn</span>
-                    </a>
-                    
-                    <a href="/tags/%E8%AE%B0%E5%BD%95/">
-                        <span class="chip bg-color">记录</span>
-                    </a>
-                    
                 </div>
                 
             </div>
