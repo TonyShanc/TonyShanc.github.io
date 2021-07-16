@@ -20,15 +20,15 @@
   <title>go 类型的可比较性 - shanah's blog</title>
 
   
-    <meta name="description" content="go内置类型都是可比较的，类型会直接比较内容，指针类型先判断指针指向地址再判断内容常用复合类型的可比较性比较复杂，demo如下 func isComparable(a interface{}) {     fmt.Println(reflect.ValueOf(a).Type().Comparable()) } type Dog struct {     name string } func (d">
+    <meta name="description" content="111">
 <meta property="og:type" content="article">
 <meta property="og:title" content="go 类型的可比较性">
 <meta property="og:url" content="http://tonyshanc.github.io/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/index.html">
 <meta property="og:site_name" content="shanah&#39;s blog">
-<meta property="og:description" content="go内置类型都是可比较的，类型会直接比较内容，指针类型先判断指针指向地址再判断内容常用复合类型的可比较性比较复杂，demo如下 func isComparable(a interface{}) {     fmt.Println(reflect.ValueOf(a).Type().Comparable()) } type Dog struct {     name string } func (d">
+<meta property="og:description" content="111">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-01-21T17:54:06.000Z">
-<meta property="article:modified_time" content="2021-01-21T17:55:41.220Z">
+<meta property="article:modified_time" content="2021-07-16T14:57:18.837Z">
 <meta property="article:author" content="shanah">
 <meta property="article:tag" content="golang">
 <meta name="twitter:card" content="summary">
@@ -65,7 +65,7 @@
 
 <div class="widgets">
 
-<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/"><div class="cap"><time>2021-01-22</time></div><span class="title">go 单例设计</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/"><div class="cap"><time>2021-01-22</time></div><span class="title">go context.ValueCtx的key</span></a><div class="line"></div><a class="more-item" href="/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/"><div class="cap"><time>2021-01-22</time></div><span class="title">CAN总线（一）</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/"><div class="cap"><time>2021-01-22</time></div><span class="title">go 类型的可比较性</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-mock-%E5%88%9D%E6%8E%A2/"><div class="cap"><time>2021-01-22</time></div><span class="title">go mock 初探</span></a></div></div>
+<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/"><div class="cap"><time>2021-07-16</time></div><span class="title">go 类型的可比较性</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/"><div class="cap"><time>2021-01-22</time></div><span class="title">go 单例设计</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/"><div class="cap"><time>2021-01-22</time></div><span class="title">go context.ValueCtx的key</span></a><div class="line"></div><a class="more-item" href="/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/"><div class="cap"><time>2021-01-22</time></div><span class="title">CAN总线（一）</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-mock-%E5%88%9D%E6%8E%A2/"><div class="cap"><time>2021-01-22</time></div><span class="title">go mock 初探</span></a></div></div>
 
 
 
@@ -79,75 +79,78 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">首頁</a><span class="sep"></span><a class="cap breadcrumb" href="/">網誌</a></div><div id="post-meta">發布於&nbsp;<time datetime="2021-01-21T17:54:06.000Z">2021-01-22</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2021-01-21T17:54:06.000Z">2021-01-22</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>go 类型的可比较性</span></h1>
+<p>111</p>
+<a id="more"></a>
+
 <p>go内置类型都是可比较的，类型会直接比较内容，指针类型先判断指针指向地址再判断内容<br>常用复合类型的可比较性比较复杂，demo如下</p>
-<pre><code class="go">func isComparable(a interface{}) {
+<pre><code class="go">func isComparable(a interface&#123;&#125;) &#123;
     fmt.Println(reflect.ValueOf(a).Type().Comparable())
-}
-type Dog struct {
+&#125;
+type Dog struct &#123;
     name string
-}
-func (d Dog) eat(){
+&#125;
+func (d Dog) eat()&#123;
     fmt.Println(&quot;dog &quot; + d.name + &quot; eat&quot;)
-}
-type Cat struct {
+&#125;
+type Cat struct &#123;
     name string 
     fur
-}
-type fur struct{
+&#125;
+type fur struct&#123;
     color string
     num   int64
-}
-func (c Cat) eat() {
+&#125;
+func (c Cat) eat() &#123;
     fmt.Println(&quot;cat &quot; + c.name + &quot; eat&quot;)
-}
-type Animal interface {
+&#125;
+type Animal interface &#123;
     eat()
-}
-type AnimalB interface {
+&#125;
+type AnimalB interface &#123;
   eat()
-}
-func main(){
+&#125;
+func main()&#123;
   a := make(map[string]int)
   isComparable(a)           // false
 
-  b := []int64{1,2}
+  b := []int64&#123;1,2&#125;
   isComparable(a)           // false
 
-  c := struct {
+  c := struct &#123;
       id int
       name string
-  }{
+  &#125;&#123;
       1,
       &quot;sc&quot;,
-  }
+  &#125;
   isComparable(c)           // true
 
-  d := struct {
+  d := struct &#123;
       id int
       name string
       clildrenId []int
-  }{
+  &#125;&#123;
       1,
       &quot;shanchao&quot;,
-      []int {1,2,3,4},
-  }
+      []int &#123;1,2,3,4&#125;,
+  &#125;
   isComparable(d)            // false struct内部存在不可比较类型slice
 
   var(
-    d1 = Dog{name: &quot;liuyang&quot;}
-    d2 = Dog{name: &quot;liuyang&quot;}
-    dog Animal = Dog{name: &quot;liuyang&quot;}
-    dog2 Animal = Dog{name: &quot;liuyang&quot;}
-    dogPtr Animal = &amp;Dog{name: &quot;liuyang&quot;}
-    dogB AnimalB = Dog{name: &quot;liuyang&quot;}
-    dogBPtr AnimalB = &amp;Dog{name: &quot;liuyang&quot;}
-    cat Animal = Cat{name: &quot;liuyang&quot;}
-    cat2  = Cat{name: &quot;sc&quot;, fur: fur{color: &quot;yellow&quot;, num: int64(1&lt;&lt;56),},}
-    cat3  = Cat{name: &quot;sc&quot;, fur: fur{color: &quot;blue&quot;, num: int64(1&lt;&lt;56),},}
+    d1 = Dog&#123;name: &quot;liuyang&quot;&#125;
+    d2 = Dog&#123;name: &quot;liuyang&quot;&#125;
+    dog Animal = Dog&#123;name: &quot;liuyang&quot;&#125;
+    dog2 Animal = Dog&#123;name: &quot;liuyang&quot;&#125;
+    dogPtr Animal = &amp;Dog&#123;name: &quot;liuyang&quot;&#125;
+    dogB AnimalB = Dog&#123;name: &quot;liuyang&quot;&#125;
+    dogBPtr AnimalB = &amp;Dog&#123;name: &quot;liuyang&quot;&#125;
+    cat Animal = Cat&#123;name: &quot;liuyang&quot;&#125;
+    cat2  = Cat&#123;name: &quot;sc&quot;, fur: fur&#123;color: &quot;yellow&quot;, num: int64(1&lt;&lt;56),&#125;,&#125;
+    cat3  = Cat&#123;name: &quot;sc&quot;, fur: fur&#123;color: &quot;blue&quot;, num: int64(1&lt;&lt;56),&#125;,&#125;
   )
   isComparable(d)            // true
   isComparable(dog)          // true
@@ -161,18 +164,18 @@ func main(){
   fmt.Println(dog == cat)    // false 考虑了自定义类型
   fmt.Println(dog == cat)    // false 考虑了自定义类型
   fmt.Println(cat2 == cat3)  // false 递归判断
-}</code></pre>
+&#125;</code></pre>
 <p>可见map, slice是不可比较的；比较interface无关；对自定义类型struct的比较先判断是否是指针，再判断属性类型、属性值，具有递归判断的性质; 嵌入不可比较类型如map slice的struct不可比较，编译会报错； </p>
 <p>另一个有趣的点涉及到interface{}:</p>
 <pre><code class="go">type myString string
-func compare(a interface{}) bool {
-    if interface{}(&quot;haha&quot;) == a {
+func compare(a interface&#123;&#125;) bool &#123;
+    if interface&#123;&#125;(&quot;haha&quot;) == a &#123;
         return true
-    }
+    &#125;
     return false
-}
+&#125;
 
-func main(){
+func main()&#123;
     var (
         s1 = myString(&quot;haha&quot;)
         s2 = &quot;haha&quot;
@@ -180,17 +183,17 @@ func main(){
     fmt.Println(s1 == &quot;haha&quot;)    // true
     fmt.Println(compare(s1))     // false
     fmt.Println(compare(s2))     // true
-}
+&#125;
 </code></pre>
 <p>自定义类型与某个基础内嵌类型相同时用==不会考虑自定义的类型，而interface{}类型相互比较时，会先比较转为interface{}前的自定义类型，之后才会进行值比较。 interface{}这个特性被contex.ValueCtx用于key判断。</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>授權條款</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下來閱讀</span></section><section class="body fs14"><a id="next" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/">go context.ValueCtx的key<span class="note">較早</span></a><div class="line"></div><div class="line"></div><a id="more" href="/archives">檢索全部文章</a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/">go context.ValueCtx的key<span class="note">较早</span></a><div class="line"></div><div class="line"></div><a id="more" href="/archives">检索全部文章</a></section></div>
 
 
 
@@ -200,8 +203,8 @@ func main(){
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本網誌所有文章除特別聲明外，均採用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 授權條款。轉載請註明出處。</p>
-<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 建立，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作為主題。</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作为主题。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -308,11 +311,11 @@ func main(){
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
   stellar.config = {
     date_suffix: {
-      just: '剛剛',
-      min: '分鐘前',
-      hour: '小時前',
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
       day: '天前',
-      month: '個月前',
+      month: '个月前',
     },
   };
 
