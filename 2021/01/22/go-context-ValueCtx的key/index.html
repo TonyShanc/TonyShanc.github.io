@@ -47,7 +47,7 @@
   
   
   
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body>
   
@@ -65,7 +65,7 @@
 
 <div class="widgets">
 
-<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/"><div class="cap"><time>2021-07-16</time></div><span class="title">go 类型的可比较性</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/"><div class="cap"><time>2021-01-22</time></div><span class="title">go 单例设计</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/"><div class="cap"><time>2021-01-22</time></div><span class="title">go context.ValueCtx的key</span></a><div class="line"></div><a class="more-item" href="/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/"><div class="cap"><time>2021-01-22</time></div><span class="title">CAN总线（一）</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-mock-%E5%88%9D%E6%8E%A2/"><div class="cap"><time>2021-01-22</time></div><span class="title">go mock 初探</span></a></div></div>
+<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/"><div class="cap"><time>2021-07-16</time></div><span class="title">go 类型的可比较性</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/"><div class="cap"><time>2021-01-22</time></div><span class="title">go 单例设计</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/"><div class="cap"><time>2021-01-22</time></div><span class="title">go context.ValueCtx的key</span></a><div class="line"></div><a class="more-item" href="/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/"><div class="cap"><time>2021-01-22</time></div><span class="title">CAN总线（一）</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-mock-%E5%88%9D%E6%8E%A2/"><div class="cap"><time>2021-01-22</time></div><span class="title">go mock 初探</span></a></div></div>
 
 
 
@@ -79,7 +79,7 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2021-01-21T17:49:27.000Z">2021-01-22</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2021-01-21T17:49:27.000Z">2021-01-22</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>go context.ValueCtx的key</span></h1>
@@ -91,37 +91,37 @@
 <p>context.WithValue 建议使用者自己定义的unexported类型当key，目的是利用interface{}的判断特性（go 类型的可判断性）,来防止冲突，这种冲突会产生是因为ctx.Value()实现点像js原型链，key在当前ctx中未匹配，就会到父ctx去找。因为设计用于包内传data, key必须得在包内能访问，如果用string int等基础类型，会导致访问到父ctx的value，与期望不符，而使用未导出的自定义类型能防止这种向上搜索。</p>
 <p>不能使用导出类型，只能在包内访问value, 这种软限制约束了context滥用，但要求看起来很高如果要用context跨包传递，该怎么办？（这种需求很实际，通常实现时我们不会把工厂函数和实际处理方法handler放在同一个包中，但handler需要工厂函数中的信息）</p>
 <p>如果需要传递的信息比较重要,类型也明确，同时又不需要麻烦地创建多个key，可以把这种context当成一个工具，同时指定唯一的key：</p>
-<pre><code class="go">//util/ctxutil.go
+<pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">//util/ctxutil.go</span>
 
-package mycontext
-// unexported, comparable
-var key = &amp;struct{}
+<span class="token keyword">package</span> mycontext
+<span class="token comment" spellcheck="true">// unexported, comparable</span>
+<span class="token keyword">var</span> key <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token keyword">struct</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 
-func WithTags(ctx context.Context, tags map[string]string) context.Context{
-    if ctx == nil {
-        ctx = context.Background()
-    }
-    return context.WithValue(ctx, ctxMarkerKey, tags)
-}
-func Extract(ctx context.Context)map[string]string{
-  // ctx is ptr
-  if ctx == nil {
-    return make(map[string]string)
-  }
-  if value, ok := ctx.Value(key).(map[string]string); ok {
-    return value
-  }else {
-    return make(map[string]string)
-  }
-}</code></pre>
+<span class="token keyword">func</span> <span class="token function">WithTags</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">,</span> tags <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span> context<span class="token punctuation">.</span>Context<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+        ctx <span class="token operator">=</span> context<span class="token punctuation">.</span><span class="token function">Background</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> context<span class="token punctuation">.</span><span class="token function">WithValue</span><span class="token punctuation">(</span>ctx<span class="token punctuation">,</span> ctxMarkerKey<span class="token punctuation">,</span> tags<span class="token punctuation">)</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token function">Extract</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token comment" spellcheck="true">// ctx is ptr</span>
+  <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> value<span class="token punctuation">,</span> ok <span class="token operator">:=</span> ctx<span class="token punctuation">.</span><span class="token function">Value</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span><span class="token punctuation">;</span> ok <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> value
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token keyword">else</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/">go 单例设计<span class="note">Older</span></a><div class="line"></div><a id="prev" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/">go 类型的可比较性<span class="note">Newer</span></a><div class="line"></div><a id="more" href="/archives">All Articles</a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/">go 单例设计<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/">go 类型的可比较性<span class="note">较新</span></a><div class="line"></div><a id="more" href="/archives">检索全部文章</a></section></div>
 
 
 
@@ -131,8 +131,8 @@ func Extract(ctx context.Context)map[string]string{
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
-<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作为主题。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -239,11 +239,11 @@ func Extract(ctx context.Context)map[string]string{
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
   stellar.config = {
     date_suffix: {
-      just: 'Just',
-      min: 'minutes ago',
-      hour: 'hours ago',
-      day: 'days ago',
-      month: 'months ago',
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
     },
   };
 

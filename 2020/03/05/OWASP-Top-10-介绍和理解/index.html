@@ -48,7 +48,7 @@
   
   
   
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body>
   
@@ -65,7 +65,7 @@
 <nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
-<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#OWASP-Top10%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">OWASP Top10是什么?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OWASP-Top10%E6%9C%89%E5%93%AA%E4%BA%9B%E5%86%85%E5%AE%B9%EF%BC%9F"><span class="toc-text">OWASP Top10有哪些内容？</span></a></li></ol></div></div></div>
+<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#OWASP-Top10%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">OWASP Top10是什么?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OWASP-Top10%E6%9C%89%E5%93%AA%E4%BA%9B%E5%86%85%E5%AE%B9%EF%BC%9F"><span class="toc-text">OWASP Top10有哪些内容？</span></a></li></ol></div></div></div>
 
 
 </div>
@@ -78,27 +78,27 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2020-03-05T14:23:21.000Z">2020-03-05</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2020-03-05T14:23:21.000Z">2020-03-05</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>OWASP Top 10  介绍和理解</span></h1>
 <p>大三下刚开学，打算网安实习，看到一些职位要求了解OWASP Top 10，打算在这里记录了解到的知识以及凭记忆和搜索引擎分析分析这些安全威胁产生的具体场景。</p>
 <a id="more"></a>
-<h4 id="OWASP-Top10是什么"><a href="#OWASP-Top10是什么" class="headerlink" title="OWASP Top10是什么?"></a>OWASP Top10是什么?</h4><p>先看下<a href="http://www.owasp.org.cn/" target="_blank" rel="noopener">OWASP中国官网</a>的自我介绍。</p>
+<h4 id="OWASP-Top10是什么"><a href="#OWASP-Top10是什么" class="headerlink" title="OWASP Top10是什么?"></a>OWASP Top10是什么?</h4><p>先看下<a target="_blank" rel="noopener" href="http://www.owasp.org.cn/">OWASP中国官网</a>的自我介绍。</p>
 <blockquote>
 <p>OWASP(Open Web Application Security Project)是一个开源的、非盈利的全球性安全组织，致力于应用软件的安全研究。我们的使命是使应用软件更加安全，使企业和组织能够对应用安全风险做出更清晰的决策。目前OWASP全球拥有250个分部近7万名会员，共同推动了安全标准、安全测试工具、安全指导手册等应用安全技术的发展。</p>
 </blockquote>
 <p>简明地说，OWASP为全球应用软件开发商提供安全标准，安全工具，安全指导手册，引导互联网从业的开发者开发更安全的应用软件。</p>
 <p>而OWASP Top 10 指的是“10项最严重的Web 应用程序安全风险列表”，它总结了Web应用程序最可能、最常见、最危险的十大漏洞，是开发、测试、服务、咨询人员应知应会的知识。</p>
 <blockquote>
-<p>当前版本: <a href="https://www.owasp.org/images/7/72/OWASP_Top_10-2017_%28en%29.pdf.pdf" target="_blank" rel="noopener">OWASP Top 10 2017</a></p>
+<p>当前版本: <a target="_blank" rel="noopener" href="https://www.owasp.org/images/7/72/OWASP_Top_10-2017_%28en%29.pdf.pdf">OWASP Top 10 2017</a></p>
 </blockquote>
 <h4 id="OWASP-Top10有哪些内容？"><a href="#OWASP-Top10有哪些内容？" class="headerlink" title="OWASP Top10有哪些内容？"></a>OWASP Top10有哪些内容？</h4><p><strong>Top 1- 注入</strong></p>
 <blockquote>
 <p>将不安全的命令作为命令发送给解析器，会产生类似于SQL注入、NoSQL注入、OS注入和LDAP注入(轻量目录访问协议) 的缺陷，攻击者可以构造恶意数据通过注入缺陷的解析器执行没有权限的非预期命令或访问数据。</p>
 </blockquote>
 <p>一般来说，存在后台的web页面会将用户提交的查询，注册，登录信息通过post或get请求发送给后台，后台接收到这些参数就会处理，部分参数需要构造sql查询语句提交给数据库查询，获得结果后后台就回回显到前端web页面中。在这个过程中如果后端在收到参数后不进行特殊语句检查，将构造好的sql语句直接传给数据库执行，用户就能通过传参构造一些恒成立条件来控制查询，得到自己想要的数据，甚至管理员权限。</p>
-<p>分享一个我觉得不错的sql注入练习平台<a href="https://redtiger.labs.overthewire.org/" target="_blank" rel="noopener">RedTiger’s Hackit</a>。</p>
+<p>分享一个我觉得不错的sql注入练习平台<a target="_blank" rel="noopener" href="https://redtiger.labs.overthewire.org/">RedTiger’s Hackit</a>。</p>
 <p><strong>Top 2-失效的身份认证和会话管理</strong></p>
 <blockquote>
 <p>通过错误使用应用程序的身份认证和会话管理功能，攻击者能够破译密码、密钥或会话令牌，或者暂时或永久的冒充其他用户的身份。</p>
@@ -128,7 +128,7 @@
 <blockquote>
 <p>当应用程序的新网页中包含不受信任的、未经恰当验证或转义的数据时，或者使用可以创建HTML或JavaScript 的浏览器API 更新现有的网页时，就会出现XSS 缺陷。XSS 让攻击者能够在受害者的浏览器中执行脚本，并劫持用户会话、破坏网站或将用户重定向到恶意站点。</p>
 </blockquote>
-<p><a href="https://zh.wikipedia.org/wiki/%E8%B7%A8%E7%B6%B2%E7%AB%99%E6%8C%87%E4%BB%A4%E7%A2%BC" target="_blank" rel="noopener">XSS wiki</a></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%A8%E7%B6%B2%E7%AB%99%E6%8C%87%E4%BB%A4%E7%A2%BC">XSS wiki</a></p>
 <p><strong>Top 8不安全的反序列化</strong></p>
 <blockquote>
 <p>不安全的反序列化会导致远程代码执行。即使反序列化缺陷不会导致远程代码执行，攻击者也可以利用它们来执行攻击，包括：重播攻击、注入攻击和特权升级攻击。</p>
@@ -141,15 +141,15 @@
 <p>经过修改后的数据：<br><code>Cookie: 3844998|AliceM|y|27|*ADMIN*|active|null|201809</code><br>由于缺乏对数据完整性的校验，服务器端在收到被修改过的这段数据后，就把当前用户当作ADMIN用户来处理了。<br>当然，现在的服务器都会对cookie进行加密，攻击者修改成想要的序列化数据有一定难度。</p>
 <p><strong>Top 9使用含有已知漏洞的组件</strong><br>组件（例如：库、框架和其他软件模块）拥有和应用程序相同的权限。如果应用程序中含有已知漏洞的组件被攻击者利用，可能会造成严重的数据丢失或服务器接管。同时，使用含有已知漏洞的组件的应用程序和API可能会破坏应用程序防御、造成各种攻击并产生严重影响。</p>
 <p><strong>Top 10不足的日志记录和监控</strong><br>不足的日志记录和监控，以及事件响应缺失或无效的集成，使攻击者能够进一步攻击系统、保持持续性或转向更多系统，以及篡改、提取或销毁数据。大多数缺陷研究显示，缺陷被检测出的时间超过200天，且通常通过外部检测方检测，而不是通过内部流程或监控检测。</p>
-<p>引用资料：<br><a href="https://blog.csdn.net/wang_624/article/details/89683571" target="_blank" rel="noopener">OWASP Top 10 简单介绍</a><br><a href="https://zhuanlan.zhihu.com/p/46505934" target="_blank" rel="noopener">知乎专栏-什么是 owasp 10?</a><br><a href="https://www.jianshu.com/p/fa912ce0426f" target="_blank" rel="noopener">简书-不安的反序列化</a></p>
+<p>引用资料：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/wang_624/article/details/89683571">OWASP Top 10 简单介绍</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/46505934">知乎专栏-什么是 owasp 10?</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/fa912ce0426f">简书-不安的反序列化</a></p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2020/02/25/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/">pwntools下踩的坑<span class="note">Older</span></a><div class="line"></div><a id="prev" href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">pwn实践记录--rop入门<span class="note">Newer</span></a><div class="line"></div><a id="more" href="/archives">All Articles</a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2020/02/25/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/">pwntools下踩的坑<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">pwn实践记录--rop入门<span class="note">较新</span></a><div class="line"></div><a id="more" href="/archives">检索全部文章</a></section></div>
 
 
 
@@ -159,8 +159,8 @@
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
-<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作为主题。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -267,11 +267,11 @@
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
   stellar.config = {
     date_suffix: {
-      just: 'Just',
-      min: 'minutes ago',
-      hour: 'hours ago',
-      day: 'days ago',
-      month: 'months ago',
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
     },
   };
 

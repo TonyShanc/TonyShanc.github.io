@@ -27,10 +27,10 @@
 <meta property="og:site_name" content="shanah&#39;s blog">
 <meta property="og:description" content="本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。">
 <meta property="og:locale">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/1.jpg">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/2.jpg">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/3.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/4.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//1.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//2.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//3.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//4.jpg">
 <meta property="article:published_time" content="2020-02-13T08:58:47.000Z">
 <meta property="article:modified_time" content="2020-02-13T09:58:34.757Z">
 <meta property="article:author" content="shanah">
@@ -38,7 +38,7 @@
 <meta property="article:tag" content="Crypto">
 <meta property="article:tag" content="曼切斯特编码">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://tonyshanc.github.io/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/1.jpg">
+<meta name="twitter:image" content="http://tonyshanc.github.io/.io//1.jpg">
   
   
 
@@ -54,7 +54,7 @@
   
   
   
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body>
   
@@ -71,7 +71,7 @@
 <nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
-<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14 post"><div class="doc-tree active"></div></div></div>
+<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14 post"><div class="doc-tree active"></div></div></div>
 
 
 </div>
@@ -84,52 +84,52 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2020-02-13T08:58:47.000Z">2020-02-13</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2020-02-13T08:58:47.000Z">2020-02-13</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>传感器1</span></h1>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/1.jpg" alt="传感器1"><br>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//1.jpg" alt="传感器1"><br>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。</p>
 <a id="more"></a>
-<p>题目出自 <a href="https://www.ichunqiu.com/battalion?t=1&r=58837" target="_blank" rel="noopener">i春秋CTF大本营: 2017届全国大学生信息安全竞赛</a></p>
+<p>题目出自 <a target="_blank" rel="noopener" href="https://www.ichunqiu.com/battalion?t=1&r=58837">i春秋CTF大本营: 2017届全国大学生信息安全竞赛</a></p>
 <p>已知 A传感器的ID和它的输出， 以及B的输出。<br>求另一个传感器B的ID。</p>
 <p>大致思路是从输出中寻找输出和ID的联系，而A的ID和输出就是线索。</p>
 <p>发现输出是16进制，遇到进制问题首先做的肯定是比对进制转换后的数字。</p>
-<p>先用在线工具转换一下A的输出：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/2.jpg" alt="传感器1"></p>
+<p>先用在线工具转换一下A的输出：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//2.jpg" alt="传感器1"></p>
 <p>发现最有规律的是2进制和8进制数据<br>但是考虑到8进制不常用，并且它的规律集中在52上，没法利用<br>所以接下来看2进制：<br>2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合<br>我们需要的是有规律的数，<br>所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中)<br>继续观察余下的二进制数<br>发现很像数字逻辑中的电平跳变，0代表低位，1代表高位<br>该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码<br>查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律</p>
-<h6 id="曼切斯特编码："><a href="#曼切斯特编码：" class="headerlink" title="曼切斯特编码："></a>曼切斯特编码：</h6><p>data用跳变表示，0和1对应01和10<br>至于谁对应谁有两种标准：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/3.png" alt="传感器1"></p>
-<h6 id="差分曼切斯特编码："><a href="#差分曼切斯特编码：" class="headerlink" title="差分曼切斯特编码："></a>差分曼切斯特编码：</h6><p>数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/02/13/%E4%BC%A0%E6%84%9F%E5%99%A81/4.jpg" alt="传感器1"></p>
+<h6 id="曼切斯特编码："><a href="#曼切斯特编码：" class="headerlink" title="曼切斯特编码："></a>曼切斯特编码：</h6><p>data用跳变表示，0和1对应01和10<br>至于谁对应谁有两种标准：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//3.png" alt="传感器1"></p>
+<h6 id="差分曼切斯特编码："><a href="#差分曼切斯特编码：" class="headerlink" title="差分曼切斯特编码："></a>差分曼切斯特编码：</h6><p>数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//4.jpg" alt="传感器1"></p>
 <p>知识回顾的差不多了，回到题目，开始撸代码<br>由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。<br>思路很简单 直接贴代码：</p>
-<pre><code class="python">import re
-def bintohex(s1):
-    s = re.findall(&#39;.{4}&#39;, s1)
-    s2 = &#39;&#39;
-    for i in s:
-        s2 += str(hex(int(i, 2))).replace(&#39;0x&#39;,&#39;&#39;)
-    return s2
+<pre class=" language-python"><code class="language-python"><span class="token keyword">import</span> re
+<span class="token keyword">def</span> <span class="token function">bintohex</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    s <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.&amp;#123;4&amp;#125;'</span><span class="token punctuation">,</span> s1<span class="token punctuation">)</span>
+    s2 <span class="token operator">=</span> <span class="token string">''</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> s<span class="token punctuation">:</span>
+        s2 <span class="token operator">+=</span> str<span class="token punctuation">(</span>hex<span class="token punctuation">(</span>int<span class="token punctuation">(</span>i<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'0x'</span><span class="token punctuation">,</span><span class="token string">''</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> s2
 
-def diffmqst(s1): #差分曼切斯特
-    pre = &#39;01&#39;
-    rst = &#39;&#39;
-    s = re.findall(&#39;.{2}&#39;,s1)
-    for i in s:
-        if i==pre:
-            rst += &#39;0&#39;
-        else : rst+=&#39;1&#39;
-        pre = i
-    return rst
+<span class="token keyword">def</span> <span class="token function">diffmqst</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment" spellcheck="true">#差分曼切斯特</span>
+    pre <span class="token operator">=</span> <span class="token string">'01'</span>
+    rst <span class="token operator">=</span> <span class="token string">''</span>
+    s <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.&amp;#123;2&amp;#125;'</span><span class="token punctuation">,</span>s1<span class="token punctuation">)</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> s<span class="token punctuation">:</span>
+        <span class="token keyword">if</span> i<span class="token operator">==</span>pre<span class="token punctuation">:</span>
+            rst <span class="token operator">+=</span> <span class="token string">'0'</span>
+        <span class="token keyword">else</span> <span class="token punctuation">:</span> rst<span class="token operator">+=</span><span class="token string">'1'</span>
+        pre <span class="token operator">=</span> i
+    <span class="token keyword">return</span> rst
 
-if __name__ == &#39;__main__&#39;:
-    hex1 = &#39;AAAAA56A69AA55A95995A569AA95565556&#39;
-    hex2 = &#39;0x8893CA58&#39;
-    bin1 = bin(int(hex1, 16)).replace(&#39;0b&#39;, &#39;&#39;)
-    bin2 = re.findall(&#39;.{4}&#39;, bin(int(hex1, 16)).replace(&#39;0b&#39;, &#39;&#39;))
-    dict1 = {&#39;0101&#39;: &#39;11&#39;, &#39;1010&#39;:&#39;00&#39;, &#39;1001&#39;:&#39;01&#39;, &#39;0110&#39;: &#39;10&#39;} #曼切斯特编码1 Thomas
-    dict2 = {&#39;0101&#39;: &#39;00&#39;, &#39;1010&#39;:&#39;11&#39;, &#39;1001&#39;:&#39;10&#39;, &#39;0110&#39;: &#39;01&#39;} #曼切斯特编码2 IEEE802.3
-    m1 = &#39;&#39;.join(dict1[_] for _ in bin2)
-    m2 = &#39;&#39;.join(dict2[_] for _ in bin2)
-    print(&quot;曼切斯特编码1 id1: &quot;, bintohex(m1))
-    print(&quot;曼切斯特编码2 id2: &quot;, bintohex(m2))
-    print(&quot;差分曼切斯特编码 id3: &quot;, bintohex(diffmqst(bin1)))
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    hex1 <span class="token operator">=</span> <span class="token string">'AAAAA56A69AA55A95995A569AA95565556'</span>
+    hex2 <span class="token operator">=</span> <span class="token string">'0x8893CA58'</span>
+    bin1 <span class="token operator">=</span> bin<span class="token punctuation">(</span>int<span class="token punctuation">(</span>hex1<span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'0b'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span>
+    bin2 <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.&amp;#123;4&amp;#125;'</span><span class="token punctuation">,</span> bin<span class="token punctuation">(</span>int<span class="token punctuation">(</span>hex1<span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'0b'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    dict1 <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;'0101': '11', '1010':'00', '1001':'01', '0110': '10'&amp;#125; #曼切斯特编码1 Thomas</span>
+    dict2 <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;'0101': '00', '1010':'11', '1001':'10', '0110': '01'&amp;#125; #曼切斯特编码2 IEEE802.3</span>
+    m1 <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>dict1<span class="token punctuation">[</span>_<span class="token punctuation">]</span> <span class="token keyword">for</span> _ <span class="token keyword">in</span> bin2<span class="token punctuation">)</span>
+    m2 <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>dict2<span class="token punctuation">[</span>_<span class="token punctuation">]</span> <span class="token keyword">for</span> _ <span class="token keyword">in</span> bin2<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"曼切斯特编码1 id1: "</span><span class="token punctuation">,</span> bintohex<span class="token punctuation">(</span>m1<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"曼切斯特编码2 id2: "</span><span class="token punctuation">,</span> bintohex<span class="token punctuation">(</span>m2<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"差分曼切斯特编码 id3: "</span><span class="token punctuation">,</span> bintohex<span class="token punctuation">(</span>diffmqst<span class="token punctuation">(</span>bin1<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
 <p>输出：</p>
 <pre><code>曼切斯特编码1 id1:  003890f1d73907efe
@@ -138,12 +138,12 @@ if __name__ == &#39;__main__&#39;:
 <p>flag=8845abf3</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2019/05/27/%E6%95%B0%E8%AE%BA%EF%BC%9A%E6%A8%A1p%E5%B9%B3%E6%96%B9%E6%A0%B9%E7%AE%97%E6%B3%95/">数论 模p平方根算法（C）<span class="note">Older</span></a><div class="line"></div><a id="prev" href="/2020/02/23/%E7%88%86%E7%A0%B4/">爆破 1<span class="note">Newer</span></a><div class="line"></div><a id="more" href="/archives">All Articles</a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2019/05/27/%E6%95%B0%E8%AE%BA%EF%BC%9A%E6%A8%A1p%E5%B9%B3%E6%96%B9%E6%A0%B9%E7%AE%97%E6%B3%95/">数论 模p平方根算法（C）<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2020/02/23/%E7%88%86%E7%A0%B4/">爆破 1<span class="note">较新</span></a><div class="line"></div><a id="more" href="/archives">检索全部文章</a></section></div>
 
 
 
@@ -153,8 +153,8 @@ if __name__ == &#39;__main__&#39;:
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
-<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作为主题。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -261,11 +261,11 @@ if __name__ == &#39;__main__&#39;:
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
   stellar.config = {
     date_suffix: {
-      just: 'Just',
-      min: 'minutes ago',
-      hour: 'hours ago',
-      day: 'days ago',
-      month: 'months ago',
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
     },
   };
 

@@ -27,22 +27,22 @@
 <meta property="og:site_name" content="shanah&#39;s blog">
 <meta property="og:description" content="传送门： kong网关中文文档 kong官网 kong官方文档 前言近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。 理论Consumer The Consumer obje">
 <meta property="og:locale">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/1.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/2.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/4.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/3.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/7.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/6.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/8.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/9.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/10.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/11.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/14.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/12.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/13.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/15.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/16.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/17.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//1.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//2.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//4.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//3.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//7.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//6.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//8.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//9.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//10.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//11.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//14.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//12.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//13.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//15.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//16.png">
+<meta property="og:image" content="http://tonyshanc.github.io/.io//17.png">
 <meta property="article:published_time" content="2020-11-22T05:40:56.000Z">
 <meta property="article:modified_time" content="2020-11-22T08:46:00.371Z">
 <meta property="article:author" content="shanah">
@@ -51,7 +51,7 @@
 <meta property="article:tag" content="微服务">
 <meta property="article:tag" content="k8s">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://tonyshanc.github.io/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/1.png">
+<meta name="twitter:image" content="http://tonyshanc.github.io/.io//1.png">
   
   
 
@@ -67,7 +67,7 @@
   
   
   
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body>
   
@@ -84,7 +84,7 @@
 <nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
-<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Consumer"><span class="toc-text">Consumer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Service"><span class="toc-text">Service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Route"><span class="toc-text">Route</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Plugin"><span class="toc-text">Plugin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Upstream"><span class="toc-text">Upstream</span></a></li></ol></div></div></div>
+<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Consumer"><span class="toc-text">Consumer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Service"><span class="toc-text">Service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Route"><span class="toc-text">Route</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Plugin"><span class="toc-text">Plugin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Upstream"><span class="toc-text">Upstream</span></a></li></ol></div></div></div>
 
 
 </div>
@@ -97,14 +97,14 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2020-11-22T05:40:56.000Z">2020-11-22</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2020-11-22T05:40:56.000Z">2020-11-22</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>网关kong 中的概念consumer service route plugin实践与理解</span></h1>
 <p>传送门：</p>
-<p><a href="https://github.com/qianyugang/kong-docs-cn" target="_blank" rel="noopener">kong网关中文文档</a></p>
-<p><a href="https://konghq.com/" target="_blank" rel="noopener">kong官网</a></p>
-<p><a href="https://docs.konghq.com/" target="_blank" rel="noopener">kong官方文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn">kong网关中文文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://konghq.com/">kong官网</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.konghq.com/">kong官方文档</a></p>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
 <h1 id="理论"><a href="#理论" class="headerlink" title="理论"></a>理论</h1><h2 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h2><blockquote>
 <p>The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.</p>
@@ -116,58 +116,58 @@
 <p>kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT</p>
 <p>他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT</p>
 <p>（这里使用kong图形界面KONGA实践）</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/1.png" style="zoom:67%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//1.png" style="zoom:67%;">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/2.png" style="zoom: 33%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//2.png" style="zoom: 33%;">
 
 <p>JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</p>
 <p>JWT最终的格式简化为三段式： base64「algorithm」. base64「payload」. base64「最终签名」 。</p>
 <p>payload中存放key以及一些不敏感信息 username, expire time等，最终签名是使用第一段的hash算法对第二段的payload哈希后的base64值。</p>
 <p>JWT token 可以在JWT 官网去生成，当然最好是使用JWT库封装接口传参生成JWT token。</p>
 <p>请求时，我们使用生成的JWT token加入请求头Authorization中, 这边提一句，请求kong的路由需要先用JWT插件开启JWT验证，这样kong才能主动检查JWT token，JWT验证的粒度可以为全局，可以负载在route上，也可以在service上（对route service不清晰的同学可以看关于他们的解释），这里我们在请求的route ping上开启JWT验证：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/4.png" style="zoom: 50%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//4.png" style="zoom: 50%;">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/3.png" style="zoom: 50%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//3.png" style="zoom: 50%;">
 
 <p>这里保持所有为默认设置就可以了。其中迷惑性较大的是consumer 参数，参数下面的解释意思是所有匿名请求来源都会被标记为user， 该参数留白的话会将所有user标记为consumer, 也就是说请求头必须带上JWT token 否则不能被识别为consumer，请求会被kong拦截，<strong>如果填上了consumer_id，并且身份验证开启了才会奏效，说的人很懵，经过一番测试下来，发现填和不填，效果是一样的</strong>。</p>
 <p>上面的consumer参数我设置成留白了，看看会发生什么：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/7.png" style="zoom: 45%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//7.png" style="zoom: 45%;">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/6.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//6.png" style="zoom: 42%;">
 
 <p>未带上JWT token的请求被拦截，返回401鉴权失败，带上JWT token的请求被放行，请求到了网页</p>
 <p>我们把test route上的JWT插件consumer填上一个consumer_id， 看看会发生什么：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/8.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//8.png" style="zoom: 42%;">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/9.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//9.png" style="zoom: 42%;">
 
 <p>第一个token是被放行的consumer的JWT token</p>
 <p>第二个token是其他consumer的JWT token</p>
 <p>不传token:</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/10.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//10.png" style="zoom: 42%;">
 
 <p>传第一个token:</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/11.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//11.png" style="zoom: 42%;">
 
 <p>传第二个token:</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/14.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//14.png" style="zoom: 42%;">
 
 <p>可见，即使填入了consumer_id, 其他consumer照样会被放行，和留白是一样的效果，唯一区别是带上其他consumer的token的user是否会被标记为其他consumer?</p>
 <p>下面继续实践：</p>
 <p>开启Acl，把被放行的consumer所在组(admin)标记为allow， 其他consumer的所在组（user）标记为deny</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/12.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//12.png" style="zoom: 42%;">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/13.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//13.png" style="zoom: 42%;">
 
 <p>这时候用第二个token继续请求，</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/15.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//15.png" style="zoom: 42%;">
 
 <p>发现其他consumer被拦截了，也就是说其他consumer的身份被识别出来了。这就证明即使JWT插件填上了consumer_id，该插件并不会针对这个consumer进行身份识别，其他consumer不进行身份识别，而是和留白情况下的逻辑是一样的，所以这个参数是多余的，建议KONGA删除。因为consumer_id只会在「在consumer下创建JWT验证插件时生成，用于consumer的身份验证」，在一个route的JWT插件中设置consumer_id不符合逻辑。</p>
 <h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><blockquote>
 <p>Service entities, as the name implies, are abstractions of each of your own upstream services. Examples of Services would be a data transformation microservice, a billing API, etc.</p>
 </blockquote>
 <p>Service译作服务，不同于kubernetes的service, k8s的service是一个实体服务，里面包括实体pod进行逻辑处理，而kong的服务属于逻辑上的概念，要知道，kong是个api网关，大多数情况下在进行流量转发，因此kong的service 引用的是其他实体服务访问url，这里创建一个testApi service:</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/16.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//16.png" style="zoom: 42%;">
 
 
 
@@ -176,7 +176,7 @@
 <p>The Route entities defines rules to match client requests. Each Route is associated with a Service, and a Service may have multiple Routes associated to it. Every request matching a given Route will be proxied to its associated Service.</p>
 </blockquote>
 <p>route顾名思义，路由，提供流量入口。kong的路由形式挺多的，有host path method可供设置：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/17.png" style="zoom: 42%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//17.png" style="zoom: 42%;">
 
 <p>他们是逻辑and的关系，只有全满足时才会访问到route，如果一个请求有多个route可以满足，kong会计算路由的优先级，优先级越高就访问哪个route，优先级的计算也比较简单，就是看请求命中route的配置的个数，个数越多，优先级越高。例如请求命中host和path的路由的优先级比只命中path的优先级高。</p>
 <p>route可以提供负载均衡，就是说一个route可以对应多个service。</p>
@@ -189,18 +189,18 @@
 <ul>
 <li><ul>
 <li><ul>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-client.md" target="_blank" rel="noopener">kong.client</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ctx.md" target="_blank" rel="noopener">kong.ctx</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ip.md" target="_blank" rel="noopener">kong.ip</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-log.md" target="_blank" rel="noopener">kong.log</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-node.md" target="_blank" rel="noopener">kong.node</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-request.md" target="_blank" rel="noopener">kong.request</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-response.md" target="_blank" rel="noopener">kong.response</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-router.md" target="_blank" rel="noopener">kong.router</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service.md" target="_blank" rel="noopener">kong.service</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-request.md" target="_blank" rel="noopener">kong.service.request</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-response.md" target="_blank" rel="noopener">kong.service.response</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-table.md" target="_blank" rel="noopener">kong.table</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-client.md">kong.client</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ctx.md">kong.ctx</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ip.md">kong.ip</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-log.md">kong.log</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-node.md">kong.node</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-request.md">kong.request</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-response.md">kong.response</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-router.md">kong.router</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service.md">kong.service</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-request.md">kong.service.request</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-response.md">kong.service.response</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-table.md">kong.table</a></li>
 </ul>
 </li>
 </ul>
@@ -212,12 +212,12 @@
 <p>很抽象的概念，其实也很好理解，类比http中的Host请求头（和route中的host一样），这个host可以理解为一个虚拟主机，Upstream中的实体和host值同名，创建Upstream，是为了控制向同名host发起的请求，或者对同名host的route做一些配置，健康检查之类的。</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/">自动驾驶模拟平台carla（一）安装<span class="note">Older</span></a><div class="line"></div><a id="prev" href="/2020/11/25/%E5%89%91%E6%8C%87offer03/">剑指offer03<span class="note">Newer</span></a><div class="line"></div><a id="more" href="/archives">All Articles</a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/">自动驾驶模拟平台carla（一）安装<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2020/11/25/%E5%89%91%E6%8C%87offer03/">剑指offer03<span class="note">较新</span></a><div class="line"></div><a id="more" href="/archives">检索全部文章</a></section></div>
 
 
 
@@ -227,8 +227,8 @@
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
-<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作为主题。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -335,11 +335,11 @@
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
   stellar.config = {
     date_suffix: {
-      just: 'Just',
-      min: 'minutes ago',
-      hour: 'hours ago',
-      day: 'days ago',
-      month: 'months ago',
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
     },
   };
 

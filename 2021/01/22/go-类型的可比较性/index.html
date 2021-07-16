@@ -47,7 +47,7 @@
   
   
   
-</head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body>
   
@@ -65,7 +65,7 @@
 
 <div class="widgets">
 
-<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/"><div class="cap"><time>2021-07-16</time></div><span class="title">go 类型的可比较性</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/"><div class="cap"><time>2021-01-22</time></div><span class="title">go 单例设计</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/"><div class="cap"><time>2021-01-22</time></div><span class="title">go context.ValueCtx的key</span></a><div class="line"></div><a class="more-item" href="/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/"><div class="cap"><time>2021-01-22</time></div><span class="title">CAN总线（一）</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-mock-%E5%88%9D%E6%8E%A2/"><div class="cap"><time>2021-01-22</time></div><span class="title">go mock 初探</span></a></div></div>
+<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%AF%E6%AF%94%E8%BE%83%E6%80%A7/"><div class="cap"><time>2021-07-16</time></div><span class="title">go 类型的可比较性</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1/"><div class="cap"><time>2021-01-22</time></div><span class="title">go 单例设计</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/"><div class="cap"><time>2021-01-22</time></div><span class="title">go context.ValueCtx的key</span></a><div class="line"></div><a class="more-item" href="/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/"><div class="cap"><time>2021-01-22</time></div><span class="title">CAN总线（一）</span></a><div class="line"></div><a class="more-item" href="/2021/01/22/go-mock-%E5%88%9D%E6%8E%A2/"><div class="cap"><time>2021-01-22</time></div><span class="title">go mock 初探</span></a></div></div>
 
 
 
@@ -79,7 +79,7 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2021-01-21T17:54:06.000Z">2021-01-22</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2021-01-21T17:54:06.000Z">2021-01-22</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>go 类型的可比较性</span></h1>
@@ -87,113 +87,113 @@
 <a id="more"></a>
 
 <p>go内置类型都是可比较的，类型会直接比较内容，指针类型先判断指针指向地址再判断内容<br>常用复合类型的可比较性比较复杂，demo如下</p>
-<pre><code class="go">func isComparable(a interface&#123;&#125;) &#123;
-    fmt.Println(reflect.ValueOf(a).Type().Comparable())
-&#125;
-type Dog struct &#123;
-    name string
-&#125;
-func (d Dog) eat()&#123;
-    fmt.Println(&quot;dog &quot; + d.name + &quot; eat&quot;)
-&#125;
-type Cat struct &#123;
-    name string 
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token function">isComparable</span><span class="token punctuation">(</span>a <span class="token keyword">interface</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>reflect<span class="token punctuation">.</span><span class="token function">ValueOf</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Type</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Comparable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> Dog <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    name <span class="token builtin">string</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>d Dog<span class="token punctuation">)</span> <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"dog "</span> <span class="token operator">+</span> d<span class="token punctuation">.</span>name <span class="token operator">+</span> <span class="token string">" eat"</span><span class="token punctuation">)</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> Cat <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    name <span class="token builtin">string</span> 
     fur
-&#125;
-type fur struct&#123;
-    color string
-    num   int64
-&#125;
-func (c Cat) eat() &#123;
-    fmt.Println(&quot;cat &quot; + c.name + &quot; eat&quot;)
-&#125;
-type Animal interface &#123;
-    eat()
-&#125;
-type AnimalB interface &#123;
-  eat()
-&#125;
-func main()&#123;
-  a := make(map[string]int)
-  isComparable(a)           // false
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> fur <span class="token keyword">struct</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    color <span class="token builtin">string</span>
+    num   <span class="token builtin">int64</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>c Cat<span class="token punctuation">)</span> <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"cat "</span> <span class="token operator">+</span> c<span class="token punctuation">.</span>name <span class="token operator">+</span> <span class="token string">" eat"</span><span class="token punctuation">)</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> Animal <span class="token keyword">interface</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> AnimalB <span class="token keyword">interface</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+  <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+  a <span class="token operator">:=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">)</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// false</span>
 
-  b := []int64&#123;1,2&#125;
-  isComparable(a)           // false
+  b <span class="token operator">:=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int64</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// false</span>
 
-  c := struct &#123;
-      id int
-      name string
-  &#125;&#123;
-      1,
-      &quot;sc&quot;,
-  &#125;
-  isComparable(c)           // true
+  c <span class="token operator">:=</span> <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+      id <span class="token builtin">int</span>
+      name <span class="token builtin">string</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+      <span class="token number">1</span><span class="token punctuation">,</span>
+      <span class="token string">"sc"</span><span class="token punctuation">,</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// true</span>
 
-  d := struct &#123;
-      id int
-      name string
-      clildrenId []int
-  &#125;&#123;
-      1,
-      &quot;shanchao&quot;,
-      []int &#123;1,2,3,4&#125;,
-  &#125;
-  isComparable(d)            // false struct内部存在不可比较类型slice
+  d <span class="token operator">:=</span> <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+      id <span class="token builtin">int</span>
+      name <span class="token builtin">string</span>
+      clildrenId <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+      <span class="token number">1</span><span class="token punctuation">,</span>
+      <span class="token string">"shanchao"</span><span class="token punctuation">,</span>
+      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">,</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span>            <span class="token comment" spellcheck="true">// false struct内部存在不可比较类型slice</span>
 
-  var(
-    d1 = Dog&#123;name: &quot;liuyang&quot;&#125;
-    d2 = Dog&#123;name: &quot;liuyang&quot;&#125;
-    dog Animal = Dog&#123;name: &quot;liuyang&quot;&#125;
-    dog2 Animal = Dog&#123;name: &quot;liuyang&quot;&#125;
-    dogPtr Animal = &amp;Dog&#123;name: &quot;liuyang&quot;&#125;
-    dogB AnimalB = Dog&#123;name: &quot;liuyang&quot;&#125;
-    dogBPtr AnimalB = &amp;Dog&#123;name: &quot;liuyang&quot;&#125;
-    cat Animal = Cat&#123;name: &quot;liuyang&quot;&#125;
-    cat2  = Cat&#123;name: &quot;sc&quot;, fur: fur&#123;color: &quot;yellow&quot;, num: int64(1&lt;&lt;56),&#125;,&#125;
-    cat3  = Cat&#123;name: &quot;sc&quot;, fur: fur&#123;color: &quot;blue&quot;, num: int64(1&lt;&lt;56),&#125;,&#125;
-  )
-  isComparable(d)            // true
-  isComparable(dog)          // true
-  isComparable(dogB)         // true
-  isComparable(cat)          // true
-  fmt.Println(d1 == d2)      // true 
-  fmt.Println(dog == dogPtr) // false
-  fmt.Println(dog == dog2)   // true 
-  fmt.Println(dog == dogB)   // true 比较与接口无关
-  fmt.Println(dogPtr == dogBPtr) // false 先指针指向地址是否相同
-  fmt.Println(dog == cat)    // false 考虑了自定义类型
-  fmt.Println(dog == cat)    // false 考虑了自定义类型
-  fmt.Println(cat2 == cat3)  // false 递归判断
-&#125;</code></pre>
+  <span class="token keyword">var</span><span class="token punctuation">(</span>
+    d1 <span class="token operator">=</span> Dog<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    d2 <span class="token operator">=</span> Dog<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    dog Animal <span class="token operator">=</span> Dog<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    dog2 Animal <span class="token operator">=</span> Dog<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    dogPtr Animal <span class="token operator">=</span> <span class="token operator">&amp;</span>Dog<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    dogB AnimalB <span class="token operator">=</span> Dog<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    dogBPtr AnimalB <span class="token operator">=</span> <span class="token operator">&amp;</span>Dog<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    cat Animal <span class="token operator">=</span> Cat<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    cat2  <span class="token operator">=</span> Cat<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"sc"</span><span class="token punctuation">,</span> fur<span class="token punctuation">:</span> fur<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>color<span class="token punctuation">:</span> <span class="token string">"yellow"</span><span class="token punctuation">,</span> num<span class="token punctuation">:</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token operator">&lt;&lt;</span><span class="token number">56</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">,</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    cat3  <span class="token operator">=</span> Cat<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>name<span class="token punctuation">:</span> <span class="token string">"sc"</span><span class="token punctuation">,</span> fur<span class="token punctuation">:</span> fur<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>color<span class="token punctuation">:</span> <span class="token string">"blue"</span><span class="token punctuation">,</span> num<span class="token punctuation">:</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token operator">&lt;&lt;</span><span class="token number">56</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">,</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+  <span class="token punctuation">)</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span>            <span class="token comment" spellcheck="true">// true</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>dog<span class="token punctuation">)</span>          <span class="token comment" spellcheck="true">// true</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>dogB<span class="token punctuation">)</span>         <span class="token comment" spellcheck="true">// true</span>
+  <span class="token function">isComparable</span><span class="token punctuation">(</span>cat<span class="token punctuation">)</span>          <span class="token comment" spellcheck="true">// true</span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>d1 <span class="token operator">==</span> d2<span class="token punctuation">)</span>      <span class="token comment" spellcheck="true">// true </span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dogPtr<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// false</span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dog2<span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">// true </span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dogB<span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">// true 比较与接口无关</span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dogPtr <span class="token operator">==</span> dogBPtr<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// false 先指针指向地址是否相同</span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> cat<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// false 考虑了自定义类型</span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> cat<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// false 考虑了自定义类型</span>
+  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>cat2 <span class="token operator">==</span> cat3<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// false 递归判断</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
 <p>可见map, slice是不可比较的；比较interface无关；对自定义类型struct的比较先判断是否是指针，再判断属性类型、属性值，具有递归判断的性质; 嵌入不可比较类型如map slice的struct不可比较，编译会报错； </p>
 <p>另一个有趣的点涉及到interface{}:</p>
-<pre><code class="go">type myString string
-func compare(a interface&#123;&#125;) bool &#123;
-    if interface&#123;&#125;(&quot;haha&quot;) == a &#123;
-        return true
-    &#125;
-    return false
-&#125;
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> myString <span class="token builtin">string</span>
+<span class="token keyword">func</span> <span class="token function">compare</span><span class="token punctuation">(</span>a <span class="token keyword">interface</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token builtin">bool</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token keyword">interface</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">(</span><span class="token string">"haha"</span><span class="token punctuation">)</span> <span class="token operator">==</span> a <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token boolean">true</span>
+    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token boolean">false</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 
-func main()&#123;
-    var (
-        s1 = myString(&quot;haha&quot;)
-        s2 = &quot;haha&quot;
-    )
-    fmt.Println(s1 == &quot;haha&quot;)    // true
-    fmt.Println(compare(s1))     // false
-    fmt.Println(compare(s2))     // true
-&#125;
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">var</span> <span class="token punctuation">(</span>
+        s1 <span class="token operator">=</span> <span class="token function">myString</span><span class="token punctuation">(</span><span class="token string">"haha"</span><span class="token punctuation">)</span>
+        s2 <span class="token operator">=</span> <span class="token string">"haha"</span>
+    <span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>s1 <span class="token operator">==</span> <span class="token string">"haha"</span><span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// true</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token function">compare</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">)</span>     <span class="token comment" spellcheck="true">// false</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token function">compare</span><span class="token punctuation">(</span>s2<span class="token punctuation">)</span><span class="token punctuation">)</span>     <span class="token comment" spellcheck="true">// true</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 </code></pre>
 <p>自定义类型与某个基础内嵌类型相同时用==不会考虑自定义的类型，而interface{}类型相互比较时，会先比较转为interface{}前的自定义类型，之后才会进行值比较。 interface{}这个特性被contex.ValueCtx用于key判断。</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/">go context.ValueCtx的key<span class="note">Older</span></a><div class="line"></div><div class="line"></div><a id="more" href="/archives">All Articles</a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2021/01/22/go-context-ValueCtx%E7%9A%84key/">go context.ValueCtx的key<span class="note">较早</span></a><div class="line"></div><div class="line"></div><a id="more" href="/archives">检索全部文章</a></section></div>
 
 
 
@@ -203,8 +203,8 @@ func main()&#123;
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
-<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作为主题。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -311,11 +311,11 @@ func main()&#123;
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
   stellar.config = {
     date_suffix: {
-      just: 'Just',
-      min: 'minutes ago',
-      hour: 'hours ago',
-      day: 'days ago',
-      month: 'months ago',
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
     },
   };
 
