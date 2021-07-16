@@ -2,7 +2,7 @@
 <html lang='default'>
 
 <head>
-  <meta name="generator" content="Hexo 5.4.0">
+  <meta name="generator" content="Hexo 4.2.1">
   <meta charset="utf-8">
   
 
@@ -26,7 +26,6 @@
 <meta property="og:url" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/index.html">
 <meta property="og:site_name" content="shanah&#39;s blog">
 <meta property="og:description" content="大四了，论文&#x2F;毕设 选了能落地的方向，课题为《智能网联汽车数字孪生》 平台选择Linux-ubuntu18.04（基于vmware）参考carla的 GitHub，以及官方文档，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用ubuntu安装： A 简易安装sudo apt-key ad">
-<meta property="og:locale">
 <meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG">
 <meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/2.PNG">
 <meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/3.PNG">
@@ -58,8 +57,7 @@
   
   
   
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
-<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body>
   
@@ -76,7 +74,7 @@
 <nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
-<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-ubuntu18-04%EF%BC%88%E5%9F%BA%E4%BA%8Evmware%EF%BC%89"><span class="toc-text">Linux-ubuntu18.04（基于vmware）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E7%AE%80%E6%98%93%E5%AE%89%E8%A3%85"><span class="toc-text">A 简易安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%AE%89%E8%A3%85"><span class="toc-text">B 软件包安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#windows-10"><span class="toc-text">windows 10</span></a></li></ol></div></div></div>
+<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-ubuntu18-04（基于vmware）"><span class="toc-text">Linux-ubuntu18.04（基于vmware）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-简易安装"><span class="toc-text">A 简易安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-软件包安装"><span class="toc-text">B 软件包安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#windows-10"><span class="toc-text">windows 10</span></a></li></ol></div></div></div>
 
 
 </div>
@@ -132,7 +130,7 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
 <p>下一篇将尝试写一些自动驾驶车辆脚本</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
@@ -147,8 +145,8 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
-<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
+<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1" target="_blank" rel="noopener">Stellar</a>.</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
