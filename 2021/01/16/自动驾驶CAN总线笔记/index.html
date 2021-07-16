@@ -2,7 +2,7 @@
 <html lang='default'>
 
 <head>
-  <meta name="generator" content="Hexo 4.2.0">
+  <meta name="generator" content="Hexo 5.4.0">
   <meta charset="utf-8">
   
 
@@ -26,9 +26,10 @@
 <meta property="og:url" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="shanah&#39;s blog">
 <meta property="og:description" content="CAN总线使用总线技术，取代了传统的点对点布线方式连接汽车电子控制单元（ECU）, 解决了传统布线方式中线束多，布线难，成本高等问题。     CAN总线标准CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。   CAN网络物理层连接在CAN总线上的设备叫做节点设备（CAN Node">
+<meta property="og:locale">
 <meta property="og:image" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/CAN%E6%80%BB%E7%BA%BF(%E4%B8%80)/1.png">
 <meta property="og:image" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/CAN%E6%80%BB%E7%BA%BF(%E4%B8%80)/2.png">
-<meta property="og:image" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/CAN%E6%80%BB%E7%BA%BF(%E4%B8%80)/3.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/CAN总线(一)/3.jpg">
 <meta property="og:image" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/CAN%E6%80%BB%E7%BA%BF(%E4%B8%80)/4.png">
 <meta property="og:image" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/CAN%E6%80%BB%E7%BA%BF(%E4%B8%80)/5.png">
 <meta property="og:image" content="http://tonyshanc.github.io/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/CAN%E6%80%BB%E7%BA%BF(%E4%B8%80)/6.jpg">
@@ -54,7 +55,8 @@
   
   
   
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
   
@@ -100,7 +102,7 @@
 <p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./CAN%E6%80%BB%E7%BA%BF(%E4%B8%80)/6.jpg" alt="总线"></p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
@@ -115,8 +117,8 @@
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
-<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1" target="_blank" rel="noopener">Stellar</a>.</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
+<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
