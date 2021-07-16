@@ -2,7 +2,7 @@
 <html lang='default'>
 
 <head>
-  <meta name="generator" content="Hexo 5.0.0">
+  <meta name="generator" content="Hexo 4.2.0">
   <meta charset="utf-8">
   
 
@@ -26,23 +26,22 @@
 <meta property="og:url" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/index.html">
 <meta property="og:site_name" content="shanah&#39;s blog">
 <meta property="og:description" content="大四了，论文&#x2F;毕设 选了能落地的方向，课题为《智能网联汽车数字孪生》 平台选择Linux-ubuntu18.04（基于vmware）参考carla的 GitHub，以及官方文档，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用ubuntu安装： A 简易安装sudo apt-key ad">
-<meta property="og:locale">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//1.PNG">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//2.PNG">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//3.PNG">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//4.PNG">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//5.PNG">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//6.PNG">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//7.PNG">
-<meta property="og:image" content="http://tonyshanc.github.io/.io//8.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/2.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/3.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/4.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/5.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/6.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/7.PNG">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/8.PNG">
 <meta property="article:published_time" content="2020-11-18T10:49:46.000Z">
 <meta property="article:modified_time" content="2021-01-16T12:44:31.960Z">
 <meta property="article:author" content="shanah">
-<meta property="article:tag" content="论文">
 <meta property="article:tag" content="carla">
 <meta property="article:tag" content="自动驾驶">
+<meta property="article:tag" content="论文">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://tonyshanc.github.io/.io//1.PNG">
+<meta name="twitter:image" content="http://tonyshanc.github.io/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG">
   
   
 
@@ -75,7 +74,7 @@
 <nav class="menu dis-select"></nav></header>
 
 <div class="widgets">
-<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-ubuntu18-04%EF%BC%88%E5%9F%BA%E4%BA%8Evmware%EF%BC%89"><span class="toc-text">Linux-ubuntu18.04（基于vmware）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E7%AE%80%E6%98%93%E5%AE%89%E8%A3%85"><span class="toc-text">A 简易安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%AE%89%E8%A3%85"><span class="toc-text">B 软件包安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#windows-10"><span class="toc-text">windows 10</span></a></li></ol></div></div></div>
+<div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">本文目錄</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-ubuntu18-04（基于vmware）"><span class="toc-text">Linux-ubuntu18.04（基于vmware）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-简易安装"><span class="toc-text">A 简易安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-软件包安装"><span class="toc-text">B 软件包安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#windows-10"><span class="toc-text">windows 10</span></a></li></ol></div></div></div>
 
 
 </div>
@@ -88,12 +87,12 @@
       
 
 
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a></div><div id="post-meta">发布于&nbsp;<time datetime="2020-11-18T10:49:46.000Z">2020-11-18</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">首頁</a><span class="sep"></span><a class="cap breadcrumb" href="/">網誌</a></div><div id="post-meta">發布於&nbsp;<time datetime="2020-11-18T10:49:46.000Z">2020-11-18</time></div></div>
 
 <article class='content md post'>
 <h1 class="article-title"><span>自动驾驶模拟平台carla（一）安装</span></h1>
 <p>大四了，论文/毕设 选了能落地的方向，课题为《智能网联汽车数字孪生》</p>
-<h1 id="平台选择"><a href="#平台选择" class="headerlink" title="平台选择"></a>平台选择</h1><h2 id="Linux-ubuntu18-04（基于vmware）"><a href="#Linux-ubuntu18-04（基于vmware）" class="headerlink" title="Linux-ubuntu18.04（基于vmware）"></a>Linux-ubuntu18.04（基于vmware）</h2><p>参考carla的 <a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla">GitHub</a>，以及<a target="_blank" rel="noopener" href="https://carla.readthedocs.io/en/latest/">官方文档</a>，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用<strong>ubuntu</strong>安装：</p>
+<h1 id="平台选择"><a href="#平台选择" class="headerlink" title="平台选择"></a>平台选择</h1><h2 id="Linux-ubuntu18-04（基于vmware）"><a href="#Linux-ubuntu18-04（基于vmware）" class="headerlink" title="Linux-ubuntu18.04（基于vmware）"></a>Linux-ubuntu18.04（基于vmware）</h2><p>参考carla的 <a href="https://github.com/carla-simulator/carla" target="_blank" rel="noopener">GitHub</a>，以及<a href="https://carla.readthedocs.io/en/latest/" target="_blank" rel="noopener">官方文档</a>，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用<strong>ubuntu</strong>安装：</p>
 <h3 id="A-简易安装"><a href="#A-简易安装" class="headerlink" title="A 简易安装"></a>A 简易安装</h3><pre class=" language-shell"><code class="language-shell">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
 sudo add-apt-repository "deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main"
 
@@ -102,41 +101,41 @@ sudo apt-get install carla-simulator # Install the latest CARLA version, or upda
 cd /opt/carla-simulator # Open the folder where CARLA is installed
 
 sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to a CARLA version, and "1" to the Debian revision</code></pre>
-<p>注： 国内下载非常慢，资源在 <a target="_blank" rel="noopener" href="http://dist.carla.org/carla">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
-<h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla/releases">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//1.PNG" alt="figure1"></p>
+<p>注： 国内下载非常慢，资源在 <a href="http://dist.carla.org/carla" target="_blank" rel="noopener">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
+<h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG" alt="figure1"></p>
 <p>执行CarlaUE4.sh:</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//2.PNG" alt></p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/2.PNG" alt></p>
 <p>报错： 驱动或硬件不支持OpenGL4.3以上版本。</p>
 <p>openGL为开源图形库，和显卡息息相关，这里有个问题：<strong>到底是因为宿主机的显卡带不动（MX150 2G显存，carla要求的最低显存为4G）还是虚拟机使用宿主机显卡的权限很低，需要调整权限</strong>。</p>
 <p>这里我先放下linux环境的安装，进行windows环境下的carla安装。</p>
 <p>最后结果是，win10下可以以10FPS运行carla，GPU使用率80%，因此最终结论是vmware创建的虚拟机需要调整显卡的资源配置，以满足OpenGL 4.3的硬件驱动需求。</p>
-<h2 id="windows-10"><a href="#windows-10" class="headerlink" title="windows 10"></a>windows 10</h2><p>一样，前往<a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla/releases">github的release</a>下选择windows的软件包下载，解压后如下：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//3.PNG" alt="figure1"></p>
+<h2 id="windows-10"><a href="#windows-10" class="headerlink" title="windows 10"></a>windows 10</h2><p>一样，前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择windows的软件包下载，解压后如下：</p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/3.PNG" alt="figure1"></p>
 <p>直接运行CarlaUE4:</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//4.PNG" alt="figure1"></p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/4.PNG" alt="figure1"></p>
 <p>会有一些场景，但是没车，没人，没关系，用自带的python脚本创建出来：</p>
 <p>前提要装好pygame numpy</p>
 <p>这里有个<strong>坑</strong>，需要安装精确到小版本的python，不然会导致carla模块找不到的问题，看源码会发现carla模块是引用egg文件导入的，egg文件上有具体的python版本要求，该文件在PythonAPI/carla/dist目录下，我的是 <strong>carla-0.9.9-py3.7-win-amd64.egg</strong>，所以我需要使用python3.7运行carla的脚本。</p>
 <p>接下来启动脚本添加npc，npc数量用 -n 指定</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//5.PNG" alt="figure1"></p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/5.PNG" alt="figure1"></p>
 <p>（ERROR应该是因为npc未初始化在道路上导致碰撞，没关系，会重新初始化的）</p>
 <p>结果：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//6.PNG" alt="figure1"></p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/6.PNG" alt="figure1"></p>
 <p>下面执行控制脚本：</p>
 <pre class=" language-shell"><code class="language-shell">python manual_control.py</code></pre>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//7.PNG" alt="figure1"></p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/7.PNG" alt="figure1"></p>
 <p>终止控制脚本会返回给你操作命令说明：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//8.PNG" alt="figure1"></p>
+<p><img class="lazy lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/.io//png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/8.PNG" alt="figure1"></p>
 <p>下一篇将尝试写一些自动驾驶车辆脚本</p>
 
 
-<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>授權條款</span></div><div class="body"><p>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body fs14"><a id="next" href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">pwn实践记录--rop入门<span class="note">较早</span></a><div class="line"></div><a id="prev" href="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/">网关kong 中的概念consumer service route plugin实践与理解<span class="note">较新</span></a><div class="line"></div><a id="more" href="/archives">检索全部文章</a></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>接下來閱讀</span></section><section class="body fs14"><a id="next" href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">pwn实践记录--rop入门<span class="note">較早</span></a><div class="line"></div><a id="prev" href="/2020/11/22/%E7%BD%91%E5%85%B3kong-%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5consumer-service-route-plugin%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%90%86%E8%A7%A3/">网关kong 中的概念consumer service route plugin实践与理解<span class="note">較新</span></a><div class="line"></div><a id="more" href="/archives">檢索全部文章</a></section></div>
 
 
 
@@ -146,8 +145,8 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
 
 
       
-<footer class="page-footer reveal fs12"><hr><div class="text"><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
-<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a> 作为主题。</p>
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 授權條款。轉載請註明出處。</p>
+<p>本站由 <a href="http://TonyShanc.github.io/">@shanah</a> 建立，使用 <a href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1" target="_blank" rel="noopener">Stellar</a> 作為主題。</p>
 </div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
@@ -254,11 +253,11 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
   stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
   stellar.config = {
     date_suffix: {
-      just: '刚刚',
-      min: '分钟前',
-      hour: '小时前',
+      just: '剛剛',
+      min: '分鐘前',
+      hour: '小時前',
       day: '天前',
-      month: '个月前',
+      month: '個月前',
     },
   };
 
