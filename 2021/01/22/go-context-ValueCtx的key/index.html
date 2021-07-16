@@ -182,29 +182,29 @@
 <p>context.WithValue 建议使用者自己定义的unexported类型当key，目的是利用interface{}的判断特性（go 类型的可判断性）,来防止冲突，这种冲突会产生是因为ctx.Value()实现点像js原型链，key在当前ctx中未匹配，就会到父ctx去找。因为设计用于包内传data, key必须得在包内能访问，如果用string int等基础类型，会导致访问到父ctx的value，与期望不符，而使用未导出的自定义类型能防止这种向上搜索。</p>
 <p>不能使用导出类型，只能在包内访问value, 这种软限制约束了context滥用，但要求看起来很高如果要用context跨包传递，该怎么办？（这种需求很实际，通常实现时我们不会把工厂函数和实际处理方法handler放在同一个包中，但handler需要工厂函数中的信息）</p>
 <p>如果需要传递的信息比较重要,类型也明确，同时又不需要麻烦地创建多个key，可以把这种context当成一个工具，同时指定唯一的key：</p>
-<pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">//util/ctxutil.go</span>
+<pre><code class="go">//util/ctxutil.go
 
-<span class="token keyword">package</span> mycontext
-<span class="token comment" spellcheck="true">// unexported, comparable</span>
-<span class="token keyword">var</span> key <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+package mycontext
+// unexported, comparable
+var key = &amp;struct{}
 
-<span class="token keyword">func</span> <span class="token function">WithTags</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">,</span> tags <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span> context<span class="token punctuation">.</span>Context<span class="token punctuation">{</span>
-    <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
-        ctx <span class="token operator">=</span> context<span class="token punctuation">.</span><span class="token function">Background</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> context<span class="token punctuation">.</span><span class="token function">WithValue</span><span class="token punctuation">(</span>ctx<span class="token punctuation">,</span> ctxMarkerKey<span class="token punctuation">,</span> tags<span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">Extract</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">{</span>
-  <span class="token comment" spellcheck="true">// ctx is ptr</span>
-  <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
-  <span class="token punctuation">}</span>
-  <span class="token keyword">if</span> value<span class="token punctuation">,</span> ok <span class="token operator">:=</span> ctx<span class="token punctuation">.</span><span class="token function">Value</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span><span class="token punctuation">;</span> ok <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> value
-  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
-  <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+func WithTags(ctx context.Context, tags map[string]string) context.Context{
+    if ctx == nil {
+        ctx = context.Background()
+    }
+    return context.WithValue(ctx, ctxMarkerKey, tags)
+}
+func Extract(ctx context.Context)map[string]string{
+  // ctx is ptr
+  if ctx == nil {
+    return make(map[string]string)
+  }
+  if value, ok := ctx.Value(key).(map[string]string); ok {
+    return value
+  }else {
+    return make(map[string]string)
+  }
+}</code></pre>
 
       
 
@@ -446,23 +446,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">golang</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -478,15 +462,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">记录</a>
+                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -499,6 +479,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">每日N题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">记录</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -518,6 +502,22 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">kong</a>
               </li>
              
@@ -534,19 +534,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
               </li>
             
             <div class="clearfix"></div>

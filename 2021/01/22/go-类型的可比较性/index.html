@@ -175,103 +175,103 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>go内置类型都是可比较的，类型会直接比较内容，指针类型先判断指针指向地址再判断内容<br>常用复合类型的可比较性比较复杂，demo如下</p>
-<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token function">isComparable</span><span class="token punctuation">(</span>a <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>reflect<span class="token punctuation">.</span><span class="token function">ValueOf</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Type</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Comparable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Dog <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    name <span class="token builtin">string</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>d Dog<span class="token punctuation">)</span> <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"dog "</span> <span class="token operator">+</span> d<span class="token punctuation">.</span>name <span class="token operator">+</span> <span class="token string">" eat"</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Cat <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    name <span class="token builtin">string</span> 
+<pre><code class="go">func isComparable(a interface{}) {
+    fmt.Println(reflect.ValueOf(a).Type().Comparable())
+}
+type Dog struct {
+    name string
+}
+func (d Dog) eat(){
+    fmt.Println(&quot;dog &quot; + d.name + &quot; eat&quot;)
+}
+type Cat struct {
+    name string 
     fur
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> fur <span class="token keyword">struct</span><span class="token punctuation">{</span>
-    color <span class="token builtin">string</span>
-    num   <span class="token builtin">int64</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>c Cat<span class="token punctuation">)</span> <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"cat "</span> <span class="token operator">+</span> c<span class="token punctuation">.</span>name <span class="token operator">+</span> <span class="token string">" eat"</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Animal <span class="token keyword">interface</span> <span class="token punctuation">{</span>
-    <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> AnimalB <span class="token keyword">interface</span> <span class="token punctuation">{</span>
-  <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-  a <span class="token operator">:=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">)</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// false</span>
+}
+type fur struct{
+    color string
+    num   int64
+}
+func (c Cat) eat() {
+    fmt.Println(&quot;cat &quot; + c.name + &quot; eat&quot;)
+}
+type Animal interface {
+    eat()
+}
+type AnimalB interface {
+  eat()
+}
+func main(){
+  a := make(map[string]int)
+  isComparable(a)           // false
 
-  b <span class="token operator">:=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int64</span><span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">}</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// false</span>
+  b := []int64{1,2}
+  isComparable(a)           // false
 
-  c <span class="token operator">:=</span> <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-      id <span class="token builtin">int</span>
-      name <span class="token builtin">string</span>
-  <span class="token punctuation">}</span><span class="token punctuation">{</span>
-      <span class="token number">1</span><span class="token punctuation">,</span>
-      <span class="token string">"sc"</span><span class="token punctuation">,</span>
-  <span class="token punctuation">}</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// true</span>
+  c := struct {
+      id int
+      name string
+  }{
+      1,
+      &quot;sc&quot;,
+  }
+  isComparable(c)           // true
 
-  d <span class="token operator">:=</span> <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-      id <span class="token builtin">int</span>
-      name <span class="token builtin">string</span>
-      clildrenId <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span>
-  <span class="token punctuation">}</span><span class="token punctuation">{</span>
-      <span class="token number">1</span><span class="token punctuation">,</span>
-      <span class="token string">"shanchao"</span><span class="token punctuation">,</span>
-      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span> <span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token punctuation">}</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span>            <span class="token comment" spellcheck="true">// false struct内部存在不可比较类型slice</span>
+  d := struct {
+      id int
+      name string
+      clildrenId []int
+  }{
+      1,
+      &quot;shanchao&quot;,
+      []int {1,2,3,4},
+  }
+  isComparable(d)            // false struct内部存在不可比较类型slice
 
-  <span class="token keyword">var</span><span class="token punctuation">(</span>
-    d1 <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    d2 <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dog Animal <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dog2 Animal <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dogPtr Animal <span class="token operator">=</span> <span class="token operator">&amp;</span>Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dogB AnimalB <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dogBPtr AnimalB <span class="token operator">=</span> <span class="token operator">&amp;</span>Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    cat Animal <span class="token operator">=</span> Cat<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    cat2  <span class="token operator">=</span> Cat<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"sc"</span><span class="token punctuation">,</span> fur<span class="token punctuation">:</span> fur<span class="token punctuation">{</span>color<span class="token punctuation">:</span> <span class="token string">"yellow"</span><span class="token punctuation">,</span> num<span class="token punctuation">:</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token operator">&lt;&lt;</span><span class="token number">56</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">}</span>
-    cat3  <span class="token operator">=</span> Cat<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"sc"</span><span class="token punctuation">,</span> fur<span class="token punctuation">:</span> fur<span class="token punctuation">{</span>color<span class="token punctuation">:</span> <span class="token string">"blue"</span><span class="token punctuation">,</span> num<span class="token punctuation">:</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token operator">&lt;&lt;</span><span class="token number">56</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">}</span>
-  <span class="token punctuation">)</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span>            <span class="token comment" spellcheck="true">// true</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>dog<span class="token punctuation">)</span>          <span class="token comment" spellcheck="true">// true</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>dogB<span class="token punctuation">)</span>         <span class="token comment" spellcheck="true">// true</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>cat<span class="token punctuation">)</span>          <span class="token comment" spellcheck="true">// true</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>d1 <span class="token operator">==</span> d2<span class="token punctuation">)</span>      <span class="token comment" spellcheck="true">// true </span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dogPtr<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// false</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dog2<span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">// true </span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dogB<span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">// true 比较与接口无关</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dogPtr <span class="token operator">==</span> dogBPtr<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// false 先指针指向地址是否相同</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> cat<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// false 考虑了自定义类型</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> cat<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// false 考虑了自定义类型</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>cat2 <span class="token operator">==</span> cat3<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// false 递归判断</span>
-<span class="token punctuation">}</span></code></pre>
+  var(
+    d1 = Dog{name: &quot;liuyang&quot;}
+    d2 = Dog{name: &quot;liuyang&quot;}
+    dog Animal = Dog{name: &quot;liuyang&quot;}
+    dog2 Animal = Dog{name: &quot;liuyang&quot;}
+    dogPtr Animal = &amp;Dog{name: &quot;liuyang&quot;}
+    dogB AnimalB = Dog{name: &quot;liuyang&quot;}
+    dogBPtr AnimalB = &amp;Dog{name: &quot;liuyang&quot;}
+    cat Animal = Cat{name: &quot;liuyang&quot;}
+    cat2  = Cat{name: &quot;sc&quot;, fur: fur{color: &quot;yellow&quot;, num: int64(1&lt;&lt;56),},}
+    cat3  = Cat{name: &quot;sc&quot;, fur: fur{color: &quot;blue&quot;, num: int64(1&lt;&lt;56),},}
+  )
+  isComparable(d)            // true
+  isComparable(dog)          // true
+  isComparable(dogB)         // true
+  isComparable(cat)          // true
+  fmt.Println(d1 == d2)      // true 
+  fmt.Println(dog == dogPtr) // false
+  fmt.Println(dog == dog2)   // true 
+  fmt.Println(dog == dogB)   // true 比较与接口无关
+  fmt.Println(dogPtr == dogBPtr) // false 先指针指向地址是否相同
+  fmt.Println(dog == cat)    // false 考虑了自定义类型
+  fmt.Println(dog == cat)    // false 考虑了自定义类型
+  fmt.Println(cat2 == cat3)  // false 递归判断
+}</code></pre>
 <p>可见map, slice是不可比较的；比较interface无关；对自定义类型struct的比较先判断是否是指针，再判断属性类型、属性值，具有递归判断的性质; 嵌入不可比较类型如map slice的struct不可比较，编译会报错； </p>
 <p>另一个有趣的点涉及到interface{}:</p>
-<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> myString <span class="token builtin">string</span>
-<span class="token keyword">func</span> <span class="token function">compare</span><span class="token punctuation">(</span>a <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token builtin">bool</span> <span class="token punctuation">{</span>
-    <span class="token keyword">if</span> <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token string">"haha"</span><span class="token punctuation">)</span> <span class="token operator">==</span> a <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> <span class="token boolean">true</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> <span class="token boolean">false</span>
-<span class="token punctuation">}</span>
+<pre><code class="go">type myString string
+func compare(a interface{}) bool {
+    if interface{}(&quot;haha&quot;) == a {
+        return true
+    }
+    return false
+}
 
-<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    <span class="token keyword">var</span> <span class="token punctuation">(</span>
-        s1 <span class="token operator">=</span> <span class="token function">myString</span><span class="token punctuation">(</span><span class="token string">"haha"</span><span class="token punctuation">)</span>
-        s2 <span class="token operator">=</span> <span class="token string">"haha"</span>
-    <span class="token punctuation">)</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>s1 <span class="token operator">==</span> <span class="token string">"haha"</span><span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// true</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token function">compare</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">)</span>     <span class="token comment" spellcheck="true">// false</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token function">compare</span><span class="token punctuation">(</span>s2<span class="token punctuation">)</span><span class="token punctuation">)</span>     <span class="token comment" spellcheck="true">// true</span>
-<span class="token punctuation">}</span>
+func main(){
+    var (
+        s1 = myString(&quot;haha&quot;)
+        s2 = &quot;haha&quot;
+    )
+    fmt.Println(s1 == &quot;haha&quot;)    // true
+    fmt.Println(compare(s1))     // false
+    fmt.Println(compare(s2))     // true
+}
 </code></pre>
 <p>自定义类型与某个基础内嵌类型相同时用==不会考虑自定义的类型，而interface{}类型相互比较时，会先比较转为interface{}前的自定义类型，之后才会进行值比较。 interface{}这个特性被contex.ValueCtx用于key判断。</p>
 
@@ -506,23 +506,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">golang</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -538,15 +522,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">记录</a>
+                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -559,6 +539,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">每日N题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">记录</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -578,6 +562,22 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">kong</a>
               </li>
              
@@ -594,19 +594,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
               </li>
             
             <div class="clearfix"></div>

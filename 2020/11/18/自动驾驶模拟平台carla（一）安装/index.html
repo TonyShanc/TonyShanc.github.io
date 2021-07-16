@@ -187,14 +187,14 @@
       
         <p>大四了，论文/毕设 选了能落地的方向，课题为《智能网联汽车数字孪生》</p>
 <h1 id="平台选择"><a href="#平台选择" class="headerlink" title="平台选择"></a>平台选择</h1><h2 id="Linux-ubuntu18-04（基于vmware）"><a href="#Linux-ubuntu18-04（基于vmware）" class="headerlink" title="Linux-ubuntu18.04（基于vmware）"></a>Linux-ubuntu18.04（基于vmware）</h2><p>参考carla的 <a href="https://github.com/carla-simulator/carla" target="_blank" rel="noopener">GitHub</a>，以及<a href="https://carla.readthedocs.io/en/latest/" target="_blank" rel="noopener">官方文档</a>，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用<strong>ubuntu</strong>安装：</p>
-<h3 id="A-简易安装"><a href="#A-简易安装" class="headerlink" title="A 简易安装"></a>A 简易安装</h3><pre class=" language-shell"><code class="language-shell">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
-sudo add-apt-repository "deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main"
+<h3 id="A-简易安装"><a href="#A-简易安装" class="headerlink" title="A 简易安装"></a>A 简易安装</h3><pre><code class="shell">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
+sudo add-apt-repository &quot;deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main&quot;
 
 sudo apt-get update # Update the Debian package index
 sudo apt-get install carla-simulator # Install the latest CARLA version, or update the current installation
 cd /opt/carla-simulator # Open the folder where CARLA is installed
 
-sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to a CARLA version, and "1" to the Debian revision</code></pre>
+sudo apt-get install carla-simulator=0.9.10-1 # In this case, &quot;0.9.10&quot; refers to a CARLA version, and &quot;1&quot; to the Debian revision</code></pre>
 <p>注： 国内下载非常慢，资源在 <a href="http://dist.carla.org/carla" target="_blank" rel="noopener">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
 <h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG" alt="figure1"></p>
@@ -217,7 +217,7 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
 <p>结果：</p>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/6.PNG" alt="figure1"></p>
 <p>下面执行控制脚本：</p>
-<pre class=" language-shell"><code class="language-shell">python manual_control.py</code></pre>
+<pre><code class="shell">python manual_control.py</code></pre>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/7.PNG" alt="figure1"></p>
 <p>终止控制脚本会返回给你操作命令说明：</p>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/8.PNG" alt="figure1"></p>
@@ -471,23 +471,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">golang</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -503,15 +487,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">记录</a>
+                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -524,6 +504,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">每日N题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">记录</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -543,6 +527,22 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">kong</a>
               </li>
              
@@ -559,19 +559,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
               </li>
             
             <div class="clearfix"></div>

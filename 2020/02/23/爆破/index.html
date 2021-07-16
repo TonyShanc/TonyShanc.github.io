@@ -183,15 +183,15 @@
 <a id="more"></a>
 <p><a href="https://www.ichunqiu.com/battalion" target="_blank" rel="noopener">爆破一题目地址</a><br>这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。<br>进去后给的是php后端源码。</p>
 <p>这是本菜鸡第一次接触<del>拍黄片</del> php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。<br>废话不多说，来看看代码：</p>
-<pre class=" language-php"><code class="language-php"><span class="token delimiter">&lt;?php</span>
-<span class="token keyword">include</span> <span class="token string">"flag.php"</span><span class="token punctuation">;</span>
-<span class="token variable">$a</span> <span class="token operator">=</span> @<span class="token variable">$_REQUEST</span><span class="token punctuation">[</span><span class="token string">'hello'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">preg_match</span><span class="token punctuation">(</span><span class="token string">'/^\w*$/'</span><span class="token punctuation">,</span><span class="token variable">$a</span> <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-  <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token string">'ERROR'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-<span class="token function">eval</span><span class="token punctuation">(</span><span class="token string">"var_dump($$a);"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token function">show_source</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token delimiter">?></span></code></pre>
+<pre><code class="php">&lt;?php
+include &quot;flag.php&quot;;
+$a = @$_REQUEST[&#39;hello&#39;];
+if(!preg_match(&#39;/^\w*$/&#39;,$a )){
+  die(&#39;ERROR&#39;);
+}
+eval(&quot;var_dump($$a);&quot;);
+show_source(__FILE__);
+?&gt;</code></pre>
 <p>@$_REQUEST[‘hello’] 提示我们上传的变量名为hello</p>
 <p>request是两种数据上传方式post和get的统称<br>这里当然选更方便的get, 直接在url后加hello变量<br>下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_]<br>以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。<br>继续往下看, 就发现神圣的选择开始了：</p>
 <p>1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS</p>
@@ -452,23 +452,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">golang</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -484,15 +468,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">记录</a>
+                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -505,6 +485,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">每日N题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">记录</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -524,6 +508,22 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">kong</a>
               </li>
              
@@ -540,19 +540,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
               </li>
             
             <div class="clearfix"></div>

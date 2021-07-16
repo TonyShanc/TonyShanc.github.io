@@ -172,103 +172,103 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>go内置类型都是可比较的，类型会直接比较内容，指针类型先判断指针指向地址再判断内容<br>常用复合类型的可比较性比较复杂，demo如下</p>
-<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token function">isComparable</span><span class="token punctuation">(</span>a <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>reflect<span class="token punctuation">.</span><span class="token function">ValueOf</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Type</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Comparable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Dog <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    name <span class="token builtin">string</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>d Dog<span class="token punctuation">)</span> <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"dog "</span> <span class="token operator">+</span> d<span class="token punctuation">.</span>name <span class="token operator">+</span> <span class="token string">" eat"</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Cat <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    name <span class="token builtin">string</span> 
+<pre><code class="go">func isComparable(a interface{}) {
+    fmt.Println(reflect.ValueOf(a).Type().Comparable())
+}
+type Dog struct {
+    name string
+}
+func (d Dog) eat(){
+    fmt.Println(&quot;dog &quot; + d.name + &quot; eat&quot;)
+}
+type Cat struct {
+    name string 
     fur
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> fur <span class="token keyword">struct</span><span class="token punctuation">{</span>
-    color <span class="token builtin">string</span>
-    num   <span class="token builtin">int64</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>c Cat<span class="token punctuation">)</span> <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"cat "</span> <span class="token operator">+</span> c<span class="token punctuation">.</span>name <span class="token operator">+</span> <span class="token string">" eat"</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Animal <span class="token keyword">interface</span> <span class="token punctuation">{</span>
-    <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> AnimalB <span class="token keyword">interface</span> <span class="token punctuation">{</span>
-  <span class="token function">eat</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-  a <span class="token operator">:=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">)</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// false</span>
+}
+type fur struct{
+    color string
+    num   int64
+}
+func (c Cat) eat() {
+    fmt.Println(&quot;cat &quot; + c.name + &quot; eat&quot;)
+}
+type Animal interface {
+    eat()
+}
+type AnimalB interface {
+  eat()
+}
+func main(){
+  a := make(map[string]int)
+  isComparable(a)           // false
 
-  b <span class="token operator">:=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int64</span><span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">}</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// false</span>
+  b := []int64{1,2}
+  isComparable(a)           // false
 
-  c <span class="token operator">:=</span> <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-      id <span class="token builtin">int</span>
-      name <span class="token builtin">string</span>
-  <span class="token punctuation">}</span><span class="token punctuation">{</span>
-      <span class="token number">1</span><span class="token punctuation">,</span>
-      <span class="token string">"sc"</span><span class="token punctuation">,</span>
-  <span class="token punctuation">}</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span>           <span class="token comment" spellcheck="true">// true</span>
+  c := struct {
+      id int
+      name string
+  }{
+      1,
+      &quot;sc&quot;,
+  }
+  isComparable(c)           // true
 
-  d <span class="token operator">:=</span> <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-      id <span class="token builtin">int</span>
-      name <span class="token builtin">string</span>
-      clildrenId <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span>
-  <span class="token punctuation">}</span><span class="token punctuation">{</span>
-      <span class="token number">1</span><span class="token punctuation">,</span>
-      <span class="token string">"shanchao"</span><span class="token punctuation">,</span>
-      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span> <span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token punctuation">}</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span>            <span class="token comment" spellcheck="true">// false struct内部存在不可比较类型slice</span>
+  d := struct {
+      id int
+      name string
+      clildrenId []int
+  }{
+      1,
+      &quot;shanchao&quot;,
+      []int {1,2,3,4},
+  }
+  isComparable(d)            // false struct内部存在不可比较类型slice
 
-  <span class="token keyword">var</span><span class="token punctuation">(</span>
-    d1 <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    d2 <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dog Animal <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dog2 Animal <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dogPtr Animal <span class="token operator">=</span> <span class="token operator">&amp;</span>Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dogB AnimalB <span class="token operator">=</span> Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    dogBPtr AnimalB <span class="token operator">=</span> <span class="token operator">&amp;</span>Dog<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    cat Animal <span class="token operator">=</span> Cat<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"liuyang"</span><span class="token punctuation">}</span>
-    cat2  <span class="token operator">=</span> Cat<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"sc"</span><span class="token punctuation">,</span> fur<span class="token punctuation">:</span> fur<span class="token punctuation">{</span>color<span class="token punctuation">:</span> <span class="token string">"yellow"</span><span class="token punctuation">,</span> num<span class="token punctuation">:</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token operator">&lt;&lt;</span><span class="token number">56</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">}</span>
-    cat3  <span class="token operator">=</span> Cat<span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"sc"</span><span class="token punctuation">,</span> fur<span class="token punctuation">:</span> fur<span class="token punctuation">{</span>color<span class="token punctuation">:</span> <span class="token string">"blue"</span><span class="token punctuation">,</span> num<span class="token punctuation">:</span> <span class="token function">int64</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token operator">&lt;&lt;</span><span class="token number">56</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">}</span>
-  <span class="token punctuation">)</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span>            <span class="token comment" spellcheck="true">// true</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>dog<span class="token punctuation">)</span>          <span class="token comment" spellcheck="true">// true</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>dogB<span class="token punctuation">)</span>         <span class="token comment" spellcheck="true">// true</span>
-  <span class="token function">isComparable</span><span class="token punctuation">(</span>cat<span class="token punctuation">)</span>          <span class="token comment" spellcheck="true">// true</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>d1 <span class="token operator">==</span> d2<span class="token punctuation">)</span>      <span class="token comment" spellcheck="true">// true </span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dogPtr<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// false</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dog2<span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">// true </span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> dogB<span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">// true 比较与接口无关</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dogPtr <span class="token operator">==</span> dogBPtr<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// false 先指针指向地址是否相同</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> cat<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// false 考虑了自定义类型</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>dog <span class="token operator">==</span> cat<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// false 考虑了自定义类型</span>
-  fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>cat2 <span class="token operator">==</span> cat3<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// false 递归判断</span>
-<span class="token punctuation">}</span></code></pre>
+  var(
+    d1 = Dog{name: &quot;liuyang&quot;}
+    d2 = Dog{name: &quot;liuyang&quot;}
+    dog Animal = Dog{name: &quot;liuyang&quot;}
+    dog2 Animal = Dog{name: &quot;liuyang&quot;}
+    dogPtr Animal = &amp;Dog{name: &quot;liuyang&quot;}
+    dogB AnimalB = Dog{name: &quot;liuyang&quot;}
+    dogBPtr AnimalB = &amp;Dog{name: &quot;liuyang&quot;}
+    cat Animal = Cat{name: &quot;liuyang&quot;}
+    cat2  = Cat{name: &quot;sc&quot;, fur: fur{color: &quot;yellow&quot;, num: int64(1&lt;&lt;56),},}
+    cat3  = Cat{name: &quot;sc&quot;, fur: fur{color: &quot;blue&quot;, num: int64(1&lt;&lt;56),},}
+  )
+  isComparable(d)            // true
+  isComparable(dog)          // true
+  isComparable(dogB)         // true
+  isComparable(cat)          // true
+  fmt.Println(d1 == d2)      // true 
+  fmt.Println(dog == dogPtr) // false
+  fmt.Println(dog == dog2)   // true 
+  fmt.Println(dog == dogB)   // true 比较与接口无关
+  fmt.Println(dogPtr == dogBPtr) // false 先指针指向地址是否相同
+  fmt.Println(dog == cat)    // false 考虑了自定义类型
+  fmt.Println(dog == cat)    // false 考虑了自定义类型
+  fmt.Println(cat2 == cat3)  // false 递归判断
+}</code></pre>
 <p>可见map, slice是不可比较的；比较interface无关；对自定义类型struct的比较先判断是否是指针，再判断属性类型、属性值，具有递归判断的性质; 嵌入不可比较类型如map slice的struct不可比较，编译会报错； </p>
 <p>另一个有趣的点涉及到interface{}:</p>
-<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> myString <span class="token builtin">string</span>
-<span class="token keyword">func</span> <span class="token function">compare</span><span class="token punctuation">(</span>a <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token builtin">bool</span> <span class="token punctuation">{</span>
-    <span class="token keyword">if</span> <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token string">"haha"</span><span class="token punctuation">)</span> <span class="token operator">==</span> a <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> <span class="token boolean">true</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> <span class="token boolean">false</span>
-<span class="token punctuation">}</span>
+<pre><code class="go">type myString string
+func compare(a interface{}) bool {
+    if interface{}(&quot;haha&quot;) == a {
+        return true
+    }
+    return false
+}
 
-<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    <span class="token keyword">var</span> <span class="token punctuation">(</span>
-        s1 <span class="token operator">=</span> <span class="token function">myString</span><span class="token punctuation">(</span><span class="token string">"haha"</span><span class="token punctuation">)</span>
-        s2 <span class="token operator">=</span> <span class="token string">"haha"</span>
-    <span class="token punctuation">)</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>s1 <span class="token operator">==</span> <span class="token string">"haha"</span><span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">// true</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token function">compare</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">)</span>     <span class="token comment" spellcheck="true">// false</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token function">compare</span><span class="token punctuation">(</span>s2<span class="token punctuation">)</span><span class="token punctuation">)</span>     <span class="token comment" spellcheck="true">// true</span>
-<span class="token punctuation">}</span>
+func main(){
+    var (
+        s1 = myString(&quot;haha&quot;)
+        s2 = &quot;haha&quot;
+    )
+    fmt.Println(s1 == &quot;haha&quot;)    // true
+    fmt.Println(compare(s1))     // false
+    fmt.Println(compare(s2))     // true
+}
 </code></pre>
 <p>自定义类型与某个基础内嵌类型相同时用==不会考虑自定义的类型，而interface{}类型相互比较时，会先比较转为interface{}前的自定义类型，之后才会进行值比较。 interface{}这个特性被contex.ValueCtx用于key判断。</p>
 
@@ -352,29 +352,29 @@
 <p>context.WithValue 建议使用者自己定义的unexported类型当key，目的是利用interface{}的判断特性（go 类型的可判断性）,来防止冲突，这种冲突会产生是因为ctx.Value()实现点像js原型链，key在当前ctx中未匹配，就会到父ctx去找。因为设计用于包内传data, key必须得在包内能访问，如果用string int等基础类型，会导致访问到父ctx的value，与期望不符，而使用未导出的自定义类型能防止这种向上搜索。</p>
 <p>不能使用导出类型，只能在包内访问value, 这种软限制约束了context滥用，但要求看起来很高如果要用context跨包传递，该怎么办？（这种需求很实际，通常实现时我们不会把工厂函数和实际处理方法handler放在同一个包中，但handler需要工厂函数中的信息）</p>
 <p>如果需要传递的信息比较重要,类型也明确，同时又不需要麻烦地创建多个key，可以把这种context当成一个工具，同时指定唯一的key：</p>
-<pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">//util/ctxutil.go</span>
+<pre><code class="go">//util/ctxutil.go
 
-<span class="token keyword">package</span> mycontext
-<span class="token comment" spellcheck="true">// unexported, comparable</span>
-<span class="token keyword">var</span> key <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+package mycontext
+// unexported, comparable
+var key = &amp;struct{}
 
-<span class="token keyword">func</span> <span class="token function">WithTags</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">,</span> tags <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span> context<span class="token punctuation">.</span>Context<span class="token punctuation">{</span>
-    <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
-        ctx <span class="token operator">=</span> context<span class="token punctuation">.</span><span class="token function">Background</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> context<span class="token punctuation">.</span><span class="token function">WithValue</span><span class="token punctuation">(</span>ctx<span class="token punctuation">,</span> ctxMarkerKey<span class="token punctuation">,</span> tags<span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">Extract</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">{</span>
-  <span class="token comment" spellcheck="true">// ctx is ptr</span>
-  <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
-  <span class="token punctuation">}</span>
-  <span class="token keyword">if</span> value<span class="token punctuation">,</span> ok <span class="token operator">:=</span> ctx<span class="token punctuation">.</span><span class="token function">Value</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span><span class="token punctuation">;</span> ok <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> value
-  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
-  <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+func WithTags(ctx context.Context, tags map[string]string) context.Context{
+    if ctx == nil {
+        ctx = context.Background()
+    }
+    return context.WithValue(ctx, ctxMarkerKey, tags)
+}
+func Extract(ctx context.Context)map[string]string{
+  // ctx is ptr
+  if ctx == nil {
+    return make(map[string]string)
+  }
+  if value, ok := ctx.Value(key).(map[string]string); ok {
+    return value
+  }else {
+    return make(map[string]string)
+  }
+}</code></pre>
 
       
 
@@ -449,102 +449,102 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>涉及到数据库/grpc连接的struct/class的设计，考虑单例与否尤为重要。目前我接触的项目里grpc连接通常是单例（因为http2支持多路复用，单链接可以支持并发访问），针对db的连接通常会用到xorm，xorm的engine也是单例，它会帮我们管理db连接池（应该）。进一步封装grpcClient和 xorm.Engine了的struct，实现了持久层方法的同时也得是个单例。</p>
-<h2 id="初始化一个grpc连接"><a href="#初始化一个grpc连接" class="headerlink" title="初始化一个grpc连接"></a>初始化一个grpc连接</h2><pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">//靠编译时初始化的全局变量实现的单例，同时实现并发安全+懒加载(调用时执行)</span>
+<h2 id="初始化一个grpc连接"><a href="#初始化一个grpc连接" class="headerlink" title="初始化一个grpc连接"></a>初始化一个grpc连接</h2><pre><code class="go">//靠编译时初始化的全局变量实现的单例，同时实现并发安全+懒加载(调用时执行)
 
-<span class="token keyword">var</span> <span class="token punctuation">(</span>
-    kratos <span class="token operator">=</span> <span class="token function">new</span><span class="token punctuation">(</span>kratosGRPC<span class="token punctuation">)</span>
-<span class="token punctuation">)</span> 
+var (
+    kratos = new(kratosGRPC)
+) 
 
-<span class="token keyword">type</span> kratosGRPC <span class="token keyword">struct</span><span class="token punctuation">{</span>
+type kratosGRPC struct{
   Client kratosGrpcClient
-  mu sync<span class="token punctuation">.</span>Mutex
-  <span class="token operator">...</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">GetClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-  <span class="token keyword">return</span> kratos<span class="token punctuation">.</span><span class="token function">getClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>k <span class="token operator">*</span>kratosGRPC<span class="token punctuation">)</span><span class="token function">getClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">*</span>kratosGrpcClient<span class="token punctuation">{</span>
-  <span class="token comment" spellcheck="true">// client已经被初始化</span>
-  <span class="token keyword">if</span> k<span class="token punctuation">.</span>Client <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> k<span class="token punctuation">.</span>Client
-  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token punctuation">{</span>
-    <span class="token comment" spellcheck="true">// 竞争抢锁初始化client</span>
-    k<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">defer</span> k<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-       <span class="token comment" spellcheck="true">//  抢到锁后需要再判断</span>
-       <span class="token keyword">if</span> k<span class="token punctuation">.</span>Client <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
-            <span class="token keyword">return</span> k<span class="token punctuation">.</span>Client
-       <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">// 建立连接</span>
-    k<span class="token punctuation">.</span>Client <span class="token operator">=</span> grpc<span class="token punctuation">.</span><span class="token function">Dial</span><span class="token punctuation">(</span><span class="token operator">...</span><span class="token punctuation">)</span>
-    <span class="token operator">...</span>
-    <span class="token keyword">return</span> k<span class="token punctuation">.</span>client
-  <span class="token punctuation">}</span>
+  mu sync.Mutex
+  ...
+}
+func GetClient(){
+  return kratos.getClient()
+}
+func (k *kratosGRPC)getClient()*kratosGrpcClient{
+  // client已经被初始化
+  if k.Client != nil {
+    return k.Client
+  }else {
+    // 竞争抢锁初始化client
+    k.mu.Lock()
+    defer k.mu.Unlock()
+       //  抢到锁后需要再判断
+       if k.Client != nil {
+            return k.Client
+       }
+    // 建立连接
+    k.Client = grpc.Dial(...)
+    ...
+    return k.client
+  }
 
-<span class="token punctuation">}</span></code></pre>
+}</code></pre>
 <p>上面是一种实现方式，当然也可以进行一些小改动，比如实现并发安全用Once.Do代替sync.Mutex。这种建立方式比较主流</p>
 <h2 id="在某个特殊的需求下，可以这样生成单例"><a href="#在某个特殊的需求下，可以这样生成单例" class="headerlink" title="在某个特殊的需求下，可以这样生成单例"></a>在某个特殊的需求下，可以这样生成单例</h2><p>假设有个需求，经分析，要有多个job，每个job有固定的工作方式，  job需要并发处理多个task, 就把这些task交给worker, worker根据task中的数据固定调用job的方法执行。</p>
 <p>job涉及到数据库的数据处理，所以需要提供持久层服务，该服务最终会提供handle方法做固定的工作，由于我们只需要handle方法，所以可以隐藏持久层服务，具体方法是通过工厂方法只调用一次的性质初始化一次持久层服务，将持久层服务中的handle方法交给工厂方法的返回体job实例。由于handle被引用了，所以持久层的单例没有被GC回收，job.HandleFunc还是可以使用持久层提供的数据库连接的。这样，代码逻辑中只含有job、task、work。</p>
 <p>做法如下：</p>
-<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> HandleFunc <span class="token keyword">func</span> <span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">type</span> job <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    Dsn <span class="token builtin">string</span>
-    TableName <span class="token builtin">string</span>
-    From <span class="token builtin">int</span>
-    To <span class="token builtin">int</span>
-    ConCurrentNum <span class="token builtin">int</span>
+<pre><code class="go">type HandleFunc func ()
+type job struct {
+    Dsn string
+    TableName string
+    From int
+    To int
+    ConCurrentNum int
     HandleFunc HandleFunc
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> RWHandler <span class="token keyword">interface</span> <span class="token punctuation">{</span>
-    <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> userDataRWHandler <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    <span class="token comment" spellcheck="true">//这里含有众多处理数据库连接的handler</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> adminDataRWHandler <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    <span class="token comment" spellcheck="true">//这里含有众多处理数据库连接的handler</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>handler userDataRWHandler<span class="token punctuation">)</span> <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"userDataRWHandler handling..."</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>handler adminDataRWHandler<span class="token punctuation">)</span> <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"adminDataRWHandler handling..."</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">newUserDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> RWHandler<span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token operator">&amp;</span>userDataHandler<span class="token punctuation">{</span><span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">newAdminDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> RWHandler <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token operator">&amp;</span>adminDataHandler<span class="token punctuation">{</span><span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Config <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    HandlerName <span class="token builtin">string</span>
-    Dsn <span class="token builtin">string</span>
-    TableName <span class="token builtin">string</span>
-    From <span class="token builtin">int</span>
-    To <span class="token builtin">int</span>
-    ConCurrentNum <span class="token builtin">int</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">newRWHandler</span><span class="token punctuation">(</span>handlerName <span class="token builtin">string</span><span class="token punctuation">)</span>RWHandler <span class="token punctuation">{</span>
-    <span class="token keyword">switch</span> handlerName <span class="token punctuation">{</span>
-    <span class="token keyword">case</span> <span class="token string">"userDataRWHandler"</span><span class="token punctuation">:</span>
-        <span class="token keyword">return</span> <span class="token function">newUserDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">case</span> <span class="token string">"adminDataRWHandler"</span><span class="token punctuation">:</span>
-        <span class="token keyword">return</span> <span class="token function">newAdminDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">default</span><span class="token punctuation">:</span>
-        <span class="token keyword">return</span> <span class="token boolean">nil</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">NewJob</span><span class="token punctuation">(</span>config Config<span class="token punctuation">)</span><span class="token operator">*</span>job<span class="token punctuation">{</span>
-    handler <span class="token operator">:=</span> <span class="token function">newRWHandler</span><span class="token punctuation">(</span>config<span class="token punctuation">.</span>HandlerName<span class="token punctuation">)</span>
-    <span class="token keyword">return</span> <span class="token operator">&amp;</span>job<span class="token punctuation">{</span>
-        Dsn<span class="token punctuation">:</span> config<span class="token punctuation">.</span>Dsn<span class="token punctuation">,</span>
-        TableName<span class="token punctuation">:</span> config<span class="token punctuation">.</span>TableName<span class="token punctuation">,</span>
-        From<span class="token punctuation">:</span> config<span class="token punctuation">.</span>From<span class="token punctuation">,</span>
-        To<span class="token punctuation">:</span> config<span class="token punctuation">.</span>To<span class="token punctuation">,</span>
-        ConCurrentNum<span class="token punctuation">:</span> config<span class="token punctuation">.</span>ConCurrentNum<span class="token punctuation">,</span>
-        HandleFunc<span class="token punctuation">:</span> handler<span class="token punctuation">.</span>Handle<span class="token punctuation">,</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+}
+type RWHandler interface {
+    Handle()
+}
+type userDataRWHandler struct {
+    //这里含有众多处理数据库连接的handler
+}
+type adminDataRWHandler struct {
+    //这里含有众多处理数据库连接的handler
+}
+func (handler userDataRWHandler) Handle(){
+    fmt.Println(&quot;userDataRWHandler handling...&quot;)
+}
+func (handler adminDataRWHandler) Handle(){
+    fmt.Println(&quot;adminDataRWHandler handling...&quot;)
+}
+func newUserDataHandler() RWHandler{
+    return &amp;userDataHandler{}
+}
+func newAdminDataHandler() RWHandler {
+    return &amp;adminDataHandler{}
+}
+type Config struct {
+    HandlerName string
+    Dsn string
+    TableName string
+    From int
+    To int
+    ConCurrentNum int
+}
+func newRWHandler(handlerName string)RWHandler {
+    switch handlerName {
+    case &quot;userDataRWHandler&quot;:
+        return newUserDataHandler()
+    case &quot;adminDataRWHandler&quot;:
+        return newAdminDataHandler()
+    default:
+        return nil
+    }
+}
+func NewJob(config Config)*job{
+    handler := newRWHandler(config.HandlerName)
+    return &amp;job{
+        Dsn: config.Dsn,
+        TableName: config.TableName,
+        From: config.From,
+        To: config.To,
+        ConCurrentNum: config.ConCurrentNum,
+        HandleFunc: handler.Handle,
+    }
+}
 </code></pre>
 
       
@@ -621,114 +621,114 @@
       
         <p>go mock 用于虚拟接口。一般只要提供interface，无论有没有实现该interface的类型，gomock会根据接口的输入输出提供一个实现了该interface的mock实例，同时在自定义mock实例的输入输出前，可以根据期望过滤输入，产生想要的输出或调用某些函数。说的很晦涩，看点代码吧。</p>
 <p>目录结构：</p>
-<pre class=" language-shell"><code class="language-shell">trymock/
+<pre><code class="shell">trymock/
     /db
     |--db.go
     |--db_test.go
     /mock
       |--db_mock.go // generated by mockgen</code></pre>
-<pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">//db.go</span>
-<span class="token keyword">type</span> DB <span class="token keyword">interface</span> <span class="token punctuation">{</span>
-    <span class="token function">Get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+<pre><code class="go">//db.go
+type DB interface {
+    Get(key string) (int, error)
+}
 
-<span class="token keyword">func</span> <span class="token function">GetFromDB</span><span class="token punctuation">(</span>db DB<span class="token punctuation">,</span> key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">int</span> <span class="token punctuation">{</span>
-    <span class="token keyword">if</span> value<span class="token punctuation">,</span> err <span class="token operator">:=</span> db<span class="token punctuation">.</span><span class="token function">Get</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> value
-    <span class="token punctuation">}</span>
+func GetFromDB(db DB, key string) int {
+    if value, err := db.Get(key); err == nil {
+        return value
+    }
 
-    <span class="token keyword">return</span> <span class="token operator">-</span><span class="token number">1</span>
-<span class="token punctuation">}</span></code></pre>
+    return -1
+}</code></pre>
 <p>gomock中，DB实例只能通过传参传入生成mock文件</p>
-<pre class=" language-shell"><code class="language-shell">mockgen -source=db.go -destination=db_mock.go -package=mock</code></pre>
+<pre><code class="shell">mockgen -source=db.go -destination=db_mock.go -package=mock</code></pre>
 <p>gomock生成的db_mock.go如下</p>
-<pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">//db_mock.go</span>
-<span class="token comment" spellcheck="true">// Code generated by MockGen. DO NOT EDIT.</span>
-<span class="token comment" spellcheck="true">// Source: db.go</span>
+<pre><code class="go">//db_mock.go
+// Code generated by MockGen. DO NOT EDIT.
+// Source: db.go
 
-<span class="token comment" spellcheck="true">// Package mock_db is a generated GoMock package.</span>
-<span class="token keyword">package</span> mock
+// Package mock_db is a generated GoMock package.
+package mock
 
-<span class="token keyword">import</span> <span class="token punctuation">(</span>
-    gomock <span class="token string">"github.com/golang/mock/gomock"</span>
-    reflect <span class="token string">"reflect"</span>
-<span class="token punctuation">)</span>
+import (
+    gomock &quot;github.com/golang/mock/gomock&quot;
+    reflect &quot;reflect&quot;
+)
 
-<span class="token comment" spellcheck="true">// MockDB is a mock of DB interface</span>
-<span class="token keyword">type</span> MockDB <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    ctrl     <span class="token operator">*</span>gomock<span class="token punctuation">.</span>Controller
-    recorder <span class="token operator">*</span>MockDBMockRecorder
-<span class="token punctuation">}</span>
+// MockDB is a mock of DB interface
+type MockDB struct {
+    ctrl     *gomock.Controller
+    recorder *MockDBMockRecorder
+}
 
-<span class="token comment" spellcheck="true">// MockDBMockRecorder is the mock recorder for MockDB</span>
-<span class="token keyword">type</span> MockDBMockRecorder <span class="token keyword">struct</span> <span class="token punctuation">{</span>
-    mock <span class="token operator">*</span>MockDB
-<span class="token punctuation">}</span>
+// MockDBMockRecorder is the mock recorder for MockDB
+type MockDBMockRecorder struct {
+    mock *MockDB
+}
 
-<span class="token comment" spellcheck="true">// NewMockDB creates a new mock instance</span>
-<span class="token keyword">func</span> <span class="token function">NewMockDB</span><span class="token punctuation">(</span>ctrl <span class="token operator">*</span>gomock<span class="token punctuation">.</span>Controller<span class="token punctuation">)</span> <span class="token operator">*</span>MockDB <span class="token punctuation">{</span>
-    mock <span class="token operator">:=</span> <span class="token operator">&amp;</span>MockDB<span class="token punctuation">{</span>ctrl<span class="token punctuation">:</span> ctrl<span class="token punctuation">}</span>
-    mock<span class="token punctuation">.</span>recorder <span class="token operator">=</span> <span class="token operator">&amp;</span>MockDBMockRecorder<span class="token punctuation">{</span>mock<span class="token punctuation">}</span>
-    <span class="token keyword">return</span> mock
-<span class="token punctuation">}</span>
+// NewMockDB creates a new mock instance
+func NewMockDB(ctrl *gomock.Controller) *MockDB {
+    mock := &amp;MockDB{ctrl: ctrl}
+    mock.recorder = &amp;MockDBMockRecorder{mock}
+    return mock
+}
 
-<span class="token comment" spellcheck="true">// EXPECT returns an object that allows the caller to indicate expected use</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>MockDB<span class="token punctuation">)</span> <span class="token function">EXPECT</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>MockDBMockRecorder <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> m<span class="token punctuation">.</span>recorder
-<span class="token punctuation">}</span>
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockDB) EXPECT() *MockDBMockRecorder {
+    return m.recorder
+}
 
-<span class="token comment" spellcheck="true">// Get mocks base method</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>MockDB<span class="token punctuation">)</span> <span class="token function">Get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    m<span class="token punctuation">.</span>ctrl<span class="token punctuation">.</span>T<span class="token punctuation">.</span><span class="token function">Helper</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    ret <span class="token operator">:=</span> m<span class="token punctuation">.</span>ctrl<span class="token punctuation">.</span><span class="token function">Call</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> <span class="token string">"Get"</span><span class="token punctuation">,</span> key<span class="token punctuation">)</span>
-    ret0<span class="token punctuation">,</span> <span class="token boolean">_</span> <span class="token operator">:=</span> ret<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
-    ret1<span class="token punctuation">,</span> <span class="token boolean">_</span> <span class="token operator">:=</span> ret<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token builtin">error</span><span class="token punctuation">)</span>
-    <span class="token keyword">return</span> ret0<span class="token punctuation">,</span> ret1
-<span class="token punctuation">}</span>
+// Get mocks base method
+func (m *MockDB) Get(key string) (int, error) {
+    m.ctrl.T.Helper()
+    ret := m.ctrl.Call(m, &quot;Get&quot;, key)
+    ret0, _ := ret[0].(int)
+    ret1, _ := ret[1].(error)
+    return ret0, ret1
+}
 
-<span class="token comment" spellcheck="true">// Get indicates an expected call of Get</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>mr <span class="token operator">*</span>MockDBMockRecorder<span class="token punctuation">)</span> <span class="token function">Get</span><span class="token punctuation">(</span>key <span class="token keyword">interface</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token operator">*</span>gomock<span class="token punctuation">.</span>Call <span class="token punctuation">{</span>
-    mr<span class="token punctuation">.</span>mock<span class="token punctuation">.</span>ctrl<span class="token punctuation">.</span>T<span class="token punctuation">.</span><span class="token function">Helper</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">return</span> mr<span class="token punctuation">.</span>mock<span class="token punctuation">.</span>ctrl<span class="token punctuation">.</span><span class="token function">RecordCallWithMethodType</span><span class="token punctuation">(</span>mr<span class="token punctuation">.</span>mock<span class="token punctuation">,</span> <span class="token string">"Get"</span><span class="token punctuation">,</span> reflect<span class="token punctuation">.</span><span class="token function">TypeOf</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token operator">*</span>MockDB<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token boolean">nil</span><span class="token punctuation">)</span><span class="token punctuation">.</span>Get<span class="token punctuation">)</span><span class="token punctuation">,</span> key<span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+// Get indicates an expected call of Get
+func (mr *MockDBMockRecorder) Get(key interface{}) *gomock.Call {
+    mr.mock.ctrl.T.Helper()
+    return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, &quot;Get&quot;, reflect.TypeOf((*MockDB)(nil).Get), key)
+}
 </code></pre>
 <p>测试</p>
-<pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">// db_test.go</span>
-<span class="token keyword">func</span> <span class="token function">TestGetFromDB</span><span class="token punctuation">(</span>t <span class="token operator">*</span>testing<span class="token punctuation">.</span>T<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    ctrl <span class="token operator">:=</span> gomock<span class="token punctuation">.</span><span class="token function">NewController</span><span class="token punctuation">(</span>t<span class="token punctuation">)</span>
-    <span class="token keyword">defer</span> ctrl<span class="token punctuation">.</span><span class="token function">Finish</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 断言 DB.Get() 方法是否被调用</span>
+<pre><code class="go">// db_test.go
+func TestGetFromDB(t *testing.T) {
+    ctrl := gomock.NewController(t)
+    defer ctrl.Finish() // 断言 DB.Get() 方法是否被调用
 
-    m <span class="token operator">:=</span> mock<span class="token punctuation">.</span><span class="token function">NewMockDB</span><span class="token punctuation">(</span>ctrl<span class="token punctuation">)</span>
-    m<span class="token punctuation">.</span><span class="token function">EXPECT</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Get</span><span class="token punctuation">(</span>gomock<span class="token punctuation">.</span><span class="token function">Eq</span><span class="token punctuation">(</span><span class="token string">"Tom"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Return</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> errors<span class="token punctuation">.</span><span class="token function">New</span><span class="token punctuation">(</span><span class="token string">"not exist"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    m := mock.NewMockDB(ctrl)
+    m.EXPECT().Get(gomock.Eq(&quot;Tom&quot;)).Return(100, errors.New(&quot;not exist&quot;))
 
-    <span class="token keyword">if</span> v <span class="token operator">:=</span> <span class="token function">GetFromDB</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> <span class="token string">"Tom"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> v <span class="token operator">!=</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token punctuation">{</span>
-        t<span class="token punctuation">.</span><span class="token function">Fatal</span><span class="token punctuation">(</span><span class="token string">"expected -1, but got"</span><span class="token punctuation">,</span> v<span class="token punctuation">)</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+    if v := GetFromDB(m, &quot;Tom&quot;); v != -1 {
+        t.Fatal(&quot;expected -1, but got&quot;, v)
+    }
+}
 </code></pre>
 <p>go mock有个限制，生成的mock_db实例和真正的db实例是两个不一样的实例（废话），因此在写测试时需要使用mock实例，而开发/生产环境中需要用真正的db实例，导致在设计GetFromDB一类的方法时，需要将db实例作为参数传入方法中，这样有碍结构设计的灵活性。 当然有方法能越过这层阻碍重点</p>
-<pre class=" language-go"><code class="language-go"><span class="token comment" spellcheck="true">//db.go</span>
+<pre><code class="go">//db.go
 
-<span class="token keyword">func</span> <span class="token function">GetFromDB</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-    db <span class="token operator">:=</span> db<span class="token punctuation">.</span><span class="token function">getDBClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    db<span class="token punctuation">.</span><span class="token function">Get</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span>
-    <span class="token operator">...</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">var</span>  mockDBClient DB
+func GetFromDB(key string){
+    db := db.getDBClient()
+    db.Get(key)
+    ...
+}
+var  mockDBClient DB
 
-<span class="token keyword">func</span> <span class="token function">getDBClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-  <span class="token keyword">if</span> mockDBClient <span class="token operator">!=</span> <span class="token boolean">nil</span><span class="token punctuation">{</span>
-    <span class="token keyword">return</span> mockDBClient
-  <span class="token punctuation">}</span>
-  <span class="token comment" spellcheck="true">// 懒加载获得真实的DB连接并返回</span>
-  <span class="token keyword">return</span> actual<span class="token punctuation">.</span><span class="token function">GetDBClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
+func getDBClient(){
+  if mockDBClient != nil{
+    return mockDBClient
+  }
+  // 懒加载获得真实的DB连接并返回
+  return actual.GetDBClient()
+}
 
-<span class="token keyword">func</span> <span class="token function">newMockDBClient</span><span class="token punctuation">(</span>t <span class="token operator">*</span>testing<span class="token punctuation">.</span>T<span class="token punctuation">)</span><span class="token punctuation">{</span>
-  gomock<span class="token punctuation">.</span><span class="token function">NewController</span><span class="token punctuation">(</span>t<span class="token punctuation">)</span>
-  m <span class="token operator">:=</span> mock<span class="token punctuation">.</span><span class="token function">NewMockDB</span><span class="token punctuation">(</span>ctrl<span class="token punctuation">)</span>
-  mockDBClient <span class="token operator">=</span> m
-<span class="token punctuation">}</span></code></pre>
+func newMockDBClient(t *testing.T){
+  gomock.NewController(t)
+  m := mock.NewMockDB(ctrl)
+  mockDBClient = m
+}</code></pre>
 <p>以上将获取真实DBClient之前加上了一层判断，判断是否创建了mockDB，创建了则返回mockDB, 没创建就懒加载DB连接。 gomock另一个缺陷是他不支持自动生成响应，也就是说不能配置mock server，或许gomock是专为测试设计的，server这一块用于前端调用模拟，一般也是给个接口就能创建，应该有其他技术覆盖了这一块。</p>
 
       
@@ -988,20 +988,20 @@
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>目标数字target必须在横向纵向的边界上， 定义一个规则，从左下角开始，当前数字比target小，往右走，否则往左走。</p>
 <p>坑： 从左上角开始走容易进入for循环+多次条件判断的坑，虽然也能做出来，但代码质量低，尽量避免。</p>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>时间复杂度O(m+n),空间复杂度O(1)</p>
-<pre class=" language-golang"><code class="language-golang">func findNumberIn2DArray(matrix [][]int, target int) bool {
+<pre><code class="golang">func findNumberIn2DArray(matrix [][]int, target int) bool {
     if len(matrix) == 0 {
         return false
     }
     n := len(matrix)
     m := len(matrix[0])
     i, j := n-1, 0
-    for i >= 0 && j < m {
+    for i &gt;= 0 &amp;&amp; j &lt; m {
         if matrix[i][j] == target {
             return true
         }
-        if matrix[i][j] > target {
+        if matrix[i][j] &gt; target {
             i--
-        } else if matrix[i][j] < target {
+        } else if matrix[i][j] &lt; target {
             j++
         }
 
@@ -1091,7 +1091,7 @@
       
         <h2 id="找出数组中重复的数字"><a href="#找出数组中重复的数字" class="headerlink" title="找出数组中重复的数字"></a><a href="https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/" target="_blank" rel="noopener">找出数组中重复的数字</a></h2><p>在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</p>
 <p><strong>示例 1：</strong></p>
-<pre class=" language-text"><code class="language-text">输入：
+<pre><code class="text">输入：
 [2, 3, 1, 0, 2, 5, 3]
 输出：2 或 3 </code></pre>
 <p><strong>限制：</strong></p>
@@ -1101,7 +1101,7 @@
 <p>复习一下各大排序算法：</p>
 <img src="/2020/11/25/%E5%89%91%E6%8C%87offer03/1.png" alt="1" style="zoom: 33%;">
 
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="golang-map-迭代-时间复杂度O-n-空间复杂度O-n"><a href="#golang-map-迭代-时间复杂度O-n-空间复杂度O-n" class="headerlink" title="golang map+迭代 时间复杂度O(n), 空间复杂度O(n)"></a>golang map+迭代 时间复杂度O(n), 空间复杂度O(n)</h3><pre class=" language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int {
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="golang-map-迭代-时间复杂度O-n-空间复杂度O-n"><a href="#golang-map-迭代-时间复杂度O-n-空间复杂度O-n" class="headerlink" title="golang map+迭代 时间复杂度O(n), 空间复杂度O(n)"></a>golang map+迭代 时间复杂度O(n), 空间复杂度O(n)</h3><pre><code class="golang">func findRepeatNumber(nums []int) int {
     m := make(map[int]bool)
     for _,n := range nums{
         if m[n] == false{
@@ -1113,11 +1113,11 @@
     return -1
 }
 </code></pre>
-<h3 id="golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1"><a href="#golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1" class="headerlink" title="golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)"></a>golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)</h3><pre class=" language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int {
+<h3 id="golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1"><a href="#golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1" class="headerlink" title="golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)"></a>golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)</h3><pre><code class="golang">func findRepeatNumber(nums []int) int {
     length := len(nums)
     sort(nums, 0,length-1)
     n := nums[0]
-    for i:=1; i < length; i++{
+    for i:=1; i &lt; length; i++{
         if nums[i]==n {
             return n
         }
@@ -1127,7 +1127,7 @@
 }
 //快排
 func sort(nums []int, start, end int){
-    if start >= end {
+    if start &gt;= end {
         return 
     }
     p := partition(nums, start, end)
@@ -1138,9 +1138,9 @@ func sort(nums []int, start, end int){
 func solve(nums []int, start, end int, p int)int{
     i := start
     j := end - 1
-    //坑点，要求i<=j
-    for i <end && j>=i {
-        if nums[i]<nums[p]{
+    //坑点，要求i&lt;=j
+    for i &lt;end &amp;&amp; j&gt;=i {
+        if nums[i]&lt;nums[p]{
             i+=1
         }else{
             //交换
@@ -1161,10 +1161,10 @@ func swap(nums []int, i, j int){
 }</code></pre>
 <p>结果超时，时间复杂度太高，说明不能用排序。</p>
 <h3 id="最后在书上看到了最优解-时间复杂度O-n-空间复杂度O-1"><a href="#最后在书上看到了最优解-时间复杂度O-n-空间复杂度O-1" class="headerlink" title="最后在书上看到了最优解 时间复杂度O(n), 空间复杂度O(1)"></a>最后在书上看到了最优解 时间复杂度O(n), 空间复杂度O(1)</h3><p>突破点在 <strong>数组 nums 里的所有数字都在 0～n-1 的范围内</strong> 这个条件中： 考虑把所有访问过的数字放到对应下标上，这种情况下若出现重复数字那会造成冲突，返回冲突值；若没有冲突，每次访问都会让一个数字归位，只会访问n次。</p>
-<pre class=" language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int {
+<pre><code class="golang">func findRepeatNumber(nums []int) int {
 length := len(nums)
 i := 0
-for i < length {
+for i &lt; length {
     if nums[i]==i{
         i+=1
     }else{
@@ -1459,14 +1459,14 @@ func swap(nums []int, i, j int){
       
         <p>大四了，论文/毕设 选了能落地的方向，课题为《智能网联汽车数字孪生》</p>
 <h1 id="平台选择"><a href="#平台选择" class="headerlink" title="平台选择"></a>平台选择</h1><h2 id="Linux-ubuntu18-04（基于vmware）"><a href="#Linux-ubuntu18-04（基于vmware）" class="headerlink" title="Linux-ubuntu18.04（基于vmware）"></a>Linux-ubuntu18.04（基于vmware）</h2><p>参考carla的 <a href="https://github.com/carla-simulator/carla" target="_blank" rel="noopener">GitHub</a>，以及<a href="https://carla.readthedocs.io/en/latest/" target="_blank" rel="noopener">官方文档</a>，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用<strong>ubuntu</strong>安装：</p>
-<h3 id="A-简易安装"><a href="#A-简易安装" class="headerlink" title="A 简易安装"></a>A 简易安装</h3><pre class=" language-shell"><code class="language-shell">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
-sudo add-apt-repository "deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main"
+<h3 id="A-简易安装"><a href="#A-简易安装" class="headerlink" title="A 简易安装"></a>A 简易安装</h3><pre><code class="shell">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
+sudo add-apt-repository &quot;deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main&quot;
 
 sudo apt-get update # Update the Debian package index
 sudo apt-get install carla-simulator # Install the latest CARLA version, or update the current installation
 cd /opt/carla-simulator # Open the folder where CARLA is installed
 
-sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to a CARLA version, and "1" to the Debian revision</code></pre>
+sudo apt-get install carla-simulator=0.9.10-1 # In this case, &quot;0.9.10&quot; refers to a CARLA version, and &quot;1&quot; to the Debian revision</code></pre>
 <p>注： 国内下载非常慢，资源在 <a href="http://dist.carla.org/carla" target="_blank" rel="noopener">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
 <h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG" alt="figure1"></p>
@@ -1489,7 +1489,7 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
 <p>结果：</p>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/6.PNG" alt="figure1"></p>
 <p>下面执行控制脚本：</p>
-<pre class=" language-shell"><code class="language-shell">python manual_control.py</code></pre>
+<pre><code class="shell">python manual_control.py</code></pre>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/7.PNG" alt="figure1"></p>
 <p>终止控制脚本会返回给你操作命令说明：</p>
 <p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/8.PNG" alt="figure1"></p>
@@ -1652,23 +1652,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">golang</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1684,15 +1668,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">记录</a>
+                <a href="javascript:void(0)" class="js-tag color3">面试</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1705,6 +1685,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">每日N题</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">记录</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1724,6 +1708,22 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">kong</a>
               </li>
              
@@ -1740,19 +1740,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+                <a href="javascript:void(0)" class="js-tag color1">owasp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">CAN总线</a>
+                <a href="javascript:void(0)" class="js-tag color5">网络安全</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">carla</a>
+                <a href="javascript:void(0)" class="js-tag color2">Crypto</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">自动驾驶</a>
+                <a href="javascript:void(0)" class="js-tag color2">曼切斯特编码</a>
               </li>
             
             <div class="clearfix"></div>
