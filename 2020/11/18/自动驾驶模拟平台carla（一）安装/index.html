@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr796c2a000ya3txejvk9f4x" class="article article-type-post" itemscope
+    <article id="post-ckr799j8q000yc9txc5cibrys" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -147,30 +147,30 @@ cd /opt/carla-simulator # Open the folder where CARLA is installed
 sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to a CARLA version, and "1" to the Debian revision<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>注： 国内下载非常慢，资源在 <a target="_blank" rel="noopener" href="http://dist.carla.org/carla">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
 <h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla/releases">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG" alt="figure1"></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/1.PNG" alt="figure1"></p>
 <p>执行CarlaUE4.sh:</p>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/2.PNG" alt=""></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/2.PNG" alt></p>
 <p>报错： 驱动或硬件不支持OpenGL4.3以上版本。</p>
 <p>openGL为开源图形库，和显卡息息相关，这里有个问题：<strong>到底是因为宿主机的显卡带不动（MX150 2G显存，carla要求的最低显存为4G）还是虚拟机使用宿主机显卡的权限很低，需要调整权限</strong>。</p>
 <p>这里我先放下linux环境的安装，进行windows环境下的carla安装。</p>
 <p>最后结果是，win10下可以以10FPS运行carla，GPU使用率80%，因此最终结论是vmware创建的虚拟机需要调整显卡的资源配置，以满足OpenGL 4.3的硬件驱动需求。</p>
 <h2 id="windows-10"><a href="#windows-10" class="headerlink" title="windows 10"></a>windows 10</h2><p>一样，前往<a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla/releases">github的release</a>下选择windows的软件包下载，解压后如下：</p>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/3.PNG" alt="figure1"></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/3.PNG" alt="figure1"></p>
 <p>直接运行CarlaUE4:</p>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/4.PNG" alt="figure1"></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/4.PNG" alt="figure1"></p>
 <p>会有一些场景，但是没车，没人，没关系，用自带的python脚本创建出来：</p>
 <p>前提要装好pygame numpy</p>
 <p>这里有个<strong>坑</strong>，需要安装精确到小版本的python，不然会导致carla模块找不到的问题，看源码会发现carla模块是引用egg文件导入的，egg文件上有具体的python版本要求，该文件在PythonAPI/carla/dist目录下，我的是 <strong>carla-0.9.9-py3.7-win-amd64.egg</strong>，所以我需要使用python3.7运行carla的脚本。</p>
 <p>接下来启动脚本添加npc，npc数量用 -n 指定</p>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/5.PNG" alt="figure1"></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/5.PNG" alt="figure1"></p>
 <p>（ERROR应该是因为npc未初始化在道路上导致碰撞，没关系，会重新初始化的）</p>
 <p>结果：</p>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/6.PNG" alt="figure1"></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/6.PNG" alt="figure1"></p>
 <p>下面执行控制脚本：</p>
 <pre class="line-numbers language-shell"><code class="language-shell">python manual_control.py<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/7.PNG" alt="figure1"></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/7.PNG" alt="figure1"></p>
 <p>终止控制脚本会返回给你操作命令说明：</p>
-<p><img src="%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/8.PNG" alt="figure1"></p>
+<p><img src="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/8.PNG" alt="figure1"></p>
 <p>下一篇将尝试写一些自动驾驶车辆脚本</p>
 <link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
         </div>
