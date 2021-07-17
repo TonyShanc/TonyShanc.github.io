@@ -6,7 +6,7 @@
 
 body {
     background-color: var(--color-bg);
-    font: 14px/1 PingFangSC,'Microsoft Yahei', Microsoft Sans Serif, sans-serif;
+    font: 14px/1 'Microsoft Yahei',PingFangSC, Microsoft Sans Serif, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -268,7 +268,7 @@ img:not([src]):not([srcset]) {
     margin-bottom: 150px;
     
     .inner {
-        padding-right: 300px;
+        padding-left: 300px;
         
         .inner-main {
             position: relative;
@@ -281,7 +281,7 @@ img:not([src]):not([srcset]) {
 
 .sidebar {
     position: fixed;
-    right: calc((100% - 1160px) / 2);
+    left: calc((100% - 1160px) / 2);
     top: 120px;
     transition: all 0.2s;
     width: 280px;
@@ -612,7 +612,7 @@ img:not([src]):not([srcset]) {
                 }
 
                 .article-entry {
-                    font-weight: 300;
+                    font-weight: 350;
                 }
             }
         }
@@ -1010,6 +1010,7 @@ img:not([src]):not([srcset]) {
         color: var(--color-white);
         line-height: 22px;
         user-select: none;
+        text-align: right;
 
         a {
             color: var(--color-white);
