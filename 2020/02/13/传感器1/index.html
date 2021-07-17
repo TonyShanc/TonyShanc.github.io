@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78z80r000h3ctxc91l2x2i" class="article article-type-post" itemscope
+    <article id="post-ckr796c1y000ha3txbkm31xx8" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -135,14 +135,14 @@
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
             <p>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。</p>
 <span id="more"></span>
-<p><img src="/.io//1.jpg" alt="传感器1"><br>题目出自 <a target="_blank" rel="noopener" href="https://www.ichunqiu.com/battalion?t=1&r=58837">i春秋CTF大本营: 2017届全国大学生信息安全竞赛</a></p>
+<p><img src="%E4%BC%A0%E6%84%9F%E5%99%A81/1.jpg" alt="传感器1"><br>题目出自 <a target="_blank" rel="noopener" href="https://www.ichunqiu.com/battalion?t=1&r=58837">i春秋CTF大本营: 2017届全国大学生信息安全竞赛</a></p>
 <p>已知 A传感器的ID和它的输出， 以及B的输出。<br>求另一个传感器B的ID。</p>
 <p>大致思路是从输出中寻找输出和ID的联系，而A的ID和输出就是线索。</p>
 <p>发现输出是16进制，遇到进制问题首先做的肯定是比对进制转换后的数字。</p>
-<p>先用在线工具转换一下A的输出：<br><img src="/.io//2.jpg" alt="传感器1"></p>
+<p>先用在线工具转换一下A的输出：<br><img src="%E4%BC%A0%E6%84%9F%E5%99%A81/2.jpg" alt="传感器1"></p>
 <p>发现最有规律的是2进制和8进制数据<br>但是考虑到8进制不常用，并且它的规律集中在52上，没法利用<br>所以接下来看2进制：<br>2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合<br>我们需要的是有规律的数，<br>所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中)<br>继续观察余下的二进制数<br>发现很像数字逻辑中的电平跳变，0代表低位，1代表高位<br>该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码<br>查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律</p>
-<h6 id="曼切斯特编码："><a href="#曼切斯特编码：" class="headerlink" title="曼切斯特编码："></a>曼切斯特编码：</h6><p>data用跳变表示，0和1对应01和10<br>至于谁对应谁有两种标准：<br><img src="/.io//3.png" alt="传感器1"></p>
-<h6 id="差分曼切斯特编码："><a href="#差分曼切斯特编码：" class="headerlink" title="差分曼切斯特编码："></a>差分曼切斯特编码：</h6><p>数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。<br><img src="/.io//4.jpg" alt="传感器1"></p>
+<h6 id="曼切斯特编码："><a href="#曼切斯特编码：" class="headerlink" title="曼切斯特编码："></a>曼切斯特编码：</h6><p>data用跳变表示，0和1对应01和10<br>至于谁对应谁有两种标准：<br><img src="%E4%BC%A0%E6%84%9F%E5%99%A81/3.png" alt="传感器1"></p>
+<h6 id="差分曼切斯特编码："><a href="#差分曼切斯特编码：" class="headerlink" title="差分曼切斯特编码："></a>差分曼切斯特编码：</h6><p>数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。<br><img src="%E4%BC%A0%E6%84%9F%E5%99%A81/4.jpg" alt="传感器1"></p>
 <p>知识回顾的差不多了，回到题目，开始撸代码<br>由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。<br>思路很简单 直接贴代码：</p>
 <pre class="line-numbers language-python"><code class="language-python"><span class="token keyword">import</span> re
 <span class="token keyword">def</span> <span class="token function">bintohex</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">:</span>
