@@ -37,7 +37,7 @@
 
     </script>
 
-<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78t8q9000ttvtxebddguo0" class="article article-type-post" itemscope
+    <article id="post-ckr78whz3000s04txg4mueibp" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -134,15 +134,15 @@
 
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
             <p>CTF</p>
-<a id="more"></a>
-<p><img src="/.io//t.JPG" alt="爆破1-3"><br>实践证明，提示也有不可靠的时候，出题人也会鸡贼。<br><a href="https://www.ichunqiu.com/battalion" target="_blank" rel="noopener">爆破一题目地址</a><br>这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。<br>进去后给的是php后端源码。</p>
+<span id="more"></span>
+<p><img src="/.io//t.JPG" alt="爆破1-3"><br>实践证明，提示也有不可靠的时候，出题人也会鸡贼。<br><a target="_blank" rel="noopener" href="https://www.ichunqiu.com/battalion">爆破一题目地址</a><br>这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。<br>进去后给的是php后端源码。</p>
 <p>这是本菜鸡第一次接触<del>拍黄片</del> php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。<br>废话不多说，来看看代码：</p>
 <pre class="line-numbers language-php"><code class="language-php"><span class="token delimiter">&lt;?php</span>
 <span class="token keyword">include</span> <span class="token string">"flag.php"</span><span class="token punctuation">;</span>
 <span class="token variable">$a</span> <span class="token operator">=</span> @<span class="token variable">$_REQUEST</span><span class="token punctuation">[</span><span class="token string">'hello'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">preg_match</span><span class="token punctuation">(</span><span class="token string">'/^\w*$/'</span><span class="token punctuation">,</span><span class="token variable">$a</span> <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">preg_match</span><span class="token punctuation">(</span><span class="token string">'/^\w*$/'</span><span class="token punctuation">,</span><span class="token variable">$a</span> <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token shell-comment comment">#123;</span>
   <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token string">'ERROR'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
+<span class="token operator">&amp;</span><span class="token shell-comment comment">#125;</span>
 <span class="token function">eval</span><span class="token punctuation">(</span><span class="token string">"var_dump($$a);"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token function">show_source</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token delimiter">?></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>

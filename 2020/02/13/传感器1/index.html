@@ -37,7 +37,7 @@
 
     </script>
 
-<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78t8pl000gtvtxgo5g77ud" class="article article-type-post" itemscope
+    <article id="post-ckr78whyu000h04txal7udwaf" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -134,8 +134,8 @@
 
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
             <p>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。</p>
-<a id="more"></a>
-<p><img src="/.io//1.jpg" alt="传感器1"><br>题目出自 <a href="https://www.ichunqiu.com/battalion?t=1&r=58837" target="_blank" rel="noopener">i春秋CTF大本营: 2017届全国大学生信息安全竞赛</a></p>
+<span id="more"></span>
+<p><img src="/.io//1.jpg" alt="传感器1"><br>题目出自 <a target="_blank" rel="noopener" href="https://www.ichunqiu.com/battalion?t=1&r=58837">i春秋CTF大本营: 2017届全国大学生信息安全竞赛</a></p>
 <p>已知 A传感器的ID和它的输出， 以及B的输出。<br>求另一个传感器B的ID。</p>
 <p>大致思路是从输出中寻找输出和ID的联系，而A的ID和输出就是线索。</p>
 <p>发现输出是16进制，遇到进制问题首先做的肯定是比对进制转换后的数字。</p>
@@ -146,7 +146,7 @@
 <p>知识回顾的差不多了，回到题目，开始撸代码<br>由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。<br>思路很简单 直接贴代码：</p>
 <pre class="line-numbers language-python"><code class="language-python"><span class="token keyword">import</span> re
 <span class="token keyword">def</span> <span class="token function">bintohex</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    s <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.{4}'</span><span class="token punctuation">,</span> s1<span class="token punctuation">)</span>
+    s <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.&amp;#123;4&amp;#125;'</span><span class="token punctuation">,</span> s1<span class="token punctuation">)</span>
     s2 <span class="token operator">=</span> <span class="token string">''</span>
     <span class="token keyword">for</span> i <span class="token keyword">in</span> s<span class="token punctuation">:</span>
         s2 <span class="token operator">+=</span> str<span class="token punctuation">(</span>hex<span class="token punctuation">(</span>int<span class="token punctuation">(</span>i<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'0x'</span><span class="token punctuation">,</span><span class="token string">''</span><span class="token punctuation">)</span>
@@ -155,7 +155,7 @@
 <span class="token keyword">def</span> <span class="token function">diffmqst</span><span class="token punctuation">(</span>s1<span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token comment" spellcheck="true">#差分曼切斯特</span>
     pre <span class="token operator">=</span> <span class="token string">'01'</span>
     rst <span class="token operator">=</span> <span class="token string">''</span>
-    s <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.{2}'</span><span class="token punctuation">,</span>s1<span class="token punctuation">)</span>
+    s <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.&amp;#123;2&amp;#125;'</span><span class="token punctuation">,</span>s1<span class="token punctuation">)</span>
     <span class="token keyword">for</span> i <span class="token keyword">in</span> s<span class="token punctuation">:</span>
         <span class="token keyword">if</span> i<span class="token operator">==</span>pre<span class="token punctuation">:</span>
             rst <span class="token operator">+=</span> <span class="token string">'0'</span>
@@ -167,9 +167,9 @@
     hex1 <span class="token operator">=</span> <span class="token string">'AAAAA56A69AA55A95995A569AA95565556'</span>
     hex2 <span class="token operator">=</span> <span class="token string">'0x8893CA58'</span>
     bin1 <span class="token operator">=</span> bin<span class="token punctuation">(</span>int<span class="token punctuation">(</span>hex1<span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'0b'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span>
-    bin2 <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.{4}'</span><span class="token punctuation">,</span> bin<span class="token punctuation">(</span>int<span class="token punctuation">(</span>hex1<span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'0b'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    dict1 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">'0101'</span><span class="token punctuation">:</span> <span class="token string">'11'</span><span class="token punctuation">,</span> <span class="token string">'1010'</span><span class="token punctuation">:</span><span class="token string">'00'</span><span class="token punctuation">,</span> <span class="token string">'1001'</span><span class="token punctuation">:</span><span class="token string">'01'</span><span class="token punctuation">,</span> <span class="token string">'0110'</span><span class="token punctuation">:</span> <span class="token string">'10'</span><span class="token punctuation">}</span> <span class="token comment" spellcheck="true">#曼切斯特编码1 Thomas</span>
-    dict2 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">'0101'</span><span class="token punctuation">:</span> <span class="token string">'00'</span><span class="token punctuation">,</span> <span class="token string">'1010'</span><span class="token punctuation">:</span><span class="token string">'11'</span><span class="token punctuation">,</span> <span class="token string">'1001'</span><span class="token punctuation">:</span><span class="token string">'10'</span><span class="token punctuation">,</span> <span class="token string">'0110'</span><span class="token punctuation">:</span> <span class="token string">'01'</span><span class="token punctuation">}</span> <span class="token comment" spellcheck="true">#曼切斯特编码2 IEEE802.3</span>
+    bin2 <span class="token operator">=</span> re<span class="token punctuation">.</span>findall<span class="token punctuation">(</span><span class="token string">'.&amp;#123;4&amp;#125;'</span><span class="token punctuation">,</span> bin<span class="token punctuation">(</span>int<span class="token punctuation">(</span>hex1<span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'0b'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    dict1 <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;'0101': '11', '1010':'00', '1001':'01', '0110': '10'&amp;#125; #曼切斯特编码1 Thomas</span>
+    dict2 <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;'0101': '00', '1010':'11', '1001':'10', '0110': '01'&amp;#125; #曼切斯特编码2 IEEE802.3</span>
     m1 <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>dict1<span class="token punctuation">[</span>_<span class="token punctuation">]</span> <span class="token keyword">for</span> _ <span class="token keyword">in</span> bin2<span class="token punctuation">)</span>
     m2 <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>dict2<span class="token punctuation">[</span>_<span class="token punctuation">]</span> <span class="token keyword">for</span> _ <span class="token keyword">in</span> bin2<span class="token punctuation">)</span>
     <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"曼切斯特编码1 id1: "</span><span class="token punctuation">,</span> bintohex<span class="token punctuation">(</span>m1<span class="token punctuation">)</span><span class="token punctuation">)</span>

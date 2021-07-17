@@ -37,7 +37,7 @@
 
     </script>
 
-<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78t8q0000otvtxexf60hah" class="article article-type-post" itemscope
+    <article id="post-ckr78whz0000o04tx5tpzddxg" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -134,8 +134,8 @@
 
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
             <p>水题</p>
-<a id="more"></a>
-<h2 id="找出数组中重复的数字"><a href="#找出数组中重复的数字" class="headerlink" title="找出数组中重复的数字"></a><a href="https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/" target="_blank" rel="noopener">找出数组中重复的数字</a></h2><p>在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</p>
+<span id="more"></span>
+<h2 id="找出数组中重复的数字"><a href="#找出数组中重复的数字" class="headerlink" title="找出数组中重复的数字"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/">找出数组中重复的数字</a></h2><p>在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</p>
 <p><strong>示例 1：</strong></p>
 <pre class="line-numbers language-text"><code class="language-text">输入：
 [2, 3, 1, 0, 2, 5, 3]
@@ -147,68 +147,87 @@
 <p>复习一下各大排序算法：</p>
 <img src="/.io//1.png" alt="1" style="zoom: 33%;">
 
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="golang-map-迭代-时间复杂度O-n-空间复杂度O-n"><a href="#golang-map-迭代-时间复杂度O-n-空间复杂度O-n" class="headerlink" title="golang map+迭代 时间复杂度O(n), 空间复杂度O(n)"></a>golang map+迭代 时间复杂度O(n), 空间复杂度O(n)</h3><pre class="line-numbers language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int {
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="golang-map-迭代-时间复杂度O-n-空间复杂度O-n"><a href="#golang-map-迭代-时间复杂度O-n-空间复杂度O-n" class="headerlink" title="golang map+迭代 时间复杂度O(n), 空间复杂度O(n)"></a>golang map+迭代 时间复杂度O(n), 空间复杂度O(n)</h3><pre class="line-numbers language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int &#123;
     m := make(map[int]bool)
-    for _,n := range nums{
-        if m[n] == false{
+    for _,n := range nums&#123;
+        if m[n] == false&#123;
             m[n] = true
-        }else{
+        &#125;else&#123;
             return n
-        }
-    }
+        &#125;
+    &#125;
     return -1
-}
+&#125;
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1"><a href="#golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1" class="headerlink" title="golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)"></a>golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)</h3><pre class="line-numbers language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int {
+<h3 id="golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1"><a href="#golang-快排-前后比较-时间复杂度O-nlogn-空间复杂度O-1" class="headerlink" title="golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)"></a>golang 快排+前后比较 时间复杂度O(nlogn),空间复杂度O(1)</h3><pre class="line-numbers language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int &#123;
     length := len(nums)
     sort(nums, 0,length-1)
     n := nums[0]
-    for i:=1; i < length; i++{
-        if nums[i]==n {
+    for i:=1; i < length; i++&#123;
+        if nums[i]==n &#123;
             return n
-        }
+        &#125;
         n = nums[i]
-    }
+    &#125;
     return 0
-}
+&#125;
 //快排
-func sort(nums []int, start, end int){
-    if start >= end {
+func sort(nums []int, start, end int)&#123;
+    if start >= end &#123;
         return 
-    }
+    &#125;
     p := partition(nums, start, end)
     t := solve(nums, start, end, p)
     sort(nums, start, t-1)
     sort(nums, t+1, end)
-}
-func solve(nums []int, start, end int, p int)int{
+&#125;
+func solve(nums []int, start, end int, p int)int&#123;
     i := start
     j := end - 1
-    //坑点，要求i<=j for i <end && j>=i {
-        if nums[i]<nums[p]{ i+="1" }else{ 交换 swap(nums, i, j) j-="1" } p) return i func partition(nums []int, start, end int)int{ swap(nums j int){ t :="nums[j]" nums[j]="nums[i]" nums[i]="t" }<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></nums[p]{></=j></code></pre>
+    //坑点，要求i<=j
+    for i <end && j>=i &#123;
+        if nums[i]<nums[p]&#123;
+            i+=1
+        &#125;else&#123;
+            //交换
+            swap(nums, i, j)
+            j-=1
+        &#125;
+    &#125;
+    swap(nums, i, p)
+    return i
+&#125;
+func partition(nums []int, start, end int)int&#123;
+    return end
+&#125;
+func swap(nums []int, i, j int)&#123;
+        t := nums[j]
+        nums[j] = nums[i]
+        nums[i] = t
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>结果超时，时间复杂度太高，说明不能用排序。</p>
 <h3 id="最后在书上看到了最优解-时间复杂度O-n-空间复杂度O-1"><a href="#最后在书上看到了最优解-时间复杂度O-n-空间复杂度O-1" class="headerlink" title="最后在书上看到了最优解 时间复杂度O(n), 空间复杂度O(1)"></a>最后在书上看到了最优解 时间复杂度O(n), 空间复杂度O(1)</h3><p>突破点在 <strong>数组 nums 里的所有数字都在 0～n-1 的范围内</strong> 这个条件中： 考虑把所有访问过的数字放到对应下标上，这种情况下若出现重复数字那会造成冲突，返回冲突值；若没有冲突，每次访问都会让一个数字归位，只会访问n次。</p>
-<pre class="line-numbers language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int {
+<pre class="line-numbers language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int &#123;
 length := len(nums)
 i := 0
-for i < length {
-    if nums[i]==i{
+for i < length &#123;
+    if nums[i]==i&#123;
         i+=1
-    }else{
-        if nums[i] == nums[nums[i]]{
+    &#125;else&#123;
+        if nums[i] == nums[nums[i]]&#123;
             return nums[i]
-        }else{
+        &#125;else&#123;
            swap(nums, i, nums[i]) 
-        }
-    }
-}
+        &#125;
+    &#125;
+&#125;
 return -1
-}
-func swap(nums []int, i, j int){
+&#125;
+func swap(nums []int, i, j int)&#123;
     t := nums[j]
     nums[j] = nums[i]
     nums[i] = t
-}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
         </div>
 

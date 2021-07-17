@@ -37,7 +37,7 @@
 
     </script>
 
-<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78t8qd000wtvtxft9x3rtc" class="article article-type-post" itemscope
+    <article id="post-ckr78whz6000y04txbxqpbq4k" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -134,9 +134,9 @@
 
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
             <p>毕设</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>大四了，论文/毕设 选了能落地的方向</p>
-<h1 id="平台选择"><a href="#平台选择" class="headerlink" title="平台选择"></a>平台选择</h1><h2 id="Linux-ubuntu18-04（基于vmware）"><a href="#Linux-ubuntu18-04（基于vmware）" class="headerlink" title="Linux-ubuntu18.04（基于vmware）"></a>Linux-ubuntu18.04（基于vmware）</h2><p>参考carla的 <a href="https://github.com/carla-simulator/carla" target="_blank" rel="noopener">GitHub</a>，以及<a href="https://carla.readthedocs.io/en/latest/" target="_blank" rel="noopener">官方文档</a>，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用<strong>ubuntu</strong>安装：</p>
+<h1 id="平台选择"><a href="#平台选择" class="headerlink" title="平台选择"></a>平台选择</h1><h2 id="Linux-ubuntu18-04（基于vmware）"><a href="#Linux-ubuntu18-04（基于vmware）" class="headerlink" title="Linux-ubuntu18.04（基于vmware）"></a>Linux-ubuntu18.04（基于vmware）</h2><p>参考carla的 <a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla">GitHub</a>，以及<a target="_blank" rel="noopener" href="https://carla.readthedocs.io/en/latest/">官方文档</a>，不难发现，carla一开始是基于linux开发的，在linux上有比较好的兼容性，后面才有基于windows的carla(macOS上还没有)，所以我首先尝试用<strong>ubuntu</strong>安装：</p>
 <h3 id="A-简易安装"><a href="#A-简易安装" class="headerlink" title="A 简易安装"></a>A 简易安装</h3><pre class="line-numbers language-shell"><code class="language-shell">sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
 sudo add-apt-repository "deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main"
 
@@ -145,8 +145,8 @@ sudo apt-get install carla-simulator # Install the latest CARLA version, or upda
 cd /opt/carla-simulator # Open the folder where CARLA is installed
 
 sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to a CARLA version, and "1" to the Debian revision<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>注： 国内下载非常慢，资源在 <a href="http://dist.carla.org/carla" target="_blank" rel="noopener">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
-<h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
+<p>注： 国内下载非常慢，资源在 <a target="_blank" rel="noopener" href="http://dist.carla.org/carla">http://dist.carla.org/carla</a> 上，延迟较高，起初下了将近四个小时才安装完成，最后启动出了点问题，后面会讲到，体验下来感觉该方法集成度更高，命令行操作更方便， 但是较难看到一些py脚本文件的源码。</p>
+<h3 id="B-软件包安装"><a href="#B-软件包安装" class="headerlink" title="B 软件包安装"></a>B 软件包安装</h3><p>前往<a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla/releases">github的release</a>下选择对应系统的软件包下载，解压之后的所有文件如下：</p>
 <p><img src="/.io//1.PNG" alt="figure1"></p>
 <p>执行CarlaUE4.sh:</p>
 <p><img src="/.io//2.PNG" alt></p>
@@ -154,7 +154,7 @@ sudo apt-get install carla-simulator=0.9.10-1 # In this case, "0.9.10" refers to
 <p>openGL为开源图形库，和显卡息息相关，这里有个问题：<strong>到底是因为宿主机的显卡带不动（MX150 2G显存，carla要求的最低显存为4G）还是虚拟机使用宿主机显卡的权限很低，需要调整权限</strong>。</p>
 <p>这里我先放下linux环境的安装，进行windows环境下的carla安装。</p>
 <p>最后结果是，win10下可以以10FPS运行carla，GPU使用率80%，因此最终结论是vmware创建的虚拟机需要调整显卡的资源配置，以满足OpenGL 4.3的硬件驱动需求。</p>
-<h2 id="windows-10"><a href="#windows-10" class="headerlink" title="windows 10"></a>windows 10</h2><p>一样，前往<a href="https://github.com/carla-simulator/carla/releases" target="_blank" rel="noopener">github的release</a>下选择windows的软件包下载，解压后如下：</p>
+<h2 id="windows-10"><a href="#windows-10" class="headerlink" title="windows 10"></a>windows 10</h2><p>一样，前往<a target="_blank" rel="noopener" href="https://github.com/carla-simulator/carla/releases">github的release</a>下选择windows的软件包下载，解压后如下：</p>
 <p><img src="/.io//3.PNG" alt="figure1"></p>
 <p>直接运行CarlaUE4:</p>
 <p><img src="/.io//4.PNG" alt="figure1"></p>

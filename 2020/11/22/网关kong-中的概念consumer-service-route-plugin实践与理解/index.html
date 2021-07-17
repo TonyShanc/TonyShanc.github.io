@@ -37,7 +37,7 @@
 
     </script>
 
-<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78t8qf000xtvtx59nw3thn" class="article article-type-post" itemscope
+    <article id="post-ckr78whz4000u04tx6zi2f1kv" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -134,11 +134,11 @@
 
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
             <p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>传送门：</p>
-<p><a href="https://github.com/qianyugang/kong-docs-cn" target="_blank" rel="noopener">kong网关中文文档</a></p>
-<p><a href="https://konghq.com/" target="_blank" rel="noopener">kong官网</a></p>
-<p><a href="https://docs.konghq.com/" target="_blank" rel="noopener">kong官方文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn">kong网关中文文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://konghq.com/">kong官网</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.konghq.com/">kong官方文档</a></p>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
 <h1 id="理论"><a href="#理论" class="headerlink" title="理论"></a>理论</h1><h2 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h2><blockquote>
 <p>The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.</p>
@@ -223,18 +223,18 @@
 <ul>
 <li><ul>
 <li><ul>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-client.md" target="_blank" rel="noopener">kong.client</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ctx.md" target="_blank" rel="noopener">kong.ctx</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ip.md" target="_blank" rel="noopener">kong.ip</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-log.md" target="_blank" rel="noopener">kong.log</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-node.md" target="_blank" rel="noopener">kong.node</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-request.md" target="_blank" rel="noopener">kong.request</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-response.md" target="_blank" rel="noopener">kong.response</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-router.md" target="_blank" rel="noopener">kong.router</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service.md" target="_blank" rel="noopener">kong.service</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-request.md" target="_blank" rel="noopener">kong.service.request</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-response.md" target="_blank" rel="noopener">kong.service.response</a></li>
-<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-table.md" target="_blank" rel="noopener">kong.table</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-client.md">kong.client</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ctx.md">kong.ctx</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-ip.md">kong.ip</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-log.md">kong.log</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-node.md">kong.node</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-request.md">kong.request</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-response.md">kong.response</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-router.md">kong.router</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service.md">kong.service</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-request.md">kong.service.request</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-service-response.md">kong.service.response</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&REFERENCES/PDK/kong-table.md">kong.table</a></li>
 </ul>
 </li>
 </ul>

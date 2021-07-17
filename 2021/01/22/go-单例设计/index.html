@@ -37,7 +37,7 @@
 
     </script>
 
-<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 <body>
@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78t8p10009tvtxcvjjf0my" class="article article-type-post" itemscope
+    <article id="post-ckr78whyo000804tx1fp94zsi" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -134,7 +134,7 @@
 
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
             <p>水题</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>涉及到数据库/grpc连接的struct/class的设计，考虑单例与否尤为重要。目前我接触的项目里grpc连接通常是单例（因为http2支持多路复用，单链接可以支持并发访问），针对db的连接通常会用到xorm，xorm的engine也是单例，它会帮我们管理db连接池（应该）。进一步封装grpcClient和 xorm.Engine了的struct，实现了持久层方法的同时也得是个单例。</p>
 <h2 id="初始化一个grpc连接"><a href="#初始化一个grpc连接" class="headerlink" title="初始化一个grpc连接"></a>初始化一个grpc连接</h2><pre class="line-numbers language-go"><code class="language-go"><span class="token comment" spellcheck="true">//靠编译时初始化的全局变量实现的单例，同时实现并发安全+懒加载(调用时执行)</span>
 
@@ -142,96 +142,96 @@
     kratos <span class="token operator">=</span> <span class="token function">new</span><span class="token punctuation">(</span>kratosGRPC<span class="token punctuation">)</span>
 <span class="token punctuation">)</span> 
 
-<span class="token keyword">type</span> kratosGRPC <span class="token keyword">struct</span><span class="token punctuation">{</span>
+<span class="token keyword">type</span> kratosGRPC <span class="token keyword">struct</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
   Client kratosGrpcClient
   mu sync<span class="token punctuation">.</span>Mutex
   <span class="token operator">...</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">GetClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token function">GetClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
   <span class="token keyword">return</span> kratos<span class="token punctuation">.</span><span class="token function">getClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>k <span class="token operator">*</span>kratosGRPC<span class="token punctuation">)</span><span class="token function">getClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">*</span>kratosGrpcClient<span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>k <span class="token operator">*</span>kratosGRPC<span class="token punctuation">)</span><span class="token function">getClient</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">*</span>kratosGrpcClient<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
   <span class="token comment" spellcheck="true">// client已经被初始化</span>
-  <span class="token keyword">if</span> k<span class="token punctuation">.</span>Client <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> k<span class="token punctuation">.</span>Client <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> k<span class="token punctuation">.</span>Client
-  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token punctuation">{</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token keyword">else</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     <span class="token comment" spellcheck="true">// 竞争抢锁初始化client</span>
     k<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
     <span class="token keyword">defer</span> k<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
        <span class="token comment" spellcheck="true">//  抢到锁后需要再判断</span>
-       <span class="token keyword">if</span> k<span class="token punctuation">.</span>Client <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+       <span class="token keyword">if</span> k<span class="token punctuation">.</span>Client <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
             <span class="token keyword">return</span> k<span class="token punctuation">.</span>Client
-       <span class="token punctuation">}</span>
+       <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
     <span class="token comment" spellcheck="true">// 建立连接</span>
     k<span class="token punctuation">.</span>Client <span class="token operator">=</span> grpc<span class="token punctuation">.</span><span class="token function">Dial</span><span class="token punctuation">(</span><span class="token operator">...</span><span class="token punctuation">)</span>
     <span class="token operator">...</span>
     <span class="token keyword">return</span> k<span class="token punctuation">.</span>client
-  <span class="token punctuation">}</span>
+  <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 
-<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>上面是一种实现方式，当然也可以进行一些小改动，比如实现并发安全用Once.Do代替sync.Mutex。这种建立方式比较主流</p>
 <h2 id="在某个特殊的需求下，可以这样生成单例"><a href="#在某个特殊的需求下，可以这样生成单例" class="headerlink" title="在某个特殊的需求下，可以这样生成单例"></a>在某个特殊的需求下，可以这样生成单例</h2><p>假设有个需求，经分析，要有多个job，每个job有固定的工作方式，  job需要并发处理多个task, 就把这些task交给worker, worker根据task中的数据固定调用job的方法执行。</p>
 <p>job涉及到数据库的数据处理，所以需要提供持久层服务，该服务最终会提供handle方法做固定的工作，由于我们只需要handle方法，所以可以隐藏持久层服务，具体方法是通过工厂方法只调用一次的性质初始化一次持久层服务，将持久层服务中的handle方法交给工厂方法的返回体job实例。由于handle被引用了，所以持久层的单例没有被GC回收，job.HandleFunc还是可以使用持久层提供的数据库连接的。这样，代码逻辑中只含有job、task、work。</p>
 <p>做法如下：</p>
 <pre class="line-numbers language-go"><code class="language-go"><span class="token keyword">type</span> HandleFunc <span class="token keyword">func</span> <span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">type</span> job <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+<span class="token keyword">type</span> job <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     Dsn <span class="token builtin">string</span>
     TableName <span class="token builtin">string</span>
     From <span class="token builtin">int</span>
     To <span class="token builtin">int</span>
     ConCurrentNum <span class="token builtin">int</span>
     HandleFunc HandleFunc
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> RWHandler <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> RWHandler <span class="token keyword">interface</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> userDataRWHandler <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> userDataRWHandler <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     <span class="token comment" spellcheck="true">//这里含有众多处理数据库连接的handler</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> adminDataRWHandler <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> adminDataRWHandler <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     <span class="token comment" spellcheck="true">//这里含有众多处理数据库连接的handler</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>handler userDataRWHandler<span class="token punctuation">)</span> <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>handler userDataRWHandler<span class="token punctuation">)</span> <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"userDataRWHandler handling..."</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token punctuation">(</span>handler adminDataRWHandler<span class="token punctuation">)</span> <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>handler adminDataRWHandler<span class="token punctuation">)</span> <span class="token function">Handle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"adminDataRWHandler handling..."</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">newUserDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> RWHandler<span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token operator">&amp;</span>userDataHandler<span class="token punctuation">{</span><span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">newAdminDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> RWHandler <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token operator">&amp;</span>adminDataHandler<span class="token punctuation">{</span><span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">type</span> Config <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token function">newUserDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> RWHandler<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token operator">&amp;</span>userDataHandler<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token function">newAdminDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span> RWHandler <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token operator">&amp;</span>adminDataHandler<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">type</span> Config <span class="token keyword">struct</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     HandlerName <span class="token builtin">string</span>
     Dsn <span class="token builtin">string</span>
     TableName <span class="token builtin">string</span>
     From <span class="token builtin">int</span>
     To <span class="token builtin">int</span>
     ConCurrentNum <span class="token builtin">int</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">newRWHandler</span><span class="token punctuation">(</span>handlerName <span class="token builtin">string</span><span class="token punctuation">)</span>RWHandler <span class="token punctuation">{</span>
-    <span class="token keyword">switch</span> handlerName <span class="token punctuation">{</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token function">newRWHandler</span><span class="token punctuation">(</span>handlerName <span class="token builtin">string</span><span class="token punctuation">)</span>RWHandler <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">switch</span> handlerName <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     <span class="token keyword">case</span> <span class="token string">"userDataRWHandler"</span><span class="token punctuation">:</span>
         <span class="token keyword">return</span> <span class="token function">newUserDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
     <span class="token keyword">case</span> <span class="token string">"adminDataRWHandler"</span><span class="token punctuation">:</span>
         <span class="token keyword">return</span> <span class="token function">newAdminDataHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
     <span class="token keyword">default</span><span class="token punctuation">:</span>
         <span class="token keyword">return</span> <span class="token boolean">nil</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-<span class="token keyword">func</span> <span class="token function">NewJob</span><span class="token punctuation">(</span>config Config<span class="token punctuation">)</span><span class="token operator">*</span>job<span class="token punctuation">{</span>
+    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token keyword">func</span> <span class="token function">NewJob</span><span class="token punctuation">(</span>config Config<span class="token punctuation">)</span><span class="token operator">*</span>job<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
     handler <span class="token operator">:=</span> <span class="token function">newRWHandler</span><span class="token punctuation">(</span>config<span class="token punctuation">.</span>HandlerName<span class="token punctuation">)</span>
-    <span class="token keyword">return</span> <span class="token operator">&amp;</span>job<span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token operator">&amp;</span>job<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
         Dsn<span class="token punctuation">:</span> config<span class="token punctuation">.</span>Dsn<span class="token punctuation">,</span>
         TableName<span class="token punctuation">:</span> config<span class="token punctuation">.</span>TableName<span class="token punctuation">,</span>
         From<span class="token punctuation">:</span> config<span class="token punctuation">.</span>From<span class="token punctuation">,</span>
         To<span class="token punctuation">:</span> config<span class="token punctuation">.</span>To<span class="token punctuation">,</span>
         ConCurrentNum<span class="token punctuation">:</span> config<span class="token punctuation">.</span>ConCurrentNum<span class="token punctuation">,</span>
         HandleFunc<span class="token punctuation">:</span> handler<span class="token punctuation">.</span>Handle<span class="token punctuation">,</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
         </div>
