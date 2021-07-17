@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78p2iu0002ojtx862t9yf0" class="article article-type-post" itemscope
+    <article id="post-ckr78t8nv0000tvtxf92269ln" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -143,37 +143,29 @@
 <p>context.WithValue 建议使用者自己定义的unexported类型当key，目的是利用interface{}的判断特性（go 类型的可判断性）,来防止冲突，这种冲突会产生是因为ctx.Value()实现点像js原型链，key在当前ctx中未匹配，就会到父ctx去找。因为设计用于包内传data, key必须得在包内能访问，如果用string int等基础类型，会导致访问到父ctx的value，与期望不符，而使用未导出的自定义类型能防止这种向上搜索。</p>
 <p>不能使用导出类型，只能在包内访问value, 这种软限制约束了context滥用，但要求看起来很高如果要用context跨包传递，该怎么办？（这种需求很实际，通常实现时我们不会把工厂函数和实际处理方法handler放在同一个包中，但handler需要工厂函数中的信息）</p>
 <p>如果需要传递的信息比较重要,类型也明确，同时又不需要麻烦地创建多个key，可以把这种context当成一个工具，同时指定唯一的key：</p>
-<div class="spoiler collapsed">
-    <div class="spoiler-title">
-        title
-    </div>
-    <div class="spoiler-content">
-        <pre class="line-numbers language-go"><span class="comment"><code class="language-go"><span class="comment">//util/ctxutil.go</span>
+<pre class="line-numbers language-go"><code class="language-go"><span class="token comment" spellcheck="true">//util/ctxutil.go</span>
 
-<span class="keyword">package</span> mycontext
-<span class="comment">// unexported, comparable</span>
-<span class="keyword">var</span> key = &<span class="keyword">struct</span>{}
+<span class="token keyword">package</span> mycontext
+<span class="token comment" spellcheck="true">// unexported, comparable</span>
+<span class="token keyword">var</span> key <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
 
-<span class="function"><span class="keyword">func</span> <span class="title">WithTags</span><span class="params">(ctx context.Context, tags <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span> <span class="title">context</span>.<span class="title">Context</span></span>{
-    <span class="keyword">if</span> ctx == <span class="literal">nil</span> {
-        ctx = context.Background()
-    }
-    <span class="keyword">return</span> context.WithValue(ctx, ctxMarkerKey, tags)
-}
-<span class="function"><span class="keyword">func</span> <span class="title">Extract</span><span class="params">(ctx context.Context)</span><span class="title">map</span>[<span class="title">string</span>]<span class="title">string</span></span>{
-  <span class="comment">// ctx is ptr</span>
-  <span class="keyword">if</span> ctx == <span class="literal">nil</span> {
-    <span class="keyword">return</span> <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)
-  }
-  <span class="keyword">if</span> value, ok := ctx.Value(key).(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>); ok {
-    <span class="keyword">return</span> value
-  }<span class="keyword">else</span> {
-    <span class="keyword">return</span> <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)
-  }
-}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-    </div>
-</div>
+<span class="token keyword">func</span> <span class="token function">WithTags</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">,</span> tags <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span> context<span class="token punctuation">.</span>Context<span class="token punctuation">{</span>
+    <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+        ctx <span class="token operator">=</span> context<span class="token punctuation">.</span><span class="token function">Background</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> context<span class="token punctuation">.</span><span class="token function">WithValue</span><span class="token punctuation">(</span>ctx<span class="token punctuation">,</span> ctxMarkerKey<span class="token punctuation">,</span> tags<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">func</span> <span class="token function">Extract</span><span class="token punctuation">(</span>ctx context<span class="token punctuation">.</span>Context<span class="token punctuation">)</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">// ctx is ptr</span>
+  <span class="token keyword">if</span> ctx <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">if</span> value<span class="token punctuation">,</span> ok <span class="token operator">:=</span> ctx<span class="token punctuation">.</span><span class="token function">Value</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span><span class="token punctuation">;</span> ok <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> value
+  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
         </div>
 

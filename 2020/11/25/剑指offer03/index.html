@@ -91,7 +91,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-ckr78p2ki000pojtxaarc0168" class="article article-type-post" itemscope
+    <article id="post-ckr78t8q0000otvtxexf60hah" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -184,27 +184,8 @@ func sort(nums []int, start, end int){
 func solve(nums []int, start, end int, p int)int{
     i := start
     j := end - 1
-    //坑点，要求i<=j
-    for i <end && j>=i {
-        if nums[i]<nums[p]{
-            i+=1
-        }else{
-            //交换
-            swap(nums, i, j)
-            j-=1
-        }
-    }
-    swap(nums, i, p)
-    return i
-}
-func partition(nums []int, start, end int)int{
-    return end
-}
-func swap(nums []int, i, j int){
-        t := nums[j]
-        nums[j] = nums[i]
-        nums[i] = t
-}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    //坑点，要求i<=j for i <end && j>=i {
+        if nums[i]<nums[p]{ i+="1" }else{ 交换 swap(nums, i, j) j-="1" } p) return i func partition(nums []int, start, end int)int{ swap(nums j int){ t :="nums[j]" nums[j]="nums[i]" nums[i]="t" }<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></nums[p]{></=j></code></pre>
 <p>结果超时，时间复杂度太高，说明不能用排序。</p>
 <h3 id="最后在书上看到了最优解-时间复杂度O-n-空间复杂度O-1"><a href="#最后在书上看到了最优解-时间复杂度O-n-空间复杂度O-1" class="headerlink" title="最后在书上看到了最优解 时间复杂度O(n), 空间复杂度O(1)"></a>最后在书上看到了最优解 时间复杂度O(n), 空间复杂度O(1)</h3><p>突破点在 <strong>数组 nums 里的所有数字都在 0～n-1 的范围内</strong> 这个条件中： 考虑把所有访问过的数字放到对应下标上，这种情况下若出现重复数字那会造成冲突，返回冲突值；若没有冲突，每次访问都会让一个数字归位，只会访问n次。</p>
 <pre class="line-numbers language-golang"><code class="language-golang">func findRepeatNumber(nums []int) int {
