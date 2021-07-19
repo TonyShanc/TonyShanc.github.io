@@ -69,7 +69,7 @@
   
 </head>
 
-<body style="background-color: #f0f3f6;">
+<body>
   
 
 
@@ -81,7 +81,7 @@
 <header class="header">
 
 <div class="logo-wrap"><a class="title" href="/"><div class="main">shanah's blog</div></a></div>
-<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/about/">关于</a></nav></header>
+<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/wiki/">项目</a></nav></header>
 
 <div class="widgets">
 <div class="widget-wrap" id="toc"><div class="widget-header cap dis-select"><span class="name">TOC</span></div><div class="widget-body fs14 post"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Consumer"><span class="toc-text">Consumer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Service"><span class="toc-text">Service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Route"><span class="toc-text">Route</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Plugin"><span class="toc-text">Plugin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Upstream"><span class="toc-text">Upstream</span></a></li></ol></div></div></div>
@@ -94,15 +94,14 @@
     <div class='l_main'>
       
 
-      <div style="background-color: #fff;">
-   
-  
-  
+      
+
+
 <div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div><div id="post-meta">Posted on&nbsp;<time datetime="2020-11-22T05:40:56.000Z">2020-11-22</time></div></div>
 
-  <article class='content md post'>
-  <h1 class="article-title"><span>网关kong 中的概念consumer service route plugin实践与理解</span></h1>
-  <p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
+<article class='content md post'>
+<h1 class="article-title"><span>网关kong 中的概念consumer service route plugin实践与理解</span></h1>
+<p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
 <span id="more"></span>
 <p>传送门：</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/qianyugang/kong-docs-cn">kong网关中文文档</a></p>
@@ -214,23 +213,25 @@
 </blockquote>
 <p>很抽象的概念，其实也很好理解，类比http中的Host请求头（和route中的host一样），这个host可以理解为一个虚拟主机，Upstream中的实体和host值同名，创建Upstream，是为了控制向同名host发起的请求，或者对同名host的route做一些配置，健康检查之类的。</p>
 <link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
-  
+
 <div class="article-footer reveal fs14"><section id="license"><div class="header"><span>License</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
 </div></section></div>
 
-  </article>
-  
+</article>
+
 <div class="related-wrap reveal" id="read-next"><section class="header cap theme"><span>READ NEXT</span></section><section class="body fs14"><a id="next" href="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/">自动驾驶模拟平台carla（一）安装<span class="note">Older</span></a><div class="line"></div><a id="prev" href="/2020/11/25/%E5%89%91%E6%8C%87offer03/">剑指offer03<span class="note">Newer</span></a><div class="line"></div><a id="more" href="/archives">All Articles</a></section></div>
 
-  
-
-
-  
 
 
 
- 
-</div>
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="sitemap"><div class="sitemap-group"><span class="fs14">社交</span><a href="/">友链</a><a href="/">留言板</a><a href="/">Spotify</a><a href="/">Unsplash</a></div><div class="sitemap-group"><span class="fs14">更多</span><a href="/">关于本站</a><a href="/">GitHub</a><a href="/">GitLab</a></div></div><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
+<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+</div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
   <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
@@ -240,10 +241,151 @@
 
     </div>
   </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
+  stellar.config = {
+    date_suffix: {
+      just: 'Just',
+      min: 'minutes ago',
+      hour: 'hours ago',
+      day: 'days ago',
+      month: 'months ago',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
+  };
+
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper/swiper-bundle.min.css","js":"https://unpkg.com/swiper/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
 </body>
 <div class="footer" style="font-size: 13px;width: 100%; position: fixed; left: 0; bottom: 0; z-index: -1; font-family: Oswald, sans-serif;font: 14px/1 'Microsoft Yahei',PingFangSC,Microsoft Sans Serif,sans-serif;    font-variant-ligatures: normal;    font-variant-caps: normal;    font-variant-numeric: normal;    font-variant-east-asian: normal;    font-weight: normal;    font-stretch: normal;    font-size: 14px;-webkit-font-smoothing: antialiased;text-rendering: optimizeLegibility;">
   <div class="footer-wave" style="height: auto;">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 520"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,800L1380,800C1320,800,800,800,800,800C960,800,800,800,800,800C600,3800,800,800,800,800C240,800,800,800,800,800L0,800Z"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 420"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,800L1380,800C1320,800,800,800,800,800C960,800,800,800,800,800C600,3800,800,800,800,800C240,800,800,800,800,800L0,800Z"></path></svg>
   </div>
 </div>
 </html>

