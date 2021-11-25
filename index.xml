@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 25 Nov 2021 15:55:17 +0800</lastBuildDate>
-    
-	<atom:link href="http://tonyshanc.github.io/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 25 Nov 2021 15:55:17 +0800</lastBuildDate><atom:link href="http://tonyshanc.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>shenme玩意儿</title>
       <link>http://tonyshanc.github.io/posts/my-first-post/</link>
