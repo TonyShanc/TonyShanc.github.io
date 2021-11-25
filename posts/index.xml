@@ -10,19 +10,13 @@
 		<atom:link href="https://tonyshanc.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
-			<title>what?</title>
+			<title>for test</title>
 			<link>https://tonyshanc.github.io/posts/my-first-post/</link>
 			<pubDate>Thu, 25 Nov 2021 15:55:17 +0800</pubDate>
 			
 			<guid>https://tonyshanc.github.io/posts/my-first-post/</guid>
-			<description>111你好 ?? 还改不了？ 镇有你的 我台南了 为舍么要hugo 再试是</description>
-			<content type="html"><![CDATA[<p>111你好
-??
-还改不了？
-镇有你的
-我台南了
-为舍么要hugo
-再试是</p>
+			<description>我觉得可以了</description>
+			<content type="html"><![CDATA[<p>我觉得可以了</p>
 ]]></content>
 		</item>
 		
