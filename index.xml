@@ -19,10 +19,10 @@
     
     <item>
       <title>markdown test</title>
-      <link>https://tonyshanc.github.io/posts/test-post/</link>
+      <link>https://tonyshanc.github.io/posts/markdown-test/</link>
       <pubDate>Wed, 24 Nov 2021 19:53:31 +0800</pubDate>
       
-      <guid>https://tonyshanc.github.io/posts/test-post/</guid>
+      <guid>https://tonyshanc.github.io/posts/markdown-test/</guid>
       <description>代码片段
 import( &amp;quot;fmt&amp;quot; ) func main() { fmt.Println(&amp;quot;hello world&amp;quot;) } 1 2 3 4  一 二  </description>
     </item>
