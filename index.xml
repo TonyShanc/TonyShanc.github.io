@@ -18,13 +18,17 @@
     </item>
     
     <item>
-      <title>markdown test</title>
+      <title>markdown 显示效果测试</title>
       <link>https://shankisme.com/posts/markdown-test/</link>
       <pubDate>Wed, 24 Nov 2021 19:53:31 +0800</pubDate>
       
       <guid>https://shankisme.com/posts/markdown-test/</guid>
       <description>代码片段
-1 2 3 4 5 6 7  import( &amp;#34;fmt&amp;#34; ) func main() { fmt.Println(&amp;#34;hello world&amp;#34;) }   1 2 3 4  一 二  </description>
+1 2 3 4 5 6 7  import( &amp;#34;fmt&amp;#34; ) func main() { fmt.Println(&amp;#34;hello world&amp;#34;) }   1 2 3 4  一 二  链接 这里是链接 内联元素 请说你好哈哈 请说你好哈
+行独占 example:
+echo &#39;line&#39;  图片 Hugo has figure shortcode built in, so you can easily add figcaptions or hyperlink rel attributes to images. Documentations can be found here:
+https://gohugo.io/content-management/shortcodes/#figure
+This theme has 3 CSS classes made for figure elements:</description>
     </item>
     
   </channel>
