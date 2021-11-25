@@ -2,18 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://tonyshanc.github.io/posts/</loc>
+    <loc>https://tonyshanc.github.io/posts/</loc>
     <lastmod>2021-11-25T15:55:17+08:00</lastmod>
   </url><url>
-    <loc>http://tonyshanc.github.io/</loc>
+    <loc>https://tonyshanc.github.io/</loc>
     <lastmod>2021-11-25T15:55:17+08:00</lastmod>
   </url><url>
-    <loc>http://tonyshanc.github.io/posts/my-first-post/</loc>
+    <loc>https://tonyshanc.github.io/posts/my-first-post/</loc>
     <lastmod>2021-11-25T15:55:17+08:00</lastmod>
   </url><url>
-    <loc>http://tonyshanc.github.io/posts/test-post/</loc>
+    <loc>https://tonyshanc.github.io/posts/test-post/</loc>
     <lastmod>2021-11-24T19:53:31+08:00</lastmod>
   </url><url>
-    <loc>http://tonyshanc.github.io/tags/</loc>
+    <loc>https://tonyshanc.github.io/tags/</loc>
   </url>
 </urlset>
