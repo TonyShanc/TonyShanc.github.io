@@ -27,16 +27,29 @@
 			
 			<guid>https://shankisme.com/posts/markdown-test/</guid>
 			<description>代码片段
-import( &amp;quot;fmt&amp;quot; ) func main() { fmt.Println(&amp;quot;hello world&amp;quot;) } 1 2 3 4  一 二  </description>
+1 2 3 4 5 6 7  import( &amp;#34;fmt&amp;#34; ) func main() { fmt.Println(&amp;#34;hello world&amp;#34;) }   1 2 3 4  一 二  </description>
 			<content type="html"><![CDATA[<p>代码片段</p>
-<pre tabindex="0"><code>import(
-    &quot;fmt&quot;
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">import(
+    &#34;fmt&#34;
 )
 
 func main() {
-    fmt.Println(&quot;hello world&quot;)
+    fmt.Println(&#34;hello world&#34;)
 }
-</code></pre><h1 id="1">1</h1>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="1">1</h1>
 <h2 id="2">2</h2>
 <h3 id="3">3</h3>
 <h4 id="4">4</h4>

@@ -24,7 +24,7 @@
       
       <guid>https://shankisme.com/posts/markdown-test/</guid>
       <description>代码片段
-import( &amp;quot;fmt&amp;quot; ) func main() { fmt.Println(&amp;quot;hello world&amp;quot;) } 1 2 3 4  一 二  </description>
+1 2 3 4 5 6 7  import( &amp;#34;fmt&amp;#34; ) func main() { fmt.Println(&amp;#34;hello world&amp;#34;) }   1 2 3 4  一 二  </description>
     </item>
     
   </channel>
