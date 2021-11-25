@@ -27,33 +27,21 @@
 			
 			<guid>https://shankisme.com/posts/markdown-test/</guid>
 			<description>代码片段
-1 2 3 4 5 6 7  import( &amp;#34;fmt&amp;#34; ) func main() { fmt.Println(&amp;#34;hello world&amp;#34;) }   1 2 3 4  一 二  链接 这里是链接 内联元素 请说你好哈哈 请说你好哈
+import( &amp;#34;fmt&amp;#34; ) func main() { fmt.Println(&amp;#34;hello world&amp;#34;) } 1 2 3 4  一 二  链接 这里是链接 内联元素 请说你好哈哈 请说你好哈
 行独占 example:
 echo &#39;line&#39;  图片 Hugo has figure shortcode built in, so you can easily add figcaptions or hyperlink rel attributes to images. Documentations can be found here:
 https://gohugo.io/content-management/shortcodes/#figure
-This theme has 3 CSS classes made for figure elements:</description>
+This theme has 3 CSS classes made for figure elements:
+ big: images will break the width limit of main content area.</description>
 			<content type="html"><![CDATA[<p>代码片段</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span><span class="p">(</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span><span class="p">(</span>
     <span class="s">&#34;fmt&#34;</span>
 <span class="p">)</span>
 
 <span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><h1 id="1">1</h1>
+</code></pre></div><h1 id="1">1</h1>
 <h2 id="2">2</h2>
 <h3 id="3">3</h3>
 <h4 id="4">4</h4>
@@ -174,23 +162,12 @@ This theme has 3 CSS classes made for figure elements:</description>
 </li>
 </ol>
 <p>Syntax Highlighting:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">,</span> <span class="nx">sum</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">num1</span><span class="p">,</span> <span class="nx">num2</span><span class="p">,</span> <span class="nx">sum</span>
 <span class="nx">num1</span> <span class="o">=</span> <span class="nx">prompt</span><span class="p">(</span><span class="s2">&#34;Enter first number&#34;</span><span class="p">)</span>
 <span class="nx">num2</span> <span class="o">=</span> <span class="nx">prompt</span><span class="p">(</span><span class="s2">&#34;Enter second number&#34;</span><span class="p">)</span>
 <span class="nx">sum</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">num1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">num2</span><span class="p">)</span> <span class="c1">// &#34;+&#34; means &#34;add&#34;
 </span><span class="c1"></span><span class="nx">alert</span><span class="p">(</span><span class="s2">&#34;Sum = &#34;</span> <span class="o">+</span> <span class="nx">sum</span><span class="p">)</span>  <span class="c1">// &#34;+&#34; means combine into a string
-</span></code></pre></td></tr></table>
-</div>
-</div><section class="footnotes" role="doc-endnotes">
+</span></code></pre></div><section class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
