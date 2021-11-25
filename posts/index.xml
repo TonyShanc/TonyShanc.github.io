@@ -1,31 +1,57 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Posts on shank</title>
-    <link>https://tonyshanc.github.io/posts/</link>
-    <description>Recent content in Posts on shank</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 25 Nov 2021 15:55:17 +0800</lastBuildDate><atom:link href="https://tonyshanc.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>what?</title>
-      <link>https://tonyshanc.github.io/posts/my-first-post/</link>
-      <pubDate>Thu, 25 Nov 2021 15:55:17 +0800</pubDate>
-      
-      <guid>https://tonyshanc.github.io/posts/my-first-post/</guid>
-      <description>111你好 ?? 还改不了？ 镇有你的 我台南了 为舍么要hugo 再试是</description>
-    </item>
-    
-    <item>
-      <title>markdown test</title>
-      <link>https://tonyshanc.github.io/posts/markdown-test/</link>
-      <pubDate>Wed, 24 Nov 2021 19:53:31 +0800</pubDate>
-      
-      <guid>https://tonyshanc.github.io/posts/markdown-test/</guid>
-      <description>代码片段
+	<channel>
+		<title>Posts on shank</title>
+		<link>https://tonyshanc.github.io/posts/</link>
+		<description>Recent content in Posts on shank</description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>en-us</language>
+		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+		<lastBuildDate>Thu, 25 Nov 2021 15:55:17 +0800</lastBuildDate>
+		<atom:link href="https://tonyshanc.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>what?</title>
+			<link>https://tonyshanc.github.io/posts/my-first-post/</link>
+			<pubDate>Thu, 25 Nov 2021 15:55:17 +0800</pubDate>
+			
+			<guid>https://tonyshanc.github.io/posts/my-first-post/</guid>
+			<description>111你好 ?? 还改不了？ 镇有你的 我台南了 为舍么要hugo 再试是</description>
+			<content type="html"><![CDATA[<p>111你好
+??
+还改不了？
+镇有你的
+我台南了
+为舍么要hugo
+再试是</p>
+]]></content>
+		</item>
+		
+		<item>
+			<title>markdown test</title>
+			<link>https://tonyshanc.github.io/posts/markdown-test/</link>
+			<pubDate>Wed, 24 Nov 2021 19:53:31 +0800</pubDate>
+			
+			<guid>https://tonyshanc.github.io/posts/markdown-test/</guid>
+			<description>代码片段
 import( &amp;quot;fmt&amp;quot; ) func main() { fmt.Println(&amp;quot;hello world&amp;quot;) } 1 2 3 4  一 二  </description>
-    </item>
-    
-  </channel>
+			<content type="html"><![CDATA[<p>代码片段</p>
+<pre tabindex="0"><code>import(
+    &quot;fmt&quot;
+)
+
+func main() {
+    fmt.Println(&quot;hello world&quot;)
+}
+</code></pre><h1 id="1">1</h1>
+<h2 id="2">2</h2>
+<h3 id="3">3</h3>
+<h4 id="4">4</h4>
+<ul>
+<li>一</li>
+<li>二</li>
+</ul>
+]]></content>
+		</item>
+		
+	</channel>
 </rss>
