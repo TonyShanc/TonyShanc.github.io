@@ -7,7 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Thu, 25 Nov 2021 15:55:17 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 Nov 2021 01:11:42 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>https://shankisme.com/about/</link>
+      <pubDate>Sat, 27 Nov 2021 01:11:42 +0800</pubDate>
+      
+      <guid>https://shankisme.com/about/</guid>
+      <description>你好呀，我叫shank
+苏州人，2021年本科毕业于华东师范大学，软件工程专业，主语言golang，爱折腾k8s，持续关注CNCF
+目前在上海某互联网企业从事后端基础架构相关工作
+如有任何问题欢迎通过发邮件或留言方式和我交流</description>
+    </item>
+    
     <item>
       <title>for test</title>
       <link>https://shankisme.com/posts/my-first-post/</link>
