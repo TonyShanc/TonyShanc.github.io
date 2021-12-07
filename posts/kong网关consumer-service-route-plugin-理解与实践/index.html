@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="kong网关consumer service route plugin 理解与实践">
+<meta itemprop="description" content="近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+传送门：
+kong网关中文文档
+kong官网
+kong官方文档
+前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+ （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
+Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
+请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
+kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT"><meta itemprop="datePublished" content="2020-11-22T13:40:56+08:00" />
+<meta itemprop="dateModified" content="2020-11-22T13:40:56+08:00" />
+<meta itemprop="wordCount" content="311">
+<meta itemprop="keywords" content="网关,微服务," /><meta property="og:title" content="kong网关consumer service route plugin 理解与实践" />
+<meta property="og:description" content="近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+传送门：
+kong网关中文文档
+kong官网
+kong官方文档
+前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+ （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
+Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
+请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
+kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-11-22T13:40:56+08:00" />
+<meta property="article:modified_time" content="2020-11-22T13:40:56+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="kong网关consumer service route plugin 理解与实践"/>
+<meta name="twitter:description" content="近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+传送门：
+kong网关中文文档
+kong官网
+kong官方文档
+前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+ （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
+Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
+请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
+kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>kong网关consumer service route plugin 理解与实践</title>
+	<link rel="stylesheet" href="https://shankisme.com/css/style.min.b1b8a0e19eabe0807fd81b41979d5ea6898b9d3e8cc583d45a28ff5f7e79e10d.css" integrity="sha256-sbig4Z6r4IB/2BtBl51epomLnT6MxYPUWij/X3554Q0=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://shankisme.com">shank</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://shankisme.com/posts/">Posts</a>
+				<a href="https://shankisme.com/about/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="theme-btn" class="hdr-btn dark">
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather sun" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather moon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+				</button>
+				<span class="hdr-social hide-in-mobile"><a href="mailto:845700113@qq.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://github.com/tonyshanc" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://shankisme.com/posts/">Posts</a></li>
+			<li><a href="https://shankisme.com/about/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Nov 22, 2020</span></div>
+				<h1>kong网关consumer service route plugin 理解与实践</h1>
+			</header>
+			<div class="content">
+				<p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
+<p>传送门：</p>
+<p><a href="https://github.com/qianyugang/kong-docs-cn">kong网关中文文档</a></p>
+<p><a href="https://konghq.com/">kong官网</a></p>
+<p><a href="https://docs.konghq.com/">kong官方文档</a></p>
+<h1 id="前言">前言<a href="#前言" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<p>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。</p>
+<h1 id="理论">理论<a href="#理论" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<h2 id="consumer">Consumer<a href="#consumer" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<blockquote>
+<p>The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.</p>
+</blockquote>
+<p>（官方原文解释中的消费者和数据库的映射这里暂时不涉及）</p>
+<p>consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。</p>
+<p>Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。</p>
+<p>请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。</p>
+<p>kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT</p>
+<p>他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT</p>
+<p>（这里使用kong图形界面KONGA实践）</p>
+<img src="/img/kong/1.png" style="zoom:67%;" />
+<img src="/img/kong/2.png" style="zoom: 33%;" />
+<p>JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</p>
+<p>JWT最终的格式简化为三段式： base64「algorithm」. base64「payload」. base64「最终签名」 。</p>
+<p>payload中存放key以及一些不敏感信息 username, expire time等，最终签名是使用第一段的hash算法对第二段的payload哈希后的base64值。</p>
+<p>JWT token 可以在JWT 官网去生成，当然最好是使用JWT库封装接口传参生成JWT token。</p>
+<p>请求时，我们使用生成的JWT token加入请求头Authorization中, 这边提一句，请求kong的路由需要先用JWT插件开启JWT验证，这样kong才能主动检查JWT token，JWT验证的粒度可以为全局，可以负载在route上，也可以在service上（对route service不清晰的同学可以看关于他们的解释），这里我们在请求的route ping上开启JWT验证：</p>
+<img src="/img/kong/4.png" style="zoom: 50%;" />
+<img src="/img/kong/3.png" style="zoom: 50%;" />
+<p>这里保持所有为默认设置就可以了。其中迷惑性较大的是consumer 参数，参数下面的解释意思是所有匿名请求来源都会被标记为user， 该参数留白的话会将所有user标记为consumer, 也就是说请求头必须带上JWT token 否则不能被识别为consumer，请求会被kong拦截，<strong>如果填上了consumer_id，并且身份验证开启了才会奏效，说的人很懵，经过一番测试下来，发现填和不填，效果是一样的</strong>。</p>
+<p>上面的consumer参数我设置成留白了，看看会发生什么：</p>
+<img src="/img/kong/7.png" style="zoom: 45%;" />
+<img src="/img/kong/6.png" style="zoom: 42%;" />
+<p>未带上JWT token的请求被拦截，返回401鉴权失败，带上JWT token的请求被放行，请求到了网页</p>
+<p>我们把test route上的JWT插件consumer填上一个consumer_id， 看看会发生什么：</p>
+<img src="/img/kong/8.png" style="zoom: 42%;" />
+<img src="/img/kong/9.png" style="zoom: 42%;" />
+<p>第一个token是被放行的consumer的JWT token</p>
+<p>第二个token是其他consumer的JWT token</p>
+<p>不传token:</p>
+<img src="/img/kong/10.png" style="zoom: 42%;" />
+<p>传第一个token:</p>
+<img src="/img/kong/11.png" style="zoom: 42%;" />
+<p>传第二个token:</p>
+<img src="/img/kong/14.png" style="zoom: 42%;" />
+<p>可见，即使填入了consumer_id, 其他consumer照样会被放行，和留白是一样的效果，唯一区别是带上其他consumer的token的user是否会被标记为其他consumer?</p>
+<p>下面继续实践：</p>
+<p>开启Acl，把被放行的consumer所在组(admin)标记为allow， 其他consumer的所在组（user）标记为deny</p>
+<img src="/img/kong/12.png" style="zoom: 42%;" />
+<img src="/img/kong/13.png" style="zoom: 42%;" />
+<p>这时候用第二个token继续请求，</p>
+<img src="/img/kong/15.png" style="zoom: 42%;" />
+<p>发现其他consumer被拦截了，也就是说其他consumer的身份被识别出来了。这就证明即使JWT插件填上了consumer_id，该插件并不会针对这个consumer进行身份识别，其他consumer不进行身份识别，而是和留白情况下的逻辑是一样的，所以这个参数是多余的，建议KONGA删除。因为consumer_id只会在「在consumer下创建JWT验证插件时生成，用于consumer的身份验证」，在一个route的JWT插件中设置consumer_id不符合逻辑。</p>
+<h2 id="service">Service<a href="#service" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<blockquote>
+<p>Service entities, as the name implies, are abstractions of each of your own upstream services. Examples of Services would be a data transformation microservice, a billing API, etc.</p>
+</blockquote>
+<p>Service译作服务，不同于kubernetes的service, k8s的service是一个实体服务，里面包括实体pod进行逻辑处理，而kong的服务属于逻辑上的概念，要知道，kong是个api网关，大多数情况下在进行流量转发，因此kong的service 引用的是其他实体服务访问url，这里创建一个testApi service:</p>
+<img src="/img/kong/16.png" style="zoom: 42%;" />
+<p>这个service配置了访问链接的host, protocol, port, path等资源定位参数，做了个套娃，形成了自己的东西，美其名曰流量转发。当然这个是有好处的哈，不是每个实体服务都在公网上。现有一种情况：kong 和 其他实体服务位于同一内网内，路由器网关只允许公网请求访问kong, 其他实体服务访问不到，这样一来就只暴露了网关kong，保护了内部服务。针对多个同名服务，kong还能进行负载均衡，kong这个功能特别强大，之前我们说到consumer能用来对请求分门别类，kong同样可以根据consumer做负载均衡限制，例如第一版api请求标记为consumer v1, 经过route负载均衡后会访问v1 api的service, consumer v2 访问同样route会打到提供v2api服务的service，各种功能结合起来非常有意思。</p>
+<h2 id="route">Route<a href="#route" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<blockquote>
+<p>The Route entities defines rules to match client requests. Each Route is associated with a Service, and a Service may have multiple Routes associated to it. Every request matching a given Route will be proxied to its associated Service.</p>
+</blockquote>
+<p>route顾名思义，路由，提供流量入口。kong的路由形式挺多的，有host path method可供设置：</p>
+<img src="/img/kong/17.png" style="zoom: 42%;" />
+<p>他们是逻辑and的关系，只有全满足时才会访问到route，如果一个请求有多个route可以满足，kong会计算路由的优先级，优先级越高就访问哪个route，优先级的计算也比较简单，就是看请求命中route的配置的个数，个数越多，优先级越高。例如请求命中host和path的路由的优先级比只命中path的优先级高。</p>
+<p>route可以提供负载均衡，就是说一个route可以对应多个service。</p>
+<p>当然route的配置还有很多，供大家一一挖掘，这里不展开了。</p>
+<h2 id="plugin">Plugin<a href="#plugin" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<blockquote>
+<p>A Plugin entity represents a plugin configuration that will be executed during the HTTP request/response workflow, and it&rsquo;s how you can add functionalities to APIs that run behind Kong, like Authentication or Rate Limiting for example.</p>
+</blockquote>
+<p>plugin即插件，主流使用lua开发（kong是openResty项目 nginx+lua），插件开发非常灵活，首先因为openresty提供了非常多的第三方库供使用，并且可以触及kong接收到的请求的生命周期，基于生命周期开发，可细粒度控制各个环节，几乎任何功能都能做到。</p>
+<p>具体可以查看中文文档中的kong开发套件。</p>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-client.md">kong.client</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-ctx.md">kong.ctx</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-ip.md">kong.ip</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-log.md">kong.log</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-node.md">kong.node</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-request.md">kong.request</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-response.md">kong.response</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-router.md">kong.router</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-service.md">kong.service</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-service-request.md">kong.service.request</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-service-response.md">kong.service.response</a></li>
+<li><a href="https://github.com/qianyugang/kong-docs-cn/blob/master/GUIDES&amp;REFERENCES/PDK/kong-table.md">kong.table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="upstream">Upstream<a href="#upstream" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<blockquote>
+<p>The upstream object represents a virtual hostname and can be used to loadbalance incoming requests over multiple services (targets). So for example an upstream named <code>service.v1.xyz</code> with an API object created with an <code>upstream_url=https://service.v1.xyz/some/path</code>. Requests for this API would be proxied to the targets defined within the upstream.</p>
+</blockquote>
+<p>很抽象的概念，其实也很好理解，类比http中的Host请求头（和route中的host一样），这个host可以理解为一个虚拟主机，Upstream中的实体和host值同名，创建Upstream，是为了控制向同名host发起的请求，或者对同名host的route做一些配置，健康检查之类的。</p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/%E7%BD%91%E5%85%B3">网关</a></span><span class="tag"><a href="https://shankisme.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>311 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-11-22 05:40 &#43;0000</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title">Table of Contents</div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#consumer">Consumer</a></li>
+    <li><a href="#service">Service</a></li>
+    <li><a href="#route">Route</a></li>
+    <li><a href="#plugin">Plugin</a></li>
+    <li><a href="#upstream">Upstream</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="to-top">
+			<i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></i>
+		</div>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://shankisme.com/posts/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%B1%BD%E8%BD%A6can%E6%80%BB%E7%BA%BF%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;Newer</span><br><span>汽车CAN总线复习笔记</span>
+			</a>
+			<a class="prev-post" href="https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>pwn实践记录--rop入门</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://utteranc.es/client.js"
+        repo="playHing/blog"
+        issue-term="pathname"
+        crossorigin="anonymous"
+        async>
+</script></div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://shankisme.com/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://shankisme.com/js/bundle.min.a0bd26cee39afcbb1504c0ffa991736f16c2439e577a925a0a9a3d0650cef15c.js" integrity="sha256-oL0mzuOa/LsVBMD/qZFzbxbCQ55XepJaCpo9BlDO8Vw=" crossorigin="anonymous"></script>
+	
+	<script src="https://shankisme.com/js/theme-control.min.03a2a6e81dcb3d6cd8e354efdca3cff8a51eb0685d8805c580acb9e0de51efda.js" integrity="sha256-A6Km6B3LPWzY41Tv3KPP+KUesGhdiAXFgKy54N5R79o=" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

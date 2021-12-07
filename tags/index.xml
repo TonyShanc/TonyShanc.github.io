@@ -35,5 +35,68 @@
       <description></description>
     </item>
     
+    <item>
+      <title>golang</title>
+      <link>https://shankisme.com/tags/golang/</link>
+      <pubDate>Fri, 22 Jan 2021 01:41:04 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CAN总线</title>
+      <link>https://shankisme.com/tags/can%E6%80%BB%E7%BA%BF/</link>
+      <pubDate>Sat, 16 Jan 2021 20:45:02 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/can%E6%80%BB%E7%BA%BF/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>微服务</title>
+      <link>https://shankisme.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+      <pubDate>Sun, 22 Nov 2020 13:40:56 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>网关</title>
+      <link>https://shankisme.com/tags/%E7%BD%91%E5%85%B3/</link>
+      <pubDate>Sun, 22 Nov 2020 13:40:56 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/%E7%BD%91%E5%85%B3/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ctf</title>
+      <link>https://shankisme.com/tags/ctf/</link>
+      <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/ctf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pwn</title>
+      <link>https://shankisme.com/tags/pwn/</link>
+      <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/pwn/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>https://shankisme.com/tags/python/</link>
+      <pubDate>Tue, 25 Feb 2020 19:03:01 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/python/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

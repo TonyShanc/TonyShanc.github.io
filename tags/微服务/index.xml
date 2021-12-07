@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>微服务 on shank</title>
+    <link>https://shankisme.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+    <description>Recent content in 微服务 on shank</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Sun, 22 Nov 2020 13:40:56 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kong网关consumer service route plugin 理解与实践</title>
+      <link>https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sun, 22 Nov 2020 13:40:56 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/</guid>
+      <description>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+传送门：
+kong网关中文文档
+kong官网
+kong官方文档
+前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+ （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
+Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
+请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
+kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT</description>
+    </item>
+    
+  </channel>
+</rss>

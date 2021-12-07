@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on shank</title>
+    <link>https://shankisme.com/tags/python/</link>
+    <description>Recent content in python on shank</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
+    <lastBuildDate>Tue, 25 Feb 2020 19:03:01 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>pwntools下踩的坑</title>
+      <link>https://shankisme.com/posts/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/</link>
+      <pubDate>Tue, 25 Feb 2020 19:03:01 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/</guid>
+      <description>纯pwn小白在疫情期间无聊，于是开始玩起了pwn。期间在i春秋,freebuf，知乎上随便看了几篇入门手册，难受的是技术活什么都看不懂。。距离上次接触汇编是大一下学期吧，当时计算机系统的实践课程要求做某常青藤的bomblab,当时跟着大佬的步骤勉强完成三关。探索的过程很累，尤其是在汇编知识还没消化完，就去做ret2somefunc的题，一个字：难，两个字：难顶。
+废话不多说，下面记录配pwntools环境踩的坑。当然踩坑还是因为没有先好好读官方文档。
+0x00 介绍 pwntools(v2.0)是编写漏洞利用脚本的python库，设计者将它分为两个模块：pwnlib与pwn。 pwnlib是个干净的模块，适合初学者快速入门。而pwn是打CTF专用的工具箱，是pwnlib的超集，功能更多，也更难入门。具体介绍请看pwntools文档。
+0x01 pwntools不适配windows中的python。 我先尝试在windows环境下pip install pwn。很快就装好了，本以为直接运行python脚本就大功告成了，结果编译器告诉我：
+行吧，缺东西，咱用pip补上，但是发现_curses仅支持linux，巧的是在win平台上有对应轮子。然后还是会有问题，就开始无限打补丁。。当然最后脑子没抽到底，换到了linux内,这里推荐ubuntu linux 64。
+0x02 要想方便流畅写exp，最好装在python2内。 为什么？因为从python3开始，str和bytes的边界不再模糊。python2中 str+bytes能合并成bytes，默认将str以ascii编码解码，而python3中，除非加法重定向，否则无法合并成统一格式。所以在python3中要想合并str和bytes。只能str.encode(&#39;ascii&#39;)+bytes或者str.encode+bytes.decode(&#39;ascii&#39;)
+0x03 pwntools不适合装在32位系统中 该坑是我在ubuntu 32安装pwntools遇到的，执行exp会有警告，pwntools仍然会起作用，但是具体会产生什么影响我也不清楚，因为当时还在写最简单的exp, 栈溢出攻击，ret2shellcode攻击。
+另外，pwntools真的是非常好的工具，接口很齐全，谁用谁知道。
+完。</description>
+    </item>
+    
+  </channel>
+</rss>
