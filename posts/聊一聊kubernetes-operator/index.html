@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="聊一聊kubernetes operator">
+<meta itemprop="description" content="前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师。
+这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
+得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd&#43;controller了。
+为了让看官更好的了解operator（controller &#43; crd &#43; cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
+声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。
+提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
+而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
+这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
+type Pod struct { metav1.TypeMeta `json:&#34;,inline&#34;` metav1.ObjectMeta `json:&#34;metadata,omitempty&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;` Spec PodSpec `json:&#34;spec,omitempty&#34; protobuf:&#34;bytes,2,opt,name=spec&#34;` Status PodStatus `json:&#34;status,omitempty&#34; protobuf:&#34;bytes,3,opt,name=status&#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
+执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
+还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
+然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
+crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化实现，与对象，对象实例之间区别类似。
+我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：
+  依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化"><meta itemprop="datePublished" content="2021-12-07T20:13:53+08:00" />
+<meta itemprop="dateModified" content="2021-12-07T20:13:53+08:00" />
+<meta itemprop="wordCount" content="107">
+<meta itemprop="keywords" content="untagged," /><meta property="og:title" content="聊一聊kubernetes operator" />
+<meta property="og:description" content="前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师。
+这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
+得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd&#43;controller了。
+为了让看官更好的了解operator（controller &#43; crd &#43; cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
+声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。
+提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
+而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
+这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
+type Pod struct { metav1.TypeMeta `json:&#34;,inline&#34;` metav1.ObjectMeta `json:&#34;metadata,omitempty&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;` Spec PodSpec `json:&#34;spec,omitempty&#34; protobuf:&#34;bytes,2,opt,name=spec&#34;` Status PodStatus `json:&#34;status,omitempty&#34; protobuf:&#34;bytes,3,opt,name=status&#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
+执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
+还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
+然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
+crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化实现，与对象，对象实例之间区别类似。
+我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：
+  依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-12-07T20:13:53+08:00" />
+<meta property="article:modified_time" content="2021-12-07T20:13:53+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="聊一聊kubernetes operator"/>
+<meta name="twitter:description" content="前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师。
+这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
+得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd&#43;controller了。
+为了让看官更好的了解operator（controller &#43; crd &#43; cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
+声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。
+提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
+而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
+这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
+type Pod struct { metav1.TypeMeta `json:&#34;,inline&#34;` metav1.ObjectMeta `json:&#34;metadata,omitempty&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;` Spec PodSpec `json:&#34;spec,omitempty&#34; protobuf:&#34;bytes,2,opt,name=spec&#34;` Status PodStatus `json:&#34;status,omitempty&#34; protobuf:&#34;bytes,3,opt,name=status&#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
+执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
+还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
+然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
+crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化实现，与对象，对象实例之间区别类似。
+我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：
+  依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化"/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>聊一聊kubernetes operator</title>
+	<link rel="stylesheet" href="https://shankisme.com/css/style.min.b1b8a0e19eabe0807fd81b41979d5ea6898b9d3e8cc583d45a28ff5f7e79e10d.css" integrity="sha256-sbig4Z6r4IB/2BtBl51epomLnT6MxYPUWij/X3554Q0=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://shankisme.com">shank</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://shankisme.com/posts/">Posts</a>
+				<a href="https://shankisme.com/about/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="theme-btn" class="hdr-btn dark">
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather sun" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather moon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+				</button>
+				<span class="hdr-social hide-in-mobile"><a href="mailto:845700113@qq.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://github.com/tonyshanc" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://shankisme.com/posts/">Posts</a></li>
+			<li><a href="https://shankisme.com/about/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Dec 7, 2021</span></div>
+				<h1>聊一聊kubernetes operator</h1>
+			</header>
+			<div class="content">
+				<h1 id="前言">前言<a href="#前言" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+<p>微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为<del>yaml工程师</del>。</p>
+<p>这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。</p>
+<p>得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。</p>
+<p>为了让看官更好的了解operator（controller + crd + cr），咱们从k8s两大设计思想：<code>声明式API</code>、<code>控制循环</code>说起。</p>
+<h2 id="声明式api">声明式API<a href="#声明式api" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。</p>
+<p>看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。</p>
+<p>提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。</p>
+<p>而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。</p>
+<p>这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是<code>规约(spec) - 状态(status)分离</code>。比如pod, 除了元信息外，状态从spec和status字段开始展开。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Pod</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">metav1</span><span class="p">.</span><span class="nx">TypeMeta</span> <span class="s">`json:&#34;,inline&#34;`</span>
+
+  <span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span> <span class="s">`json:&#34;metadata,omitempty&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;`</span>
+
+  <span class="nx">Spec</span> <span class="nx">PodSpec</span> <span class="s">`json:&#34;spec,omitempty&#34; protobuf:&#34;bytes,2,opt,name=spec&#34;`</span>
+
+  <span class="nx">Status</span> <span class="nx">PodStatus</span> <span class="s">`json:&#34;status,omitempty&#34; protobuf:&#34;bytes,3,opt,name=status&#34;`</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="控制循环control-loop">控制循环（control loop）<a href="#控制循环control-loop" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。</p>
+<!-- raw HTML omitted -->
+<h2 id="执行者">执行者<a href="#执行者" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。</p>
+<p>kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。</p>
+<p>还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。</p>
+<p>然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。</p>
+<p>crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化实现，与对象，对象实例之间区别类似。</p>
+<p>我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：</p>
+<ul>
+<li>
+<p>依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化</p>
+</li>
+<li>
+<p>reconcile方法中的业务逻辑会根据资源的期望状态，对外部世界作出改变，如果处理失败，就重新入队，按某种规则到某个时间继续进入reconcile, 直到处理完成。</p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h3 id="一些细节">一些细节<a href="#一些细节" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h4 id="时间换空间">时间换空间<a href="#时间换空间" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>api server是k8s的核心组件，总不能仅仅因为controller要频繁获取资源状态，就让它受高qps压榨延迟变高吧，因此controller在设计时就采用的空间换时间的策略: 把目标资源状态存在内存里，informer再和api server建立http长连接watch事件变化，这样一来，controller在读取资源状态时直接从内存读就行了，变更资源状态时再通过client向api server发送请求。</p>
+<p>cache部分由informer实现，这里小提以下它的设计(图在下方)：</p>
+<ul>
+<li><code>Reflector</code>: list &amp; watch 资源，写入FIFO</li>
+<li><code>FIFO queue</code>: 入队事件动作和对应资源,pop出的数据同时交给Indexer和外部的eventHandler</li>
+<li><code>Indexer(local store)</code>: 基于内存的并发安全存储，存储FIFO pop的数据</li>
+</ul>
+<h4 id="解耦">解耦<a href="#解耦" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<p>通常，informer接收到事件后不会直接执行eventHandler中的业务逻辑，而是将数据丢进queue中，由多个并行的worker处理，妥妥的生产者-消费者模型，避免informer在调用handler时间过长被拖死。</p>
+<p><strong>那不加work queue解耦会有什么后果？</strong></p>
+<p>通常我们用的是sharedInformer，进程里有多个controller时，用sharedInformerFactory创建出来的Informer只有独立的listener, 其余的reflector和indexer是共享的，原因很简单，多个重复reflector会增加api server负担。而不加work queue时，上一个addHandler还在处理中，listener就将下一个数据写入channel(listener用的无缓冲区channel)，而distribute方法又是range listeners的，直接会导致之后的listener无法写入数据，FIFO queue无法被consume, 底层的slice越来越大，直到OOM。</p>
+<!-- raw HTML omitted -->
+<h2 id="构建方式">构建方式<a href="#构建方式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>code-generator: 底层方式，基本没封装，能帮你了解operator的原始设计。</li>
+<li>kube-builder: 封装好，基本只要关注reconcile的业务逻辑实现。</li>
+</ul>
+<p>下一篇会带大家用这两种方式搞一搞operator的开发。</p>
+
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/untagged">untagged</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>107 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-12-07 12:13 &#43;0000</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title">Table of Contents</div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#声明式api">声明式API</a></li>
+    <li><a href="#控制循环control-loop">控制循环（control loop）</a></li>
+    <li><a href="#执行者">执行者</a>
+      <ul>
+        <li><a href="#一些细节">一些细节</a></li>
+      </ul>
+    </li>
+    <li><a href="#构建方式">构建方式</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="to-top">
+			<i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></i>
+		</div>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://shankisme.com/posts/go-mock%E5%88%9D%E6%8E%A2/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>go-mock初探</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://utteranc.es/client.js"
+        repo="playHing/blog"
+        issue-term="pathname"
+        crossorigin="anonymous"
+        async>
+</script></div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://shankisme.com/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://shankisme.com/js/bundle.min.a0bd26cee39afcbb1504c0ffa991736f16c2439e577a925a0a9a3d0650cef15c.js" integrity="sha256-oL0mzuOa/LsVBMD/qZFzbxbCQ55XepJaCpo9BlDO8Vw=" crossorigin="anonymous"></script>
+	
+	<script src="https://shankisme.com/js/theme-control.min.03a2a6e81dcb3d6cd8e354efdca3cff8a51eb0685d8805c580acb9e0de51efda.js" integrity="sha256-A6Km6B3LPWzY41Tv3KPP+KUesGhdiAXFgKy54N5R79o=" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
