@@ -8,7 +8,7 @@
 	<meta name="theme-color" content="#494f5c">
 	<meta name="msapplication-TileColor" content="#494f5c">
 <meta itemprop="name" content="pwn实践记录--rop入门">
-<meta itemprop="description" content="回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+<meta itemprop="description" content="前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
 本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python&#43;pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
 0x00 return2shellcode 文件：level1 习惯性查看保护机制：
 很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136&#43;4(存储ebp指针地址大小)&#43;4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&quot;/bin/sh&quot;)。因此我们从payload的开始位置存shellcode，剩下的用&rsquo;A&rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
@@ -17,9 +17,9 @@ ulimit -c unlimited 执行level1:
 ./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。
 from pwn import * p = process(&#39;./level1&#39;) ret = 0xffffd0c0 shellcode = &#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&#34; shellcode &#43;= &#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&#34; shellcode &#43;= &#34;\x0b\xcd\x80&#34; payload = shellcode &#43; &#39;A&#39; * (140 - len(shellcode)) &#43; p32(ret) p."><meta itemprop="datePublished" content="2020-03-07T21:43:55+08:00" />
 <meta itemprop="dateModified" content="2020-03-07T21:43:55+08:00" />
-<meta itemprop="wordCount" content="433">
+<meta itemprop="wordCount" content="434">
 <meta itemprop="keywords" content="ctf,pwn," /><meta property="og:title" content="pwn实践记录--rop入门" />
-<meta property="og:description" content="回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+<meta property="og:description" content="前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
 本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python&#43;pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
 0x00 return2shellcode 文件：level1 习惯性查看保护机制：
 很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136&#43;4(存储ebp指针地址大小)&#43;4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&quot;/bin/sh&quot;)。因此我们从payload的开始位置存shellcode，剩下的用&rsquo;A&rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
@@ -34,7 +34,7 @@ from pwn import * p = process(&#39;./level1&#39;) ret = 0xffffd0c0 shellcode = &
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="pwn实践记录--rop入门"/>
-<meta name="twitter:description" content="回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+<meta name="twitter:description" content="前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
 本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python&#43;pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
 0x00 return2shellcode 文件：level1 习惯性查看保护机制：
 很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136&#43;4(存储ebp指针地址大小)&#43;4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&quot;/bin/sh&quot;)。因此我们从payload的开始位置存shellcode，剩下的用&rsquo;A&rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
@@ -94,12 +94,12 @@ from pwn import * p = process(&#39;./level1&#39;) ret = 0xffffd0c0 shellcode = &
 				<h1>pwn实践记录--rop入门</h1>
 			</header>
 			<div class="content">
-				<p><img src="1.jpg" alt="/img/pwn/1.jpg">
-回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。</p>
+				<h2 id="前言">前言<a href="#前言" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。</p>
 <p>本次回顾涉及到的elf文件以及exp都能在<a href="https://github.com/TonyShanc/new2pwn">这里</a>获取到。
 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:)
 知识回顾：<a href="https://blog.csdn.net/RChaos/article/details/104344276">操作系统预防二进制漏洞的保护机制</a>、elf文件组成、栈机制、大小端。</p>
-<h4 id="0x00-return2shellcode">0x00 return2shellcode<a href="#0x00-return2shellcode" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<h2 id="0x00-return2shellcode">0x00 return2shellcode<a href="#0x00-return2shellcode" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>文件：level1
 习惯性查看保护机制：</p>
 <p>很好全关，接下来利用IDA Pro F5大法查看反汇编结果：
@@ -146,7 +146,7 @@ next  next
 <span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 </code></pre></div><p>效果如下：
 <img src="/img/pwn/9.jpg" alt="8.jpg"></p>
-<h4 id="0x01-ret2libc绕过nx">0x01 ret2libc(绕过NX)<a href="#0x01-ret2libc绕过nx" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<h2 id="0x01-ret2libc绕过nx">0x01 ret2libc(绕过NX)<a href="#0x01-ret2libc绕过nx" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>文件：level2
 保护：NX
 查看保护机制：
@@ -198,7 +198,7 @@ exp如下：</p>
 <span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 </code></pre></div><p>结果如下：
 <img src="/img/pwn/19.jpg" alt="6.jpg"></p>
-<h4 id="0x02-ret2libc绕过aslrpie">0x02 ret2libc(绕过ASLR/PIE)<a href="#0x02-ret2libc绕过aslrpie" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<h2 id="0x02-ret2libc绕过aslrpie">0x02 ret2libc(绕过ASLR/PIE)<a href="#0x02-ret2libc绕过aslrpie" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>文件：还是level2
 保护：ASLR NX
 下面我们把系统ASLR/PIE防护开启：</p>
@@ -243,7 +243,7 @@ exp如下：</p>
 <span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 </code></pre></div><p>效果如下：
 <img src="/img/pwn/22.jpg" alt="figure"></p>
-<h4 id="0x03格式化字符串漏洞">0x03格式化字符串漏洞<a href="#0x03格式化字符串漏洞" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<h2 id="0x03格式化字符串漏洞">0x03格式化字符串漏洞<a href="#0x03格式化字符串漏洞" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>文件：pwne (2017湖湘杯pwn200赛题)
 保护：ASLR NX
 printf函数的格式化字符串常见的有 %d，%f，%c，%s（用于读取内存数据），%x（输出16进制数，前面没有0x），%p或%#x（输出16进制数，前面带有0x）；%n是一个不经常用到的格式符，它的作用是把前面已经打印的长度写入某个内存地址，用于修改内存，除了%n,还有%hn，%hhn，%lln，分别为写入目标空间4字节，2字节，1字节，8字节。</p>
@@ -300,7 +300,7 @@ exp:</p>
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/ctf">ctf</a></span><span class="tag"><a href="https://shankisme.com/tags/pwn">pwn</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>433 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>434 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-03-07 13:43 &#43;0000</p>
 			</footer>
 		</article>
@@ -308,11 +308,11 @@ exp:</p>
 			<div class="toc-title">Table of Contents</div>
 			<nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#0x00-return2shellcode">0x00 return2shellcode</a></li>
+    <li><a href="#0x01-ret2libc绕过nx">0x01 ret2libc(绕过NX)</a></li>
+    <li><a href="#0x02-ret2libc绕过aslrpie">0x02 ret2libc(绕过ASLR/PIE)</a></li>
+    <li><a href="#0x03格式化字符串漏洞">0x03格式化字符串漏洞</a></li>
   </ul>
 </nav>
 		</aside>

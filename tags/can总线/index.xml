@@ -15,7 +15,8 @@
       
       <guid>https://shankisme.com/posts/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%B1%BD%E8%BD%A6can%E6%80%BB%E7%BA%BF%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
       <description>CAN总线使用总线技术，取代了传统的点对点布线方式连接汽车电子控制单元（ECU）, 解决了传统布线方式中线束多，布线难，成本高等问题。
-CAN总线标准 CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。
+ figure-normal (without any classes)
+  CAN总线标准 CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。
 CAN网络物理层 连接在CAN总线上的设备叫做节点设备（CAN Node），CAN网络的拓扑一般为线型。线束最常用的是双绞线，线上传输为对称的差分电平信号。</description>
     </item>
     

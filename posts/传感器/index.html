@@ -113,11 +113,11 @@ import re def bintohex(s1): s = re.findall(&#39;.{4}&#39;, s1) s2 = &#39;&#39; f
 发现很像数字逻辑中的电平跳变，0代表低位，1代表高位
 该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码
 查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律</p>
-<h6 id="曼切斯特编码">曼切斯特编码：<a href="#曼切斯特编码" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h6>
+<h2 id="曼切斯特编码">曼切斯特编码：<a href="#曼切斯特编码" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>data用跳变表示，0和1对应01和10
 至于谁对应谁有两种标准：
 <img src="/img/sensor/3.png" alt="传感器1"></p>
-<h6 id="差分曼切斯特编码">差分曼切斯特编码：<a href="#差分曼切斯特编码" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h6>
+<h2 id="差分曼切斯特编码">差分曼切斯特编码：<a href="#差分曼切斯特编码" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。
 <img src="/img/sensor/4.jpg" alt="传感器1"></p>
 <p>知识回顾的差不多了，回到题目，开始撸代码
@@ -177,11 +177,8 @@ import re def bintohex(s1): s = re.findall(&#39;.{4}&#39;, s1) s2 = &#39;&#39; f
 			<div class="toc-title">Table of Contents</div>
 			<nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
+    <li><a href="#曼切斯特编码">曼切斯特编码：</a></li>
+    <li><a href="#差分曼切斯特编码">差分曼切斯特编码：</a></li>
   </ul>
 </nav>
 		</aside>

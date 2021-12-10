@@ -14,7 +14,7 @@
       <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
       
       <guid>https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</guid>
-      <description>回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+      <description>前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
 本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
 0x00 return2shellcode 文件：level1 习惯性查看保护机制：
 很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&amp;quot;/bin/sh&amp;quot;)。因此我们从payload的开始位置存shellcode，剩下的用&amp;rsquo;A&amp;rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
