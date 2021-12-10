@@ -13,12 +13,12 @@
 得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd&#43;controller了。
 为了让看官更好的了解operator（controller &#43; crd &#43; cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
 声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
-看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性。
 提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
 而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
 这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
 type Pod struct { metav1.TypeMeta `json:&#34;,inline&#34;` metav1.ObjectMeta `json:&#34;metadata,omitempty&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;` Spec PodSpec `json:&#34;spec,omitempty&#34; protobuf:&#34;bytes,2,opt,name=spec&#34;` Status PodStatus `json:&#34;status,omitempty&#34; protobuf:&#34;bytes,3,opt,name=status&#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
-执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+ 执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
 kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
 还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
 然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
@@ -26,19 +26,19 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：
   依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化"><meta itemprop="datePublished" content="2021-12-07T20:13:53+08:00" />
 <meta itemprop="dateModified" content="2021-12-07T20:13:53+08:00" />
-<meta itemprop="wordCount" content="107">
+<meta itemprop="wordCount" content="114">
 <meta itemprop="keywords" content="untagged," /><meta property="og:title" content="聊一聊kubernetes operator" />
 <meta property="og:description" content="前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师。
 这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
 得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd&#43;controller了。
 为了让看官更好的了解operator（controller &#43; crd &#43; cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
 声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
-看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性。
 提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
 而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
 这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
 type Pod struct { metav1.TypeMeta `json:&#34;,inline&#34;` metav1.ObjectMeta `json:&#34;metadata,omitempty&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;` Spec PodSpec `json:&#34;spec,omitempty&#34; protobuf:&#34;bytes,2,opt,name=spec&#34;` Status PodStatus `json:&#34;status,omitempty&#34; protobuf:&#34;bytes,3,opt,name=status&#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
-执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+ 执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
 kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
 还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
 然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
@@ -57,12 +57,12 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd&#43;controller了。
 为了让看官更好的了解operator（controller &#43; crd &#43; cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
 声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
-看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性。
 提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
 而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
 这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
 type Pod struct { metav1.TypeMeta `json:&#34;,inline&#34;` metav1.ObjectMeta `json:&#34;metadata,omitempty&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;` Spec PodSpec `json:&#34;spec,omitempty&#34; protobuf:&#34;bytes,2,opt,name=spec&#34;` Status PodStatus `json:&#34;status,omitempty&#34; protobuf:&#34;bytes,3,opt,name=status&#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
-执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+ 执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
 kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
 还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
 然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
@@ -128,7 +128,7 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 <p>为了让看官更好的了解operator（controller + crd + cr），咱们从k8s两大设计思想：<code>声明式API</code>、<code>控制循环</code>说起。</p>
 <h2 id="声明式api">声明式API<a href="#声明式api" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。</p>
-<p>看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。</p>
+<p>看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性。</p>
 <p>提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。</p>
 <p>而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。</p>
 <p>这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是<code>规约(spec) - 状态(status)分离</code>。比如pod, 除了元信息外，状态从spec和status字段开始展开。</p>
@@ -143,7 +143,10 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 <span class="p">}</span>
 </code></pre></div><h2 id="控制循环control-loop">控制循环（control loop）<a href="#控制循环control-loop" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。</p>
-<!-- raw HTML omitted -->
+<figure><img src="/img/%e8%81%8a%e8%81%8aoperator/controlloop2.png"
+         alt="image" width="300px"/>
+</figure>
+
 <h2 id="执行者">执行者<a href="#执行者" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。</p>
 <p>kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。</p>
@@ -158,8 +161,16 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 <li>
 <p>reconcile方法中的业务逻辑会根据资源的期望状态，对外部世界作出改变，如果处理失败，就重新入队，按某种规则到某个时间继续进入reconcile, 直到处理完成。</p>
 </li>
+<li>
+<p>也可以设置resync period, 全量资源定时入队处理。</p>
+<figure><img src="/img/%e8%81%8a%e8%81%8aoperator/controller.png"
+         alt="image"/><figcaption>
+            <p>figure-normal (without any classes)</p>
+        </figcaption>
+</figure>
+
+</li>
 </ul>
-<!-- raw HTML omitted -->
 <h3 id="一些细节">一些细节<a href="#一些细节" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <h4 id="时间换空间">时间换空间<a href="#时间换空间" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
 <p>api server是k8s的核心组件，总不能仅仅因为controller要频繁获取资源状态，就让它受高qps压榨延迟变高吧，因此controller在设计时就采用的空间换时间的策略: 把目标资源状态存在内存里，informer再和api server建立http长连接watch事件变化，这样一来，controller在读取资源状态时直接从内存读就行了，变更资源状态时再通过client向api server发送请求。</p>
@@ -173,7 +184,10 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 <p>通常，informer接收到事件后不会直接执行eventHandler中的业务逻辑，而是将数据丢进queue中，由多个并行的worker处理，妥妥的生产者-消费者模型，避免informer在调用handler时间过长被拖死。</p>
 <p><strong>那不加work queue解耦会有什么后果？</strong></p>
 <p>通常我们用的是sharedInformer，进程里有多个controller时，用sharedInformerFactory创建出来的Informer只有独立的listener, 其余的reflector和indexer是共享的，原因很简单，多个重复reflector会增加api server负担。而不加work queue时，上一个addHandler还在处理中，listener就将下一个数据写入channel(listener用的无缓冲区channel)，而distribute方法又是range listeners的，直接会导致之后的listener无法写入数据，FIFO queue无法被consume, 底层的slice越来越大，直到OOM。</p>
-<!-- raw HTML omitted -->
+<figure><img src="/img/%e8%81%8a%e8%81%8aoperator/informer2.png"
+         alt="image" width="600px"/>
+</figure>
+
 <h2 id="构建方式">构建方式<a href="#构建方式" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>
 <li>code-generator: 底层方式，基本没封装，能帮你了解operator的原始设计。</li>
@@ -187,7 +201,7 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/untagged">untagged</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>107 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>114 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-12-07 12:13 &#43;0000</p>
 			</footer>
 		</article>

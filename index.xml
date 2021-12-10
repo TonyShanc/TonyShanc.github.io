@@ -19,12 +19,12 @@
 得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。
 为了让看官更好的了解operator（controller + crd + cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
 声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
-看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性，能在传输过程中不丢失并正确执行。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性。
 提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
 而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
 这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
 type Pod struct { metav1.TypeMeta `json:&amp;#34;,inline&amp;#34;` metav1.ObjectMeta `json:&amp;#34;metadata,omitempty&amp;#34; protobuf:&amp;#34;bytes,1,opt,name=metadata&amp;#34;` Spec PodSpec `json:&amp;#34;spec,omitempty&amp;#34; protobuf:&amp;#34;bytes,2,opt,name=spec&amp;#34;` Status PodStatus `json:&amp;#34;status,omitempty&amp;#34; protobuf:&amp;#34;bytes,3,opt,name=status&amp;#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
-执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+ 执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
 kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
 还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
 然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
