@@ -99,7 +99,7 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
          alt="image" width="600px"/>
 </figure>
 
-<h2 id="构建方式">构建方式</h2>
+<h2 id="框架生成工具">框架生成工具</h2>
 <ul>
 <li>code-generator: 底层方式，基本没封装，能帮你了解operator的原始设计。</li>
 <li>kube-builder: 封装好，基本只要关注reconcile的业务逻辑实现。</li>
