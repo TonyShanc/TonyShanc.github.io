@@ -115,6 +115,12 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 <li><a href="https://github.com/TonyShanc/sample-operator-v1">code-generator generated operator demo</a></li>
 <li><a href="https://github.com/TonyShanc/sample-operator-v2">kubebuilder generated operator demo</a></li>
 </ul>
+<h2 id="reference">reference</h2>
+<ul>
+<li>《programming kubernetes》</li>
+<li>《kubernetes源码剖析》</li>
+<li>《深入剖析kubernetes》</li>
+</ul>
 ]]></content>
 		</item>
 		
