@@ -17,6 +17,7 @@
 			<guid>https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/</guid>
 			<description>前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师。
 这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
+当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。
 得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。
 为了让看官更好的了解operator（controller + crd + cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
 声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
@@ -35,6 +36,7 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 			<content type="html"><![CDATA[<h1 id="前言">前言</h1>
 <p>微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为<del>yaml工程师</del>。</p>
 <p>这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。</p>
+<p>当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。</p>
 <p>得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。</p>
 <p>为了让看官更好的了解operator（controller + crd + cr），咱们从k8s两大设计思想：<code>声明式API</code>、<code>控制循环</code>说起。</p>
 <h2 id="声明式api">声明式API</h2>
