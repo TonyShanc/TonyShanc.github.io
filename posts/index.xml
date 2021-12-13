@@ -105,10 +105,10 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 <li>kube-builder: 封装好，基本只要关注reconcile的业务逻辑实现。</li>
 <li>operator-sdk: 基于controller-runtime, 和kube-builder大同小异, 未来可能合并。</li>
 </ul>
-<h2 id="测试框架">测试框架</h2>
+<h2 id="测试工具">测试工具</h2>
 <p>kubebuilder-generatored operator 有自己内嵌的测试框架ginkgo&amp;gomega，这套框架会依赖本地的api-server或者依赖本地etcd二进制文件再创建出来一个新的api server，用作controller-runtime client的请求目标，测试过程按着行为驱动开发（BDD）的方式走，写起来很省心。</p>
 <h2 id="practice">practice</h2>
-<p>实在太懒，我把demo地址放下面了，基本是抄书抄的，带注释，感兴趣的可以去看看。</p>
+<p>实在太懒，我把demo地址放下面了，业务逻辑基本是抄书抄的，带注释带单元测试，感兴趣的可以去看看。</p>
 <ul>
 <li><a href="https://github.com/TonyShanc/sample-operator-v1">code-generator generated operator demo</a></li>
 <li><a href="https://github.com/TonyShanc/sample-operator-v2">kubebuilder generated operator demo</a></li>
