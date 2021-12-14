@@ -200,13 +200,13 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 </ul>
 <h2 id="测试工具">测试工具<a href="#测试工具" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>kubebuilder-generatored operator 有自己内嵌的测试框架ginkgo&amp;gomega，这套框架会依赖本地的api-server或者依赖本地etcd二进制文件再创建出来一个新的api server，用作controller-runtime client的请求目标，测试过程按着行为驱动开发（BDD）的方式走，写起来很省心。</p>
-<h2 id="practice">practice<a href="#practice" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="练习">练习<a href="#练习" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>实在太懒，我把demo地址放下面了，业务逻辑基本是抄书抄的，带注释带单元测试，感兴趣的可以去看看。</p>
 <ul>
 <li><a href="https://github.com/TonyShanc/sample-operator-v1">code-generator generated operator demo</a></li>
 <li><a href="https://github.com/TonyShanc/sample-operator-v2">kubebuilder generated operator demo</a></li>
 </ul>
-<h2 id="reference">reference<a href="#reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="参考">参考<a href="#参考" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <ul>
 <li>《programming kubernetes》</li>
 <li>《kubernetes源码剖析》</li>
@@ -236,8 +236,8 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
     </li>
     <li><a href="#框架生成工具">框架生成工具</a></li>
     <li><a href="#测试工具">测试工具</a></li>
-    <li><a href="#practice">practice</a></li>
-    <li><a href="#reference">reference</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
 		</aside>
