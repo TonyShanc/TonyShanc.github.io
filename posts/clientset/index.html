@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="theme-color" content="#494f5c">
+	<meta name="msapplication-TileColor" content="#494f5c">
+<meta itemprop="name" content="面向API server CRUD的探索">
+<meta itemprop="description" content="前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
+前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
+k8s将资源分组和版本化，形成了:
+ Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念  k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
+资源组、资源版本、资源、子资源的完整表现形式为：&lt;group&gt;/&lt;version&gt;/&lt;resource&gt;/&lt;subresource&gt;
+如Deployment资源，完整表现形式为：apps/v1/deployments/status
+资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&lt;group&gt;/&lt;version&gt;,Kind=&lt;kind&gt;
+如Deployment, 完整表现形式为apps/v1,Kind=Deployment
+client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。
+client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient
+RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
+ RESTClient package main import ( &#34;context&#34; &#34;fmt&#34; corev1 &#34;k8s.io/api/core/v1&#34; metav1 &#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34; &#34;k8s.io/client-go/kubernetes/scheme&#34; &#34;k8s.io/client-go/rest&#34; &#34;k8s.io/client-go/tools/clientcmd&#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&#34;&#34;, &#34;/etc/rancher/k3s/k3s.yaml&#34;) if err != nil { panic(err) } config.APIPath = &#34;api&#34; // group core version v1 	config.GroupVersion = &amp;corev1."><meta itemprop="datePublished" content="2021-12-13T15:35:21+08:00" />
+<meta itemprop="dateModified" content="2021-12-13T15:35:21+08:00" />
+<meta itemprop="wordCount" content="378">
+<meta itemprop="keywords" content="kubernetes,golang," /><meta property="og:title" content="面向API server CRUD的探索" />
+<meta property="og:description" content="前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
+前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
+k8s将资源分组和版本化，形成了:
+ Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念  k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
+资源组、资源版本、资源、子资源的完整表现形式为：&lt;group&gt;/&lt;version&gt;/&lt;resource&gt;/&lt;subresource&gt;
+如Deployment资源，完整表现形式为：apps/v1/deployments/status
+资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&lt;group&gt;/&lt;version&gt;,Kind=&lt;kind&gt;
+如Deployment, 完整表现形式为apps/v1,Kind=Deployment
+client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。
+client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient
+RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
+ RESTClient package main import ( &#34;context&#34; &#34;fmt&#34; corev1 &#34;k8s.io/api/core/v1&#34; metav1 &#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34; &#34;k8s.io/client-go/kubernetes/scheme&#34; &#34;k8s.io/client-go/rest&#34; &#34;k8s.io/client-go/tools/clientcmd&#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&#34;&#34;, &#34;/etc/rancher/k3s/k3s.yaml&#34;) if err != nil { panic(err) } config.APIPath = &#34;api&#34; // group core version v1 	config.GroupVersion = &amp;corev1." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shankisme.com/posts/clientset/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-12-13T15:35:21+08:00" />
+<meta property="article:modified_time" content="2021-12-13T15:35:21+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="面向API server CRUD的探索"/>
+<meta name="twitter:description" content="前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
+前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
+k8s将资源分组和版本化，形成了:
+ Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念  k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
+资源组、资源版本、资源、子资源的完整表现形式为：&lt;group&gt;/&lt;version&gt;/&lt;resource&gt;/&lt;subresource&gt;
+如Deployment资源，完整表现形式为：apps/v1/deployments/status
+资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&lt;group&gt;/&lt;version&gt;,Kind=&lt;kind&gt;
+如Deployment, 完整表现形式为apps/v1,Kind=Deployment
+client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。
+client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient
+RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
+ RESTClient package main import ( &#34;context&#34; &#34;fmt&#34; corev1 &#34;k8s.io/api/core/v1&#34; metav1 &#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34; &#34;k8s.io/client-go/kubernetes/scheme&#34; &#34;k8s.io/client-go/rest&#34; &#34;k8s.io/client-go/tools/clientcmd&#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&#34;&#34;, &#34;/etc/rancher/k3s/k3s.yaml&#34;) if err != nil { panic(err) } config.APIPath = &#34;api&#34; // group core version v1 	config.GroupVersion = &amp;corev1."/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<title>面向API server CRUD的探索</title>
+	<link rel="stylesheet" href="https://shankisme.com/css/style.min.b1b8a0e19eabe0807fd81b41979d5ea6898b9d3e8cc583d45a28ff5f7e79e10d.css" integrity="sha256-sbig4Z6r4IB/2BtBl51epomLnT6MxYPUWij/X3554Q0=" crossorigin="anonymous">
+	
+</head>
+
+<body id="page">
+	
+	<header id="site-header">
+		<div class="hdr-wrapper section-inner">
+			<div class="hdr-left">
+				<div class="site-branding">
+					<a href="https://shankisme.com">shank</a>
+				</div>
+				<nav class="site-nav hide-in-mobile">
+					
+				<a href="https://shankisme.com/posts/">Posts</a>
+				<a href="https://shankisme.com/about/">About</a>
+
+				</nav>
+			</div>
+			<div class="hdr-right hdr-icons">
+				<button id="theme-btn" class="hdr-btn dark">
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather sun" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" class="feather moon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+				</button>
+				<span class="hdr-social hide-in-mobile"><a href="mailto:845700113@qq.com" target="_blank" rel="noopener me" title="Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a><a href="https://github.com/tonyshanc" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a></span><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+			</div>
+		</div>
+	</header>
+	<div id="mobile-menu" class="animated fast">
+		<ul>
+			<li><a href="https://shankisme.com/posts/">Posts</a></li>
+			<li><a href="https://shankisme.com/about/">About</a></li>
+		</ul>
+	</div>
+
+
+	<main class="site-main section-inner animated fadeIn faster">
+		<article class="thin">
+			<header class="post-header">
+				<div class="post-meta"><span>Dec 13, 2021</span></div>
+				<h1>面向API server CRUD的探索</h1>
+			</header>
+			<div class="content">
+				<h2 id="前言">前言<a href="#前言" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。</p>
+<h2 id="前置知识">前置知识<a href="#前置知识" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="gvrgvk">GVR、GVK<a href="#gvrgvk" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。</p>
+<p>k8s将资源分组和版本化，形成了:</p>
+<ul>
+<li><code>Group</code>: 资源组</li>
+<li><code>Version</code>: 资源版本</li>
+<li><code>Resource</code>: 资源</li>
+<li><code>Kind</code>: 资源种类, 与resource为同级概念</li>
+</ul>
+<p>k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。</p>
+<p>资源组、资源版本、资源、子资源的完整表现形式为：&lt;group&gt;/&lt;version&gt;/&lt;resource&gt;/&lt;subresource&gt;</p>
+<p>如Deployment资源，完整表现形式为：apps/v1/deployments/status</p>
+<p>资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&lt;group&gt;/&lt;version&gt;,Kind=&lt;kind&gt;</p>
+<p>如Deployment, 完整表现形式为apps/v1,Kind=Deployment</p>
+<h2 id="client-go">client-go<a href="#client-go" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。</p>
+<p>client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient</p>
+<p>RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。</p>
+<figure><img src="/img/clientset/clients.png"
+         alt="image"/>
+</figure>
+
+<h2 id="restclient">RESTClient<a href="#restclient" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="nx">corev1</span> <span class="s">&#34;k8s.io/api/core/v1&#34;</span>
+	<span class="nx">metav1</span> <span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/kubernetes/scheme&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/rest&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">config</span><span class="p">.</span><span class="nx">APIPath</span> <span class="p">=</span> <span class="s">&#34;api&#34;</span>
+	<span class="c1">// group core version v1
+</span><span class="c1"></span>	<span class="nx">config</span><span class="p">.</span><span class="nx">GroupVersion</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">SchemeGroupVersion</span>
+	<span class="c1">// set codec
+</span><span class="c1"></span>	<span class="nx">config</span><span class="p">.</span><span class="nx">NegotiatedSerializer</span> <span class="p">=</span> <span class="nx">scheme</span><span class="p">.</span><span class="nx">Codecs</span>
+	
+	<span class="nx">restClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rest</span><span class="p">.</span><span class="nf">RESTClientFor</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">result</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">PodList</span><span class="p">{}</span>
+
+	<span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">restClient</span><span class="p">.</span><span class="nf">Get</span><span class="p">().</span>
+		<span class="nf">Namespace</span><span class="p">(</span><span class="s">&#34;default&#34;</span><span class="p">).</span>
+		<span class="nf">Resource</span><span class="p">(</span><span class="s">&#34;pods&#34;</span><span class="p">).</span>
+		<span class="nf">VersionedParams</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{</span><span class="nx">Limit</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> <span class="nx">scheme</span><span class="p">.</span><span class="nx">ParameterCodec</span><span class="p">).</span>
+		<span class="nf">Do</span><span class="p">(</span><span class="nx">ctx</span><span class="p">).</span>
+		<span class="nf">Into</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pod</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="clientset">clientset<a href="#clientset" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>ClientSet在RESTClient基础上封装了Resource管理方法, 每个Resource可以理解为一个资源crud的客户端，而ClientSet是多个客户端集合，在使用前需要知道要操作资源的Group, Version。需要注意，clientset仅能访问k8s内置资源，无法访问自定义资源CRD，如需访问CRD，需要使用代码生成器重新生成clientset。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="nx">metav1</span> <span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/kubernetes&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">clientset</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">kubernetes</span><span class="p">.</span><span class="nf">NewForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+	<span class="c1">// all namepsaces pods
+</span><span class="c1"></span>	<span class="nx">podClient</span> <span class="o">:=</span> <span class="nx">clientset</span><span class="p">.</span><span class="nf">CoreV1</span><span class="p">().</span><span class="nf">Pods</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span>
+	<span class="nx">list</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">podClient</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{})</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pod</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">list</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="dynamic-client">dynamic client<a href="#dynamic-client" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>dynamic client是一种动态客户端，和clientset最大的区别是：clientset不能操作自定义资源，但dynamic client可以，这是因为dynamic client内部使用非结构化数据unstructured，该数据结构能与resource互转。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="nx">corev1</span> <span class="s">&#34;k8s.io/api/core/v1&#34;</span>
+	<span class="nx">metav1</span> <span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime/schema&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/dynamic&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">dynamicClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">dynamic</span><span class="p">.</span><span class="nf">NewForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+	<span class="nx">gvr</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nx">GroupVersionResource</span><span class="p">{</span><span class="nx">Version</span><span class="p">:</span> <span class="s">&#34;v1&#34;</span><span class="p">,</span> <span class="nx">Resource</span><span class="p">:</span> <span class="s">&#34;pods&#34;</span><span class="p">}</span>
+	<span class="c1">// all namespaces
+</span><span class="c1"></span>	<span class="nx">unstructuredObjs</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">dynamicClient</span><span class="p">.</span><span class="nf">Resource</span><span class="p">(</span><span class="nx">gvr</span><span class="p">).</span><span class="nf">Namespace</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">).</span><span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{})</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">podList</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">PodList</span><span class="p">{}</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">DefaultUnstructuredConverter</span><span class="p">.</span><span class="nf">FromUnstructured</span><span class="p">(</span><span class="nx">unstructuredObjs</span><span class="p">.</span><span class="nf">UnstructuredContent</span><span class="p">(),</span> <span class="nx">podList</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pod</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">podList</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div><h2 id="discovery-client">discovery client<a href="#discovery-client" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>discovery client是一个带缓存的资源发现客户端，主要用于发现API server支持的GVR，缓存信息默认存储于<code>~/.kube/cache</code>和<code>~/.kube/http-cache中</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// list resource
+</span><span class="c1"></span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime/schema&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/discovery&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">discoveryClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">discovery</span><span class="p">.</span><span class="nf">NewDiscoveryClientForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">_</span><span class="p">,</span> <span class="nx">APIResourceLIst</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">discovery</span><span class="p">.</span><span class="nf">ServerGroupsAndResources</span><span class="p">(</span><span class="nx">discoveryClient</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">list</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">APIResourceLIst</span> <span class="p">{</span>
+		<span class="nx">gv</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nf">ParseGroupVersion</span><span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">GroupVersion</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">resource</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">list</span><span class="p">.</span><span class="nx">APIResources</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">resource</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">gv</span><span class="p">.</span><span class="nx">Group</span><span class="p">,</span> <span class="nx">gv</span><span class="p">.</span><span class="nx">Version</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+			</div>
+			<hr class="post-end">
+			<footer class="post-info">
+				<p>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/kubernetes">kubernetes</a></span><span class="tag"><a href="https://shankisme.com/tags/golang">golang</a></span>
+				</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>378 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-12-13 07:35 &#43;0000</p>
+			</footer>
+		</article>
+		<aside id="toc" class="show-toc">
+			<div class="toc-title">Table of Contents</div>
+			<nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#前置知识">前置知识</a>
+      <ul>
+        <li><a href="#gvrgvk">GVR、GVK</a></li>
+      </ul>
+    </li>
+    <li><a href="#client-go">client-go</a></li>
+    <li><a href="#restclient">RESTClient</a></li>
+    <li><a href="#clientset">clientset</a></li>
+    <li><a href="#dynamic-client">dynamic client</a></li>
+    <li><a href="#discovery-client">discovery client</a></li>
+  </ul>
+</nav>
+		</aside>
+		<div class="to-top">
+			<i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></i>
+		</div>
+		<div class="post-nav thin">
+			<a class="prev-post" href="https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/">
+				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>聊一聊kubernetes operator</span>
+			</a>
+		</div>
+		<div id="comments" class="thin"><script src="https://utteranc.es/client.js"
+        repo="playHing/blog"
+        issue-term="pathname"
+        crossorigin="anonymous"
+        async>
+</script></div>
+	</main>
+
+	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+		<p>&copy; 2021 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://shankisme.com/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+		</p>
+	</footer>
+
+
+
+	<script src="https://shankisme.com/js/bundle.min.a0bd26cee39afcbb1504c0ffa991736f16c2439e577a925a0a9a3d0650cef15c.js" integrity="sha256-oL0mzuOa/LsVBMD/qZFzbxbCQ55XepJaCpo9BlDO8Vw=" crossorigin="anonymous"></script>
+	
+	<script src="https://shankisme.com/js/theme-control.min.03a2a6e81dcb3d6cd8e354efdca3cff8a51eb0685d8805c580acb9e0de51efda.js" integrity="sha256-A6Km6B3LPWzY41Tv3KPP+KUesGhdiAXFgKy54N5R79o=" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

@@ -6,8 +6,226 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-		<lastBuildDate>Tue, 07 Dec 2021 20:13:53 +0800</lastBuildDate>
+		<lastBuildDate>Mon, 13 Dec 2021 15:35:21 +0800</lastBuildDate>
 		<atom:link href="https://shankisme.com/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>面向API server CRUD的探索</title>
+			<link>https://shankisme.com/posts/clientset/</link>
+			<pubDate>Mon, 13 Dec 2021 15:35:21 +0800</pubDate>
+			
+			<guid>https://shankisme.com/posts/clientset/</guid>
+			<description>前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
+前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
+k8s将资源分组和版本化，形成了:
+ Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念  k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
+资源组、资源版本、资源、子资源的完整表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;/&amp;lt;resource&amp;gt;/&amp;lt;subresource&amp;gt;
+如Deployment资源，完整表现形式为：apps/v1/deployments/status
+资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;,Kind=&amp;lt;kind&amp;gt;
+如Deployment, 完整表现形式为apps/v1,Kind=Deployment
+client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。
+client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient
+RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
+ RESTClient package main import ( &amp;#34;context&amp;#34; &amp;#34;fmt&amp;#34; corev1 &amp;#34;k8s.io/api/core/v1&amp;#34; metav1 &amp;#34;k8s.io/apimachinery/pkg/apis/meta/v1&amp;#34; &amp;#34;k8s.io/client-go/kubernetes/scheme&amp;#34; &amp;#34;k8s.io/client-go/rest&amp;#34; &amp;#34;k8s.io/client-go/tools/clientcmd&amp;#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&amp;#34;&amp;#34;, &amp;#34;/etc/rancher/k3s/k3s.yaml&amp;#34;) if err != nil { panic(err) } config.APIPath = &amp;#34;api&amp;#34; // group core version v1 	config.GroupVersion = &amp;amp;corev1.</description>
+			<content type="html"><![CDATA[<h2 id="前言">前言</h2>
+<p>某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。</p>
+<h2 id="前置知识">前置知识</h2>
+<h3 id="gvrgvk">GVR、GVK</h3>
+<p>在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。</p>
+<p>k8s将资源分组和版本化，形成了:</p>
+<ul>
+<li><code>Group</code>: 资源组</li>
+<li><code>Version</code>: 资源版本</li>
+<li><code>Resource</code>: 资源</li>
+<li><code>Kind</code>: 资源种类, 与resource为同级概念</li>
+</ul>
+<p>k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。</p>
+<p>资源组、资源版本、资源、子资源的完整表现形式为：&lt;group&gt;/&lt;version&gt;/&lt;resource&gt;/&lt;subresource&gt;</p>
+<p>如Deployment资源，完整表现形式为：apps/v1/deployments/status</p>
+<p>资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&lt;group&gt;/&lt;version&gt;,Kind=&lt;kind&gt;</p>
+<p>如Deployment, 完整表现形式为apps/v1,Kind=Deployment</p>
+<h2 id="client-go">client-go</h2>
+<p>k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。</p>
+<p>client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient</p>
+<p>RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。</p>
+<figure><img src="/img/clientset/clients.png"
+         alt="image"/>
+</figure>
+
+<h2 id="restclient">RESTClient</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="nx">corev1</span> <span class="s">&#34;k8s.io/api/core/v1&#34;</span>
+	<span class="nx">metav1</span> <span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/kubernetes/scheme&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/rest&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">config</span><span class="p">.</span><span class="nx">APIPath</span> <span class="p">=</span> <span class="s">&#34;api&#34;</span>
+	<span class="c1">// group core version v1
+</span><span class="c1"></span>	<span class="nx">config</span><span class="p">.</span><span class="nx">GroupVersion</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">SchemeGroupVersion</span>
+	<span class="c1">// set codec
+</span><span class="c1"></span>	<span class="nx">config</span><span class="p">.</span><span class="nx">NegotiatedSerializer</span> <span class="p">=</span> <span class="nx">scheme</span><span class="p">.</span><span class="nx">Codecs</span>
+	
+	<span class="nx">restClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rest</span><span class="p">.</span><span class="nf">RESTClientFor</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">result</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">PodList</span><span class="p">{}</span>
+
+	<span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">restClient</span><span class="p">.</span><span class="nf">Get</span><span class="p">().</span>
+		<span class="nf">Namespace</span><span class="p">(</span><span class="s">&#34;default&#34;</span><span class="p">).</span>
+		<span class="nf">Resource</span><span class="p">(</span><span class="s">&#34;pods&#34;</span><span class="p">).</span>
+		<span class="nf">VersionedParams</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{</span><span class="nx">Limit</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> <span class="nx">scheme</span><span class="p">.</span><span class="nx">ParameterCodec</span><span class="p">).</span>
+		<span class="nf">Do</span><span class="p">(</span><span class="nx">ctx</span><span class="p">).</span>
+		<span class="nf">Into</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pod</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">result</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="clientset">clientset</h2>
+<p>ClientSet在RESTClient基础上封装了Resource管理方法, 每个Resource可以理解为一个资源crud的客户端，而ClientSet是多个客户端集合，在使用前需要知道要操作资源的Group, Version。需要注意，clientset仅能访问k8s内置资源，无法访问自定义资源CRD，如需访问CRD，需要使用代码生成器重新生成clientset。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="nx">metav1</span> <span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/kubernetes&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">clientset</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">kubernetes</span><span class="p">.</span><span class="nf">NewForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+	<span class="c1">// all namepsaces pods
+</span><span class="c1"></span>	<span class="nx">podClient</span> <span class="o">:=</span> <span class="nx">clientset</span><span class="p">.</span><span class="nf">CoreV1</span><span class="p">().</span><span class="nf">Pods</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span>
+	<span class="nx">list</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">podClient</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{})</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pod</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">list</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="dynamic-client">dynamic client</h2>
+<p>dynamic client是一种动态客户端，和clientset最大的区别是：clientset不能操作自定义资源，但dynamic client可以，这是因为dynamic client内部使用非结构化数据unstructured，该数据结构能与resource互转。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="nx">corev1</span> <span class="s">&#34;k8s.io/api/core/v1&#34;</span>
+	<span class="nx">metav1</span> <span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime/schema&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/dynamic&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">dynamicClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">dynamic</span><span class="p">.</span><span class="nf">NewForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+	<span class="nx">gvr</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nx">GroupVersionResource</span><span class="p">{</span><span class="nx">Version</span><span class="p">:</span> <span class="s">&#34;v1&#34;</span><span class="p">,</span> <span class="nx">Resource</span><span class="p">:</span> <span class="s">&#34;pods&#34;</span><span class="p">}</span>
+	<span class="c1">// all namespaces
+</span><span class="c1"></span>	<span class="nx">unstructuredObjs</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">dynamicClient</span><span class="p">.</span><span class="nf">Resource</span><span class="p">(</span><span class="nx">gvr</span><span class="p">).</span><span class="nf">Namespace</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">).</span><span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{})</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">podList</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">PodList</span><span class="p">{}</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">DefaultUnstructuredConverter</span><span class="p">.</span><span class="nf">FromUnstructured</span><span class="p">(</span><span class="nx">unstructuredObjs</span><span class="p">.</span><span class="nf">UnstructuredContent</span><span class="p">(),</span> <span class="nx">podList</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pod</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">podList</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div><h2 id="discovery-client">discovery client</h2>
+<p>discovery client是一个带缓存的资源发现客户端，主要用于发现API server支持的GVR，缓存信息默认存储于<code>~/.kube/cache</code>和<code>~/.kube/http-cache中</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// list resource
+</span><span class="c1"></span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime/schema&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/discovery&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;/etc/rancher/k3s/k3s.yaml&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">discoveryClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">discovery</span><span class="p">.</span><span class="nf">NewDiscoveryClientForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">_</span><span class="p">,</span> <span class="nx">APIResourceLIst</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">discovery</span><span class="p">.</span><span class="nf">ServerGroupsAndResources</span><span class="p">(</span><span class="nx">discoveryClient</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">list</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">APIResourceLIst</span> <span class="p">{</span>
+		<span class="nx">gv</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">schema</span><span class="p">.</span><span class="nf">ParseGroupVersion</span><span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">GroupVersion</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">resource</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">list</span><span class="p">.</span><span class="nx">APIResources</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">resource</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">gv</span><span class="p">.</span><span class="nx">Group</span><span class="p">,</span> <span class="nx">gv</span><span class="p">.</span><span class="nx">Version</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>]]></content>
+		</item>
 		
 		<item>
 			<title>聊一聊kubernetes operator</title>
@@ -15,7 +233,7 @@
 			<pubDate>Tue, 07 Dec 2021 20:13:53 +0800</pubDate>
 			
 			<guid>https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/</guid>
-			<description>前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师。
+			<description>前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师🤣。
 这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
 当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。
 得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。
@@ -34,7 +252,7 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：
   依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化</description>
 			<content type="html"><![CDATA[<h1 id="前言">前言</h1>
-<p>微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为<del>yaml工程师</del>。</p>
+<p>微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为<del>yaml工程师</del>🤣。</p>
 <p>这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。</p>
 <p>当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。</p>
 <p>得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。</p>

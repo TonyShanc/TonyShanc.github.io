@@ -7,14 +7,34 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Tue, 07 Dec 2021 20:13:53 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 13 Dec 2021 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>面向API server CRUD的探索</title>
+      <link>https://shankisme.com/posts/clientset/</link>
+      <pubDate>Mon, 13 Dec 2021 15:35:21 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/clientset/</guid>
+      <description>前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
+前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
+k8s将资源分组和版本化，形成了:
+ Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念  k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
+资源组、资源版本、资源、子资源的完整表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;/&amp;lt;resource&amp;gt;/&amp;lt;subresource&amp;gt;
+如Deployment资源，完整表现形式为：apps/v1/deployments/status
+资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;,Kind=&amp;lt;kind&amp;gt;
+如Deployment, 完整表现形式为apps/v1,Kind=Deployment
+client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。
+client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient
+RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
+ RESTClient package main import ( &amp;#34;context&amp;#34; &amp;#34;fmt&amp;#34; corev1 &amp;#34;k8s.io/api/core/v1&amp;#34; metav1 &amp;#34;k8s.io/apimachinery/pkg/apis/meta/v1&amp;#34; &amp;#34;k8s.io/client-go/kubernetes/scheme&amp;#34; &amp;#34;k8s.io/client-go/rest&amp;#34; &amp;#34;k8s.io/client-go/tools/clientcmd&amp;#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&amp;#34;&amp;#34;, &amp;#34;/etc/rancher/k3s/k3s.yaml&amp;#34;) if err != nil { panic(err) } config.APIPath = &amp;#34;api&amp;#34; // group core version v1 	config.GroupVersion = &amp;amp;corev1.</description>
+    </item>
+    
     <item>
       <title>聊一聊kubernetes operator</title>
       <link>https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/</link>
       <pubDate>Tue, 07 Dec 2021 20:13:53 +0800</pubDate>
       
       <guid>https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/</guid>
-      <description>前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师。
+      <description>前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师🤣。
 这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
 当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。
 得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。
