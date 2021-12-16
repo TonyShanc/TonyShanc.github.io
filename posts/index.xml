@@ -52,7 +52,7 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
          alt="image"/>
 </figure>
 
-<h2 id="restclient">RESTClient</h2>
+<h3 id="restclient">RESTClient</h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
@@ -102,7 +102,7 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
 	<span class="p">}</span>
 <span class="p">}</span>
-</code></pre></div><h2 id="clientset">clientset</h2>
+</code></pre></div><h3 id="clientset">clientset</h3>
 <p>ClientSet在RESTClient基础上封装了Resource管理方法, 每个Resource可以理解为一个资源crud的客户端，而ClientSet是多个客户端集合，在使用前需要知道要操作资源的Group, Version。需要注意，clientset仅能访问k8s内置资源，无法访问自定义资源CRD，如需访问CRD，需要使用代码生成器重新生成clientset。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
@@ -138,8 +138,9 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
 		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Phase</span><span class="p">)</span>
 	<span class="p">}</span>
 <span class="p">}</span>
-</code></pre></div><h2 id="dynamic-client">dynamic client</h2>
+</code></pre></div><h3 id="dynamic-client">dynamic client</h3>
 <p>dynamic client是一种动态客户端，和clientset最大的区别是：clientset不能操作自定义资源，但dynamic client可以，这是因为dynamic client内部使用非结构化数据unstructured，该数据结构能与resource互转。</p>
+<p>同时，dynamic client有对应的dynamic informer实现，因此在查询时可以从本地内存缓存获取资源信息。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
@@ -183,7 +184,7 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
 	<span class="p">}</span>
 <span class="p">}</span>
 
-</code></pre></div><h2 id="discovery-client">discovery client</h2>
+</code></pre></div><h3 id="discovery-client">discovery client</h3>
 <p>discovery client是一个带缓存的资源发现客户端，主要用于发现API server支持的GVR，缓存信息默认存储于<code>~/.kube/cache</code>和<code>~/.kube/http-cache中</code>。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// list resource
 </span><span class="c1"></span>
@@ -224,6 +225,178 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
 		<span class="p">}</span>
 	<span class="p">}</span>
 <span class="p">}</span>
+</code></pre></div><h2 id="best-practice">best practice</h2>
+<p>通常， 我们在设计自己的程序时，既想用discovery client的资源发现能力，也想拥有dynamic client对内置资源和自定义资源一致的管理能力，使用RESTmapper可以将两者结合起来：</p>
+<ul>
+<li>restmapper借助discovery client，实现GVK映射GVR，若资源不存在映射失败</li>
+<li>dynamic client使用获取的GVR向API server查询</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;sync&#34;</span>
+
+	<span class="nx">corev1</span> <span class="s">&#34;k8s.io/api/core/v1&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/api/meta&#34;</span>
+	<span class="nx">metav1</span> <span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/apis/meta/v1/unstructured&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime&#34;</span>
+	<span class="s">&#34;k8s.io/apimachinery/pkg/runtime/schema&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/discovery&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/discovery/cached/memory&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/dynamic&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/restmapper&#34;</span>
+	<span class="s">&#34;k8s.io/client-go/tools/clientcmd&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nf">mustInitClient</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+	<span class="nx">discoveryClient</span> <span class="o">*</span><span class="nx">discovery</span><span class="p">.</span><span class="nx">DiscoveryClient</span>
+	<span class="nx">dynamicClient</span>   <span class="nx">dynamic</span><span class="p">.</span><span class="nx">Interface</span>
+	<span class="nx">once</span>            <span class="nx">sync</span><span class="p">.</span><span class="nx">Once</span>
+
+	<span class="nx">gvk</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">schema</span><span class="p">.</span><span class="nx">GroupVersionKind</span><span class="p">{</span>
+		<span class="nx">Version</span><span class="p">:</span> <span class="s">&#34;v1&#34;</span><span class="p">,</span>
+		<span class="nx">Kind</span><span class="p">:</span>    <span class="s">&#34;Pod&#34;</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="nx">namespace</span> <span class="p">=</span> <span class="s">&#34;default&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">()</span>
+	<span class="nx">resource</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">getDynamicResource</span><span class="p">(</span><span class="nx">gvk</span><span class="p">,</span> <span class="nx">namespace</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">create</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;creating pod......&#34;</span><span class="p">)</span>
+		<span class="nx">pod</span> <span class="o">:=</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">Pod</span><span class="p">{</span>
+			<span class="nx">TypeMeta</span><span class="p">:</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">TypeMeta</span><span class="p">{},</span>
+			<span class="nx">ObjectMeta</span><span class="p">:</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span>
+				<span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;test-pod&#34;</span><span class="p">,</span>
+			<span class="p">},</span>
+			<span class="nx">Spec</span><span class="p">:</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">PodSpec</span><span class="p">{</span>
+				<span class="nx">Containers</span><span class="p">:</span> <span class="p">[]</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">Container</span><span class="p">{</span>
+					<span class="p">{</span>
+						<span class="nx">Name</span><span class="p">:</span>  <span class="s">&#34;test-busybox&#34;</span><span class="p">,</span>
+						<span class="nx">Image</span><span class="p">:</span> <span class="s">&#34;busybox&#34;</span><span class="p">,</span>
+					<span class="p">},</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+		<span class="p">}</span>
+		<span class="nx">obj</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">DefaultUnstructuredConverter</span><span class="p">.</span><span class="nf">ToUnstructured</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">pod</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="kd">var</span> <span class="nx">unstructured</span> <span class="nx">unstructured</span><span class="p">.</span><span class="nx">Unstructured</span>
+		<span class="nx">unstructured</span><span class="p">.</span><span class="nx">Object</span> <span class="p">=</span> <span class="nx">obj</span>
+		<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">resource</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">unstructured</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">CreateOptions</span><span class="p">{});</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="nf">create</span><span class="p">()</span>
+
+	<span class="nx">get</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;getting pod......&#34;</span><span class="p">)</span>
+		<span class="nx">unstructured</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">resource</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="s">&#34;test-pod&#34;</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">GetOptions</span><span class="p">{})</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="kd">var</span> <span class="nx">pod</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">Pod</span>
+		<span class="nx">err</span> <span class="p">=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">DefaultUnstructuredConverter</span><span class="p">.</span>
+			<span class="nf">FromUnstructured</span><span class="p">(</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Object</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pod</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nf">get</span><span class="p">()</span>
+
+	<span class="nx">list</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;listing pods......&#34;</span><span class="p">)</span>
+		<span class="nx">unstructuredList</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">resource</span><span class="p">.</span><span class="nf">List</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">ListOptions</span><span class="p">{})</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="kd">var</span> <span class="nx">podList</span> <span class="p">[]</span><span class="o">*</span><span class="nx">corev1</span><span class="p">.</span><span class="nx">Pod</span>
+		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">unstructured</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">unstructuredList</span><span class="p">.</span><span class="nx">Items</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">pod</span> <span class="nx">corev1</span><span class="p">.</span><span class="nx">Pod</span>
+			<span class="nx">err</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">DefaultUnstructuredConverter</span><span class="p">.</span>
+				<span class="nf">FromUnstructured</span><span class="p">(</span><span class="nx">unstructured</span><span class="p">.</span><span class="nx">Object</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pod</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="nx">podList</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">podList</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">pod</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">pod</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">podList</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">pod</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">pod</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="nf">list</span><span class="p">()</span>
+
+	<span class="nx">delete</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(){</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;deleting pod...&#34;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">resource</span><span class="p">.</span><span class="nf">Delete</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="s">&#34;test-pod&#34;</span><span class="p">,</span> <span class="nx">metav1</span><span class="p">.</span><span class="nx">DeleteOptions</span><span class="p">{});</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="nb">delete</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">mustInitClient</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">once</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+
+		<span class="kd">var</span> <span class="nx">configPath</span> <span class="kt">string</span>
+
+		<span class="k">if</span> <span class="nx">value</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;KUBECONFIG&#34;</span><span class="p">);</span> <span class="nx">value</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+			<span class="nx">configPath</span> <span class="p">=</span> <span class="nx">value</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">configPath</span> <span class="p">=</span> <span class="s">&#34;~/.kube/config&#34;</span>
+		<span class="p">}</span>
+
+		<span class="nx">config</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">clientcmd</span><span class="p">.</span><span class="nf">BuildConfigFromFlags</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">configPath</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="nx">discoveryClient</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">discovery</span><span class="p">.</span><span class="nf">NewDiscoveryClientForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="nx">dynamicClient</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">dynamic</span><span class="p">.</span><span class="nf">NewForConfig</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">})</span>
+<span class="p">}</span>
+
+<span class="c1">// getDynamicResource convert GVK into dynamic resource
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">getDynamicResource</span><span class="p">(</span><span class="nx">gvk</span> <span class="o">*</span><span class="nx">schema</span><span class="p">.</span><span class="nx">GroupVersionKind</span><span class="p">,</span> <span class="nx">namespace</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">dr</span> <span class="nx">dynamic</span><span class="p">.</span><span class="nx">ResourceInterface</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="nx">mapper</span> <span class="o">:=</span> <span class="nx">restmapper</span><span class="p">.</span><span class="nf">NewDeferredDiscoveryRESTMapper</span><span class="p">(</span><span class="nx">memory</span><span class="p">.</span><span class="nf">NewMemCacheClient</span><span class="p">(</span><span class="nx">discoveryClient</span><span class="p">))</span>
+	<span class="nx">mapping</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mapper</span><span class="p">.</span><span class="nf">RESTMapping</span><span class="p">(</span><span class="nx">gvk</span><span class="p">.</span><span class="nf">GroupKind</span><span class="p">(),</span> <span class="nx">gvk</span><span class="p">.</span><span class="nx">Version</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;CRD has not been registed, err: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">mapping</span><span class="p">.</span><span class="nx">Scope</span><span class="p">.</span><span class="nf">Name</span><span class="p">()</span> <span class="o">==</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">RESTScopeNameNamespace</span> <span class="p">{</span>
+		<span class="nx">dr</span> <span class="p">=</span> <span class="nx">dynamicClient</span><span class="p">.</span><span class="nf">Resource</span><span class="p">(</span><span class="nx">mapping</span><span class="p">.</span><span class="nx">Resource</span><span class="p">).</span><span class="nf">Namespace</span><span class="p">(</span><span class="nx">namespace</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">dr</span> <span class="p">=</span> <span class="nx">dynamicClient</span><span class="p">.</span><span class="nf">Resource</span><span class="p">(</span><span class="nx">mapping</span><span class="p">.</span><span class="nx">Resource</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
 </code></pre></div>]]></content>
 		</item>
 		
