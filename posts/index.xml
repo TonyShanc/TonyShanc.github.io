@@ -397,7 +397,11 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
 	<span class="k">return</span>
 <span class="p">}</span>
 
-</code></pre></div>]]></content>
+</code></pre></div><h2 id="参考">参考</h2>
+<ul>
+<li>《kubernetes源码剖析》</li>
+</ul>
+]]></content>
 		</item>
 		
 		<item>

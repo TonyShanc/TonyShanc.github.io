@@ -21,7 +21,7 @@ client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient
 RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
  RESTClient package main import ( &#34;context&#34; &#34;fmt&#34; corev1 &#34;k8s.io/api/core/v1&#34; metav1 &#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34; &#34;k8s.io/client-go/kubernetes/scheme&#34; &#34;k8s.io/client-go/rest&#34; &#34;k8s.io/client-go/tools/clientcmd&#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&#34;&#34;, &#34;/etc/rancher/k3s/k3s.yaml&#34;) if err != nil { panic(err) } config.APIPath = &#34;api&#34; // group core version v1 	config.GroupVersion = &amp;corev1."><meta itemprop="datePublished" content="2021-12-13T15:35:21+08:00" />
 <meta itemprop="dateModified" content="2021-12-13T15:35:21+08:00" />
-<meta itemprop="wordCount" content="756">
+<meta itemprop="wordCount" content="758">
 <meta itemprop="keywords" content="kubernetes,golang," /><meta property="og:title" content="面向API server CRUD的探索" />
 <meta property="og:description" content="前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
 前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
@@ -476,14 +476,18 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
 	<span class="k">return</span>
 <span class="p">}</span>
 
-</code></pre></div>
+</code></pre></div><h2 id="参考">参考<a href="#参考" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li>《kubernetes源码剖析》</li>
+</ul>
+
 			</div>
 			<hr class="post-end">
 			<footer class="post-info">
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/kubernetes">kubernetes</a></span><span class="tag"><a href="https://shankisme.com/tags/golang">golang</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>756 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>758 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-12-13 07:35 &#43;0000</p>
 			</footer>
 		</article>
@@ -506,6 +510,7 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
       </ul>
     </li>
     <li><a href="#best-practice">best practice</a></li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
 		</aside>
