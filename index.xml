@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Mon, 13 Dec 2021 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 22 Dec 2021 20:07:57 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用go创建简单容器</title>
+      <link>https://shankisme.com/posts/%E7%94%A8go%E5%88%9B%E5%BB%BA%E7%AE%80%E5%8D%95%E5%AE%B9%E5%99%A8/</link>
+      <pubDate>Wed, 22 Dec 2021 20:07:57 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/%E7%94%A8go%E5%88%9B%E5%BB%BA%E7%AE%80%E5%8D%95%E5%AE%B9%E5%99%A8/</guid>
+      <description>environment  ubuntu 20.04 go 1.17  linux namespace UTS namespace UTS namespace常用来隔离子进程与父进程的hostname
+package main import ( &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; &amp;#34;os/exec&amp;#34; &amp;#34;syscall&amp;#34; ) func main() { cmd := exec.Command(&amp;#34;/bin/sh&amp;#34;) cmd.Stdin = os.Stdin cmd.Stdout = os.Stdout cmd.Stderr = os.Stderr cmd.SysProcAttr = &amp;amp;syscall.SysProcAttr{ // UTS namespace 	Cloneflags: syscall.CLONE_NEWUTS, } if err := cmd.Run(); err != nil { fmt.Printf(&amp;#34;Error running the exec.Command - %s\n&amp;#34;, err) os.Exit(1) } } 因为sudo 运行程序时非root用户设置的额外环境变量会因为安全策略失效， 这里参考如何设置。 图方便，让我们build后运行试一下
+tonyshanc@tonyshanc-ThinkPad:~/桌面/goproj/learnk8s$ go build container/namespace/PID/main.</description>
+    </item>
+    
     <item>
       <title>面向API server CRUD的探索</title>
       <link>https://shankisme.com/posts/clientset/</link>
@@ -159,23 +170,6 @@ from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shell
 先用在线工具转换一下A的输出 发现最有规律的是2进制和8进制数据 但是考虑到8进制不常用，并且它的规律集中在52上，没法利用 所以接下来看2进制： 2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合 我们需要的是有规律的数， 所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中) 继续观察余下的二进制数 发现很像数字逻辑中的电平跳变，0代表低位，1代表高位 该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码 查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律
 曼切斯特编码： data用跳变表示，0和1对应01和10 至于谁对应谁有两种标准： 差分曼切斯特编码： 数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。 知识回顾的差不多了，回到题目，开始撸代码 由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。 思路很简单 直接贴代码：
 import re def bintohex(s1): s = re.findall(&amp;#39;.{4}&amp;#39;, s1) s2 = &amp;#39;&amp;#39; for i in s: s2 += str(hex(int(i, 2))).replace(&amp;#39;0x&amp;#39;,&amp;#39;&amp;#39;) return s2 def diffmqst(s1): #差分曼切斯特 pre = &amp;#39;01&amp;#39; rst = &amp;#39;&amp;#39; s = re.findall(&amp;#39;.{2}&amp;#39;,s1) for i in s: if i==pre: rst += &amp;#39;0&amp;#39; else : rst+=&amp;#39;1&amp;#39; pre = i return rst if __name__ == &amp;#39;__main__&amp;#39;: hex1 = &amp;#39;AAAAA56A69AA55A95995A569AA95565556&amp;#39; hex2 = &amp;#39;0x8893CA58&amp;#39; bin1 = bin(int(hex1, 16)).</description>
-    </item>
-    
-    <item>
-      <title>ctf水题---爆破</title>
-      <link>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</link>
-      <pubDate>Fri, 21 Feb 2020 01:07:00 +0800</pubDate>
-      
-      <guid>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</guid>
-      <description>实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
-这是本菜鸡第一次接触拍黄片php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
-&amp;lt;?php include &amp;#34;flag.php&amp;#34;; $a = @$_REQUEST[&amp;#39;hello&amp;#39;]; if(!preg_match(&amp;#39;/^\w*$/&amp;#39;,$a )){ die(&amp;#39;ERROR&amp;#39;); } eval(&amp;#34;var_dump($$a);&amp;#34;); show_source(__FILE__); ?&amp;gt;@$_REQUEST[&amp;lsquo;hello&amp;rsquo;] 提示我们上传的变量名为hello
-request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：
-1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS
-2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&amp;quot;flag.php&amp;quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。
-做到这里再看提示，说真的，应该只有高手和做完的人能推出其中意思，我这样的菜鸡很有可能去猜文件里的六位变量值。
-后面陆续把爆破二，爆破三做掉了（偷偷参考了下WP 嘿嘿）
-总结的话就是：web题解决的关键的熟悉php以及理解php的脆弱方面；2 php是直接上最好的语言（狗头）</description>
     </item>
     
   </channel>

@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 27 Nov 2021 01:11:42 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/untagged/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 22 Dec 2021 20:07:57 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/untagged/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用go创建简单容器</title>
+      <link>https://shankisme.com/posts/%E7%94%A8go%E5%88%9B%E5%BB%BA%E7%AE%80%E5%8D%95%E5%AE%B9%E5%99%A8/</link>
+      <pubDate>Wed, 22 Dec 2021 20:07:57 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/%E7%94%A8go%E5%88%9B%E5%BB%BA%E7%AE%80%E5%8D%95%E5%AE%B9%E5%99%A8/</guid>
+      <description>environment  ubuntu 20.04 go 1.17  linux namespace UTS namespace UTS namespace常用来隔离子进程与父进程的hostname
+package main import ( &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; &amp;#34;os/exec&amp;#34; &amp;#34;syscall&amp;#34; ) func main() { cmd := exec.Command(&amp;#34;/bin/sh&amp;#34;) cmd.Stdin = os.Stdin cmd.Stdout = os.Stdout cmd.Stderr = os.Stderr cmd.SysProcAttr = &amp;amp;syscall.SysProcAttr{ // UTS namespace 	Cloneflags: syscall.CLONE_NEWUTS, } if err := cmd.Run(); err != nil { fmt.Printf(&amp;#34;Error running the exec.Command - %s\n&amp;#34;, err) os.Exit(1) } } 因为sudo 运行程序时非root用户设置的额外环境变量会因为安全策略失效， 这里参考如何设置。 图方便，让我们build后运行试一下
+tonyshanc@tonyshanc-ThinkPad:~/桌面/goproj/learnk8s$ go build container/namespace/PID/main.</description>
+    </item>
+    
     <item>
       <title>About</title>
       <link>https://shankisme.com/about/</link>
