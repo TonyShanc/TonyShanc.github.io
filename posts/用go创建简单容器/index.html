@@ -12,7 +12,7 @@
 package main import ( &#34;fmt&#34; &#34;os&#34; &#34;os/exec&#34; &#34;syscall&#34; ) func main() { cmd := exec.Command(&#34;/bin/sh&#34;) cmd.Stdin = os.Stdin cmd.Stdout = os.Stdout cmd.Stderr = os.Stderr cmd.SysProcAttr = &amp;syscall.SysProcAttr{ // UTS namespace 	Cloneflags: syscall.CLONE_NEWUTS, } if err := cmd.Run(); err != nil { fmt.Printf(&#34;Error running the exec.Command - %s\n&#34;, err) os.Exit(1) } } 因为sudo 运行程序时非root用户设置的额外环境变量会因为安全策略失效， 这里参考如何设置。 图方便，让我们build后运行试一下
 tonyshanc@tonyshanc-ThinkPad:~/桌面/goproj/learnk8s$ go build container/namespace/PID/main."><meta itemprop="datePublished" content="2021-12-22T20:07:57+08:00" />
 <meta itemprop="dateModified" content="2021-12-22T20:07:57+08:00" />
-<meta itemprop="wordCount" content="250">
+<meta itemprop="wordCount" content="509">
 <meta itemprop="keywords" content="untagged," /><meta property="og:title" content="用go创建简单容器" />
 <meta property="og:description" content="environment  ubuntu 20.04 go 1.17  linux namespace UTS namespace UTS namespace常用来隔离子进程与父进程的hostname
 package main import ( &#34;fmt&#34; &#34;os&#34; &#34;os/exec&#34; &#34;syscall&#34; ) func main() { cmd := exec.Command(&#34;/bin/sh&#34;) cmd.Stdin = os.Stdin cmd.Stdout = os.Stdout cmd.Stderr = os.Stderr cmd.SysProcAttr = &amp;syscall.SysProcAttr{ // UTS namespace 	Cloneflags: syscall.CLONE_NEWUTS, } if err := cmd.Run(); err != nil { fmt.Printf(&#34;Error running the exec.Command - %s\n&#34;, err) os.Exit(1) } } 因为sudo 运行程序时非root用户设置的额外环境变量会因为安全策略失效， 这里参考如何设置。 图方便，让我们build后运行试一下
@@ -158,7 +158,7 @@ root     2779454 2779449  0 20:40 pts/14   00:00:00 /bin/sh
 </code></pre><p>得到</p>
 <pre tabindex="0"><code>/bin/sh: 3: kill: No such process
 </code></pre><p>ps命令查看进程状态是利用linux特殊文件系统/proc实现的，所以只要没对这个进程做fs mount,linux内的进程都是可以看到所有进程状态的，这次响应<code>no such process</code>是因为PID namespace生效了，子进程看不到PID namespace外部的父进程。</p>
-<h2 id="uid-namespace">UID namespace<a href="#uid-namespace" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h3 id="uid-namespace">UID namespace<a href="#uid-namespace" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>如果需要将一个非root用户/组映射到某一个进程的root用户/组，就会用到UID namespace</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="o">......</span>
 <span class="nx">cmd</span><span class="p">.</span><span class="nx">SysProcAttr</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">SysProcAttr</span><span class="p">{</span>
@@ -190,6 +190,99 @@ root     2779454 2779449  0 20:40 pts/14   00:00:00 /bin/sh
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># touch /testpermission</span>
 touch: 无法创建 <span class="s1">&#39;/testpermission&#39;</span>: 权限不够
 </code></pre></div><p>在这个进程中即使看起来是root用户在操作,但是在host中，还是以普通用户身份操作，这就是用户的映射。</p>
+<h2 id="cgroups">cgroups<a href="#cgroups" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<p>进程运行时，常用到的有cpu,内存，外存，显卡等资源</p>
+<p>而一个容器（本质上是进程），资源使用上需要被限制，这时候cgroups就大显身手了。</p>
+<h3 id="cpu-limit">CPU limit<a href="#cpu-limit" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<p>cpu的使用计量方式很特殊，尤其在现在的多核cpu的操作系统中，一个进程的多个线程能并行跑在多个cpu核中，所以我们会期望，当前进程cpu资源使用上限可以是0.2cpu(1CPU的20%)，1.5cpu, 2cpu</p>
+<p>这样的需求在cgroups用两种概念来组合表达：</p>
+<ul>
+<li>cpu.cfs_period_us cpu使用时间周期长度</li>
+<li>cpu.cfs_quota_us 在一个cpu使用时间周期中，能用的cpu时间是多少</li>
+</ul>
+<p>比如限制只能使用0.2个cpu：</p>
+<pre tabindex="0"><code># echo 10000 &gt; cpu.cfs_quota_us /* quota = 10ms */
+# echo 50000 &gt; cpu.cfs_period_us /* period = 50ms */
+</code></pre><p>限制1.5个cpu：</p>
+<pre tabindex="0"><code># echo 10000 &gt; cpu.cfs_quota_us /* quota = 10ms */
+# echo 15000 &gt; cpu.cfs_period_us /* period = 15ms */
+</code></pre><p>限制2个cpu：</p>
+<pre tabindex="0"><code># echo 100000 &gt; cpu.cfs_quota_us /* quota = 100ms */
+# echo 50000 &gt; cpu.cfs_period_us /* period = 50ms */
+</code></pre><p>首先创建cgroup 文件夹，用来标记指定的进程ID</p>
+<pre tabindex="0"><code>sudo su
+mkdir -p /sys/fs/cgroup/memory/mycontainer
+</code></pre><p>我们计划让mycontainer下的进程只能使用0.5个CPU</p>
+<pre tabindex="0"><code>echo 10000000 &gt; /sys/fs/cgroup/memory/mycontainer/memory.limit_in_bytes
+echo &lt;process-id&gt; &gt; /sys/fs/cgroup/memory/mycontainer/cgroup.procs
+</code></pre><p>之后用代码创建个子进程，把子进程的PID放到这个文件夹下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;os/exec&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nf">Command</span><span class="p">(</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">)</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nx">Stdin</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stdin</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nx">Stdout</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span>
+	<span class="nx">cmd</span><span class="p">.</span><span class="nx">Stderr</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">Start</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;cmd start error&#34;</span><span class="p">)</span>
+		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nf">cgroupSetup</span><span class="p">(</span><span class="nx">cmd</span><span class="p">.</span><span class="nx">Process</span><span class="p">.</span><span class="nx">Pid</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nf">Wait</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;cmd wait error&#34;</span><span class="p">)</span>
+		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">cgroupSetup</span><span class="p">(</span><span class="nx">pid</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">cpath</span> <span class="o">:=</span> <span class="s">&#34;/sys/fs/cgroup/cpu/mycontainer/&#34;</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">MkdirAll</span><span class="p">(</span><span class="nx">cpath</span><span class="p">,</span> <span class="mo">0644</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;failed to create cpu cgroup&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nf">addProcessToCgroup</span><span class="p">(</span><span class="nx">cpath</span><span class="o">+</span><span class="s">&#34;cgroup.procs&#34;</span><span class="p">,</span> <span class="nx">pid</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">addProcessToCgroup</span><span class="p">(</span><span class="nx">fpath</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">pid</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">OpenFile</span><span class="p">(</span><span class="nx">fpath</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span> <span class="mo">0644</span><span class="p">)</span>
+	<span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">file</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="nx">pid</span><span class="p">));</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;failer to write pid&#34;</span><span class="p">)</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>然后查看当前PID：</p>
+<pre tabindex="0"><code># echo $PPID
+3929803
+# ps -ef | grep 3929803
+root     3929803 3929697  0 17:28 pts/14   00:00:00 /tmp/go-build3119061363/b001/exe/main
+root     3929808 3929803  0 17:28 pts/14   00:00:00 /bin/sh
+root     3931113 3929808  0 17:29 pts/14   00:00:00 grep 3929803
+</code></pre><p>当前PID=3929808
+换个host下的shell查看mycontainer cpu list文件夹下有没有这个进程号：</p>
+<pre tabindex="0"><code>tonyshanc@tonyshanc-ThinkPad:/sys/fs/cgroup/cpu/mycontainer$ cat cgroup.procs
+3929808
+</code></pre><p>很好，对应起来了</p>
+<p>由于cpu负载只能用百分比衡量，无法查看；用了几个核心，这里就不再继续探索了，下面的memory limit实验或许能给你更直观的感受。</p>
+<h3 id="memory-limit">memory limit<a href="#memory-limit" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h2 id="reference">reference<a href="#reference" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<ul>
+<li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/resource_management_guide/sec-cpu">cpu-redhat</a></li>
+<li><a href="https://songrgg.github.io/programming/">songrgg&rsquo;s blog</a></li>
+</ul>
 
 			</div>
 			<hr class="post-end">
@@ -197,7 +290,7 @@ touch: 无法创建 <span class="s1">&#39;/testpermission&#39;</span>: 权限不
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/untagged">untagged</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>250 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>509 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-12-22 12:07 &#43;0000</p>
 			</footer>
 		</article>
@@ -210,9 +303,16 @@ touch: 无法创建 <span class="s1">&#39;/testpermission&#39;</span>: 权限不
       <ul>
         <li><a href="#uts-namespace">UTS namespace</a></li>
         <li><a href="#pid-namespace">PID namespace</a></li>
+        <li><a href="#uid-namespace">UID namespace</a></li>
       </ul>
     </li>
-    <li><a href="#uid-namespace">UID namespace</a></li>
+    <li><a href="#cgroups">cgroups</a>
+      <ul>
+        <li><a href="#cpu-limit">CPU limit</a></li>
+        <li><a href="#memory-limit">memory limit</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference">reference</a></li>
   </ul>
 </nav>
 		</aside>
