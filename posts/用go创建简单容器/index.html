@@ -12,7 +12,7 @@
 package main import ( &#34;fmt&#34; &#34;os&#34; &#34;os/exec&#34; &#34;syscall&#34; ) func main() { cmd := exec.Command(&#34;/bin/sh&#34;) cmd.Stdin = os.Stdin cmd.Stdout = os.Stdout cmd.Stderr = os.Stderr cmd.SysProcAttr = &amp;syscall.SysProcAttr{ // UTS namespace 	Cloneflags: syscall.CLONE_NEWUTS, } if err := cmd.Run(); err != nil { fmt.Printf(&#34;Error running the exec.Command - %s\n&#34;, err) os.Exit(1) } } 因为sudo 运行程序时非root用户设置的额外环境变量会因为安全策略失效， 这里参考如何设置。 图方便，让我们build后运行试一下
 tonyshanc@tonyshanc-ThinkPad:~/桌面/goproj/learnk8s$ go build container/namespace/PID/main."><meta itemprop="datePublished" content="2021-12-22T20:07:57+08:00" />
 <meta itemprop="dateModified" content="2021-12-22T20:07:57+08:00" />
-<meta itemprop="wordCount" content="629">
+<meta itemprop="wordCount" content="603">
 <meta itemprop="keywords" content="untagged," /><meta property="og:title" content="用go创建简单容器" />
 <meta property="og:description" content="environment  ubuntu 20.04 go 1.17  linux namespace UTS namespace UTS namespace常用来隔离子进程与父进程的hostname
 package main import ( &#34;fmt&#34; &#34;os&#34; &#34;os/exec&#34; &#34;syscall&#34; ) func main() { cmd := exec.Command(&#34;/bin/sh&#34;) cmd.Stdin = os.Stdin cmd.Stdout = os.Stdout cmd.Stderr = os.Stderr cmd.SysProcAttr = &amp;syscall.SysProcAttr{ // UTS namespace 	Cloneflags: syscall.CLONE_NEWUTS, } if err := cmd.Run(); err != nil { fmt.Printf(&#34;Error running the exec.Command - %s\n&#34;, err) os.Exit(1) } } 因为sudo 运行程序时非root用户设置的额外环境变量会因为安全策略失效， 这里参考如何设置。 图方便，让我们build后运行试一下
@@ -214,7 +214,7 @@ touch: 无法创建 <span class="s1">&#39;/testpermission&#39;</span>: 权限不
 mkdir -p /sys/fs/cgroup/cpu/mycontainer
 </code></pre><p>我们计划让mycontainer下的进程只能使用1个CPU</p>
 <pre tabindex="0"><code>echo 10000 &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_period_us
-echo 5000  &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_quota_us
+echo 10000  &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_quota_us
 </code></pre><p>之后用代码创建个子进程，把子进程的PID放到这个文件夹下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
@@ -269,12 +269,8 @@ echo 5000  &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_quota_us
 <span class="c1">#！/bin/bash</span>
 <span class="k">while</span> true<span class="p">;</span> <span class="k">do</span> true<span class="p">;</span> <span class="k">done</span>
 </code></pre></div><p>然后查看当前PID：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># echo $PPID</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># echo $$</span>
 <span class="m">3929803</span>
-<span class="c1"># ps -ef | grep 3929803</span>
-root     <span class="m">3929803</span> <span class="m">3929697</span>  <span class="m">0</span> 17:28 pts/14   00:00:00 /tmp/go-build3119061363/b001/exe/main
-root     <span class="m">3929808</span> <span class="m">3929803</span>  <span class="m">0</span> 17:28 pts/14   00:00:00 /bin/sh
-root     <span class="m">3931113</span> <span class="m">3929808</span>  <span class="m">0</span> 17:29 pts/14   00:00:00 grep <span class="m">3929803</span>
 </code></pre></div><p>当前PID=3929808
 换个host下的shell查看mycontainer cpu list文件夹下有没有这个进程号：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">tonyshanc@tonyshanc-ThinkPad:/sys/fs/cgroup/cpu/mycontainer$ cat cgroup.procs
@@ -294,7 +290,9 @@ root     <span class="m">3931113</span> <span class="m">3929808</span>  <span cl
 <h3 id="memory-limit">memory limit<a href="#memory-limit" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>这里只做简单的memory hard limit, 用来限制进程内存使用上限</p>
 <p>限制mycontainer group中的进程，只能使用10M内存</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> <span class="m">10000000</span> &gt; /sys/fs/cgroup/memory/mycontainer/memory.limit_in_bytes
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo su
+mkdir -p /sys/fs/cgroup/memory/mycontainer
+<span class="nb">echo</span> <span class="m">10000000</span> &gt; /sys/fs/cgroup/memory/mycontainer/memory.limit_in_bytes
 </code></pre></div><p>针对上一个代码改一下path:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="o">......</span>
 <span class="nx">cpath</span> <span class="o">:=</span> <span class="s">&#34;/sys/fs/cgroup/memory/mycontainer/&#34;</span>
@@ -326,7 +324,7 @@ VmRSS:      602 kB
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/untagged">untagged</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>629 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>603 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2021-12-22 12:07 &#43;0000</p>
 			</footer>
 		</article>

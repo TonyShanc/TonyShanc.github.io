@@ -153,7 +153,7 @@ touch: 无法创建 <span class="s1">&#39;/testpermission&#39;</span>: 权限不
 mkdir -p /sys/fs/cgroup/cpu/mycontainer
 </code></pre><p>我们计划让mycontainer下的进程只能使用1个CPU</p>
 <pre tabindex="0"><code>echo 10000 &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_period_us
-echo 5000  &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_quota_us
+echo 10000  &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_quota_us
 </code></pre><p>之后用代码创建个子进程，把子进程的PID放到这个文件夹下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
@@ -208,12 +208,8 @@ echo 5000  &gt; /sys/fs/cgroup/cpu/mycontainer/cpu.cfs_quota_us
 <span class="c1">#！/bin/bash</span>
 <span class="k">while</span> true<span class="p">;</span> <span class="k">do</span> true<span class="p">;</span> <span class="k">done</span>
 </code></pre></div><p>然后查看当前PID：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># echo $PPID</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># echo $$</span>
 <span class="m">3929803</span>
-<span class="c1"># ps -ef | grep 3929803</span>
-root     <span class="m">3929803</span> <span class="m">3929697</span>  <span class="m">0</span> 17:28 pts/14   00:00:00 /tmp/go-build3119061363/b001/exe/main
-root     <span class="m">3929808</span> <span class="m">3929803</span>  <span class="m">0</span> 17:28 pts/14   00:00:00 /bin/sh
-root     <span class="m">3931113</span> <span class="m">3929808</span>  <span class="m">0</span> 17:29 pts/14   00:00:00 grep <span class="m">3929803</span>
 </code></pre></div><p>当前PID=3929808
 换个host下的shell查看mycontainer cpu list文件夹下有没有这个进程号：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">tonyshanc@tonyshanc-ThinkPad:/sys/fs/cgroup/cpu/mycontainer$ cat cgroup.procs
@@ -233,7 +229,9 @@ root     <span class="m">3931113</span> <span class="m">3929808</span>  <span cl
 <h3 id="memory-limit">memory limit</h3>
 <p>这里只做简单的memory hard limit, 用来限制进程内存使用上限</p>
 <p>限制mycontainer group中的进程，只能使用10M内存</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> <span class="m">10000000</span> &gt; /sys/fs/cgroup/memory/mycontainer/memory.limit_in_bytes
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo su
+mkdir -p /sys/fs/cgroup/memory/mycontainer
+<span class="nb">echo</span> <span class="m">10000000</span> &gt; /sys/fs/cgroup/memory/mycontainer/memory.limit_in_bytes
 </code></pre></div><p>针对上一个代码改一下path:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="o">......</span>
 <span class="nx">cpath</span> <span class="o">:=</span> <span class="s">&#34;/sys/fs/cgroup/memory/mycontainer/&#34;</span>
