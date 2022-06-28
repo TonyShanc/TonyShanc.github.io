@@ -14,13 +14,15 @@ kong网关中文文档
 kong官网
 kong官方文档
 前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
-理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
- （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+理论 Consumer The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+（官方原文解释中的消费者和数据库的映射这里暂时不涉及）
 consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
 Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
 请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
 kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
-他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT"><meta itemprop="datePublished" content="2020-11-22T13:40:56+08:00" />
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT
+（这里使用kong图形界面KONGA实践）
+JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。"><meta itemprop="datePublished" content="2020-11-22T13:40:56+08:00" />
 <meta itemprop="dateModified" content="2020-11-22T13:40:56+08:00" />
 <meta itemprop="wordCount" content="311">
 <meta itemprop="keywords" content="网关,微服务," /><meta property="og:title" content="kong网关consumer service route plugin 理解与实践" />
@@ -30,13 +32,15 @@ kong网关中文文档
 kong官网
 kong官方文档
 前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
-理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
- （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+理论 Consumer The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+（官方原文解释中的消费者和数据库的映射这里暂时不涉及）
 consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
 Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
 请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
 kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
-他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT" />
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT
+（这里使用kong图形界面KONGA实践）
+JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-11-22T13:40:56+08:00" />
@@ -50,13 +54,15 @@ kong网关中文文档
 kong官网
 kong官方文档
 前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
-理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
- （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+理论 Consumer The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+（官方原文解释中的消费者和数据库的映射这里暂时不涉及）
 consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
 Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
 请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
 kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
-他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT"/>
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT
+（这里使用kong图形界面KONGA实践）
+JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。"/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -311,9 +317,9 @@ kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
 
 
 
-	<script src="https://shankisme.com/js/bundle.min.a0bd26cee39afcbb1504c0ffa991736f16c2439e577a925a0a9a3d0650cef15c.js" integrity="sha256-oL0mzuOa/LsVBMD/qZFzbxbCQ55XepJaCpo9BlDO8Vw=" crossorigin="anonymous"></script>
+	<script src="https://shankisme.com/js/bundle.min.85c1ea774c975b7667d2561aba385b9ea6db4df796d327b4adcce8222a092535.js" integrity="sha256-hcHqd0yXW3Zn0lYaujhbnqbbTfeW0ye0rczoIioJJTU=" crossorigin="anonymous"></script>
 	
-	<script src="https://shankisme.com/js/theme-control.min.03a2a6e81dcb3d6cd8e354efdca3cff8a51eb0685d8805c580acb9e0de51efda.js" integrity="sha256-A6Km6B3LPWzY41Tv3KPP+KUesGhdiAXFgKy54N5R79o=" crossorigin="anonymous"></script>
+	<script src="https://shankisme.com/js/theme-control.min.57826e365f2f9ee43c90b7d00ea1d564293c338d68cc0ddf1cd8d654d4815d09.js" integrity="sha256-V4JuNl8vnuQ8kLfQDqHVZCk8M41ozA3fHNjWVNSBXQk=" crossorigin="anonymous"></script>
 
 </body>
 

@@ -7,7 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Mon, 13 Dec 2021 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 28 Jun 2022 10:56:02 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CAN网络设备在k8s集群内的管理方式</title>
+      <link>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</link>
+      <pubDate>Tue, 28 Jun 2022 10:56:02 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</guid>
+      <description>背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败。
+已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。
+yaml例如：
+apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。
+问题 没有管理好CAN的生命周期，当CAN所在的netns被删除时，CAN也会被删除，需要CAN相关的驱动或守护进程兜底，重新创建出新的CAN接口。
+CAN接口资源是唯一的，意味着使用CAN的项目只能有一个副本，deployment滚动更新时需要保证老pod稳定运行，不能移除CAN，又要保证新pod拿到CAN达到healthy状态才能完成滚动更新，直接导致死锁。
+一般来说k8s device plugin适合分配像gpu、cpu、内存这类分配数可大于1的整数计算资源，而CAN网络接口pod内存在即可，和数量无关，所以基于k8s device plugin的方案不合适。
+方案 平滑升级项目版本是有必要的，k8s deployment的滚动更新必然要求同时有多个CAN，单纯移动CAN的想法似乎应该被抛弃。
+流量转发 学习docker网络原理的时候，我们会了解到一些特殊的网络设备：veth pair、bridge。
+docker的默认网络模式bridge，使用docker0(bridge网络设备)作为host的ethX与其他netns的ethX流量转发中枢，使用veth为容器网络提供ethX接口与外界通信。
+CAN网络设备也有类似的网桥cangw和连接两个netns的vxcan实现上面的流量转发方案。
+环境要求 linux should support can kernel module(sudo modprobe can to check and load)
+linux should support vxcan kernel module(sudo modprobe vxcan to check and load)</description>
+    </item>
+    
     <item>
       <title>面向API server CRUD的探索</title>
       <link>https://shankisme.com/posts/clientset/</link>
@@ -17,7 +38,7 @@
       <description>前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
 前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
 k8s将资源分组和版本化，形成了:
- Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念  k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
+Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念 k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
 资源组、资源版本、资源、子资源的完整表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;/&amp;lt;resource&amp;gt;/&amp;lt;subresource&amp;gt;
 如Deployment资源，完整表现形式为：apps/v1/deployments/status
 资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;,Kind=&amp;lt;kind&amp;gt;
@@ -25,7 +46,7 @@ k8s将资源分组和版本化，形成了:
 client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。
 client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient
 RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
- RESTClient package main import ( &amp;#34;context&amp;#34; &amp;#34;fmt&amp;#34; corev1 &amp;#34;k8s.io/api/core/v1&amp;#34; metav1 &amp;#34;k8s.io/apimachinery/pkg/apis/meta/v1&amp;#34; &amp;#34;k8s.io/client-go/kubernetes/scheme&amp;#34; &amp;#34;k8s.io/client-go/rest&amp;#34; &amp;#34;k8s.io/client-go/tools/clientcmd&amp;#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&amp;#34;&amp;#34;, &amp;#34;/etc/rancher/k3s/k3s.yaml&amp;#34;) if err != nil { panic(err) } config.APIPath = &amp;#34;api&amp;#34; // group core version v1 	config.GroupVersion = &amp;amp;corev1.</description>
+RESTClient package main import ( &amp;#34;context&amp;#34; &amp;#34;fmt&amp;#34; corev1 &amp;#34;k8s.io/api/core/v1&amp;#34; metav1 &amp;#34;k8s.io/apimachinery/pkg/apis/meta/v1&amp;#34; &amp;#34;k8s.io/client-go/kubernetes/scheme&amp;#34; &amp;#34;k8s.io/client-go/rest&amp;#34; &amp;#34;k8s.io/client-go/tools/clientcmd&amp;#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&amp;#34;&amp;#34;, &amp;#34;/etc/rancher/k3s/k3s.yaml&amp;#34;) if err != nil { panic(err) } config.APIPath = &amp;#34;api&amp;#34; // group core version v1 config.GroupVersion = &amp;amp;corev1.SchemeGroupVersion // set codec config.</description>
     </item>
     
     <item>
@@ -45,13 +66,14 @@ RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，Cli
 而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
 这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
 type Pod struct { metav1.TypeMeta `json:&amp;#34;,inline&amp;#34;` metav1.ObjectMeta `json:&amp;#34;metadata,omitempty&amp;#34; protobuf:&amp;#34;bytes,1,opt,name=metadata&amp;#34;` Spec PodSpec `json:&amp;#34;spec,omitempty&amp;#34; protobuf:&amp;#34;bytes,2,opt,name=spec&amp;#34;` Status PodStatus `json:&amp;#34;status,omitempty&amp;#34; protobuf:&amp;#34;bytes,3,opt,name=status&amp;#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
- 执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
 kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
 还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
 然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
 crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化实现，与对象，对象实例之间区别类似。
 我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：
-  依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化</description>
+依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化
+reconcile方法中的业务逻辑会根据资源的期望状态，对外部世界作出改变，如果处理失败，就重新入队，按某种规则到某个时间继续进入reconcile, 直到处理完成。</description>
     </item>
     
     <item>
@@ -76,7 +98,7 @@ crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化
 目录结构：
 trymock/ /db |--db.go |--db_test.go /mock |--db_mock.go // generated by mockgen //db.go type DB interface { Get(key string) (int, error) } func GetFromDB(db DB, key string) int { if value, err := db.Get(key); err == nil { return value } return -1 } gomock中，DB实例只能通过传参传入生成mock文件
 mockgen -source=db.go -destination=db_mock.go -package=mock gomock生成的db_mock.go如下
-//db_mock.go // Code generated by MockGen. DO NOT EDIT. // Source: db.go  // Package mock_db is a generated GoMock package.</description>
+//db_mock.go // Code generated by MockGen. DO NOT EDIT. // Source: db.go // Package mock_db is a generated GoMock package.</description>
     </item>
     
     <item>
@@ -86,8 +108,8 @@ mockgen -source=db.go -destination=db_mock.go -package=mock gomock生成的db_mo
       
       <guid>https://shankisme.com/posts/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%B1%BD%E8%BD%A6can%E6%80%BB%E7%BA%BF%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
       <description>CAN总线使用总线技术，取代了传统的点对点布线方式连接汽车电子控制单元（ECU）, 解决了传统布线方式中线束多，布线难，成本高等问题。
- figure-normal (without any classes)
-  CAN总线标准 CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。
+figure-normal (without any classes)
+CAN总线标准 CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。
 CAN网络物理层 连接在CAN总线上的设备叫做节点设备（CAN Node），CAN网络的拓扑一般为线型。线束最常用的是双绞线，线上传输为对称的差分电平信号。</description>
     </item>
     
@@ -103,13 +125,15 @@ kong网关中文文档
 kong官网
 kong官方文档
 前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
-理论 Consumer  The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
- （官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+理论 Consumer The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+（官方原文解释中的消费者和数据库的映射这里暂时不涉及）
 consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
 Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
 请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
 kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
-他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT</description>
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT
+（这里使用kong图形界面KONGA实践）
+JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</description>
     </item>
     
     <item>
@@ -159,23 +183,6 @@ from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shell
 先用在线工具转换一下A的输出 发现最有规律的是2进制和8进制数据 但是考虑到8进制不常用，并且它的规律集中在52上，没法利用 所以接下来看2进制： 2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合 我们需要的是有规律的数， 所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中) 继续观察余下的二进制数 发现很像数字逻辑中的电平跳变，0代表低位，1代表高位 该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码 查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律
 曼切斯特编码： data用跳变表示，0和1对应01和10 至于谁对应谁有两种标准： 差分曼切斯特编码： 数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。 知识回顾的差不多了，回到题目，开始撸代码 由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。 思路很简单 直接贴代码：
 import re def bintohex(s1): s = re.findall(&amp;#39;.{4}&amp;#39;, s1) s2 = &amp;#39;&amp;#39; for i in s: s2 += str(hex(int(i, 2))).replace(&amp;#39;0x&amp;#39;,&amp;#39;&amp;#39;) return s2 def diffmqst(s1): #差分曼切斯特 pre = &amp;#39;01&amp;#39; rst = &amp;#39;&amp;#39; s = re.findall(&amp;#39;.{2}&amp;#39;,s1) for i in s: if i==pre: rst += &amp;#39;0&amp;#39; else : rst+=&amp;#39;1&amp;#39; pre = i return rst if __name__ == &amp;#39;__main__&amp;#39;: hex1 = &amp;#39;AAAAA56A69AA55A95995A569AA95565556&amp;#39; hex2 = &amp;#39;0x8893CA58&amp;#39; bin1 = bin(int(hex1, 16)).</description>
-    </item>
-    
-    <item>
-      <title>ctf水题---爆破</title>
-      <link>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</link>
-      <pubDate>Fri, 21 Feb 2020 01:07:00 +0800</pubDate>
-      
-      <guid>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</guid>
-      <description>实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
-这是本菜鸡第一次接触拍黄片php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
-&amp;lt;?php include &amp;#34;flag.php&amp;#34;; $a = @$_REQUEST[&amp;#39;hello&amp;#39;]; if(!preg_match(&amp;#39;/^\w*$/&amp;#39;,$a )){ die(&amp;#39;ERROR&amp;#39;); } eval(&amp;#34;var_dump($$a);&amp;#34;); show_source(__FILE__); ?&amp;gt;@$_REQUEST[&amp;lsquo;hello&amp;rsquo;] 提示我们上传的变量名为hello
-request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：
-1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS
-2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&amp;quot;flag.php&amp;quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。
-做到这里再看提示，说真的，应该只有高手和做完的人能推出其中意思，我这样的菜鸡很有可能去猜文件里的六位变量值。
-后面陆续把爆破二，爆破三做掉了（偷偷参考了下WP 嘿嘿）
-总结的话就是：web题解决的关键的熟悉php以及理解php的脆弱方面；2 php是直接上最好的语言（狗头）</description>
     </item>
     
   </channel>

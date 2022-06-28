@@ -9,8 +9,8 @@
 	<meta name="msapplication-TileColor" content="#494f5c">
 <meta itemprop="name" content="ctf水题---爆破">
 <meta itemprop="description" content="实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
-这是本菜鸡第一次接触拍黄片php, 会了几招后发现php的语法简直像是C&#43;python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
-&lt;?php include &#34;flag.php&#34;; $a = @$_REQUEST[&#39;hello&#39;]; if(!preg_match(&#39;/^\w*$/&#39;,$a )){ die(&#39;ERROR&#39;); } eval(&#34;var_dump($$a);&#34;); show_source(__FILE__); ?&gt;@$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello
+这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C&#43;python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
+&lt;?php include &#34;flag.php&#34;; $a = @$_REQUEST[&#39;hello&#39;]; if(!preg_match(&#39;/^\w*$/&#39;,$a )){ die(&#39;ERROR&#39;); } eval(&#34;var_dump($$a);&#34;); show_source(__FILE__); ?&gt; @$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello
 request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：
 1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS
 2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&quot;flag.php&quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。
@@ -18,11 +18,11 @@ request是两种数据上传方式post和get的统称 这里当然选更方便�
 后面陆续把爆破二，爆破三做掉了（偷偷参考了下WP 嘿嘿）
 总结的话就是：web题解决的关键的熟悉php以及理解php的脆弱方面；2 php是直接上最好的语言（狗头）"><meta itemprop="datePublished" content="2020-02-21T01:07:00+08:00" />
 <meta itemprop="dateModified" content="2020-02-21T01:07:00+08:00" />
-<meta itemprop="wordCount" content="38">
+<meta itemprop="wordCount" content="40">
 <meta itemprop="keywords" content="ctf,misc,php," /><meta property="og:title" content="ctf水题---爆破" />
 <meta property="og:description" content="实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
-这是本菜鸡第一次接触拍黄片php, 会了几招后发现php的语法简直像是C&#43;python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
-&lt;?php include &#34;flag.php&#34;; $a = @$_REQUEST[&#39;hello&#39;]; if(!preg_match(&#39;/^\w*$/&#39;,$a )){ die(&#39;ERROR&#39;); } eval(&#34;var_dump($$a);&#34;); show_source(__FILE__); ?&gt;@$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello
+这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C&#43;python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
+&lt;?php include &#34;flag.php&#34;; $a = @$_REQUEST[&#39;hello&#39;]; if(!preg_match(&#39;/^\w*$/&#39;,$a )){ die(&#39;ERROR&#39;); } eval(&#34;var_dump($$a);&#34;); show_source(__FILE__); ?&gt; @$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello
 request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：
 1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS
 2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&quot;flag.php&quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。
@@ -37,8 +37,8 @@ request是两种数据上传方式post和get的统称 这里当然选更方便�
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="ctf水题---爆破"/>
 <meta name="twitter:description" content="实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
-这是本菜鸡第一次接触拍黄片php, 会了几招后发现php的语法简直像是C&#43;python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
-&lt;?php include &#34;flag.php&#34;; $a = @$_REQUEST[&#39;hello&#39;]; if(!preg_match(&#39;/^\w*$/&#39;,$a )){ die(&#39;ERROR&#39;); } eval(&#34;var_dump($$a);&#34;); show_source(__FILE__); ?&gt;@$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello
+这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C&#43;python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
+&lt;?php include &#34;flag.php&#34;; $a = @$_REQUEST[&#39;hello&#39;]; if(!preg_match(&#39;/^\w*$/&#39;,$a )){ die(&#39;ERROR&#39;); } eval(&#34;var_dump($$a);&#34;); show_source(__FILE__); ?&gt; @$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello
 request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：
 1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS
 2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&quot;flag.php&quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。
@@ -104,16 +104,16 @@ request是两种数据上传方式post和get的统称 这里当然选更方便�
 进去后给的是php后端源码。</p>
 <p>这是本菜鸡第一次接触<!-- raw HTML omitted -->拍黄片<!-- raw HTML omitted --> php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。
 废话不多说，来看看代码：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
-<span class="k">include</span> <span class="s2">&#34;flag.php&#34;</span><span class="p">;</span>
-<span class="nv">$a</span> <span class="o">=</span> <span class="o">@</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">];</span>
-<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">preg_match</span><span class="p">(</span><span class="s1">&#39;/^\w*$/&#39;</span><span class="p">,</span><span class="nv">$a</span> <span class="p">)){</span>
-  <span class="k">die</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">eval</span><span class="p">(</span><span class="s2">&#34;var_dump($</span><span class="si">$a</span><span class="s2">);&#34;</span><span class="p">);</span>
-<span class="nx">show_source</span><span class="p">(</span><span class="no">__FILE__</span><span class="p">);</span>
-<span class="cp">?&gt;</span><span class="err">
-</span></code></pre></div><p>@$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl"><span class="k">include</span> <span class="s2">&#34;flag.php&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$a</span> <span class="o">=</span> <span class="o">@</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">preg_match</span><span class="p">(</span><span class="s1">&#39;/^\w*$/&#39;</span><span class="p">,</span><span class="nv">$a</span> <span class="p">)){</span>
+</span></span><span class="line"><span class="cl">  <span class="k">die</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">eval</span><span class="p">(</span><span class="s2">&#34;var_dump($</span><span class="si">$a</span><span class="s2">);&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">show_source</span><span class="p">(</span><span class="no">__FILE__</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="cp">?&gt;</span><span class="err">
+</span></span></span></code></pre></div><p>@$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello</p>
 <p>request是两种数据上传方式post和get的统称
 这里当然选更方便的get, 直接在url后加hello变量
 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_]
@@ -133,7 +133,7 @@ request是两种数据上传方式post和get的统称 这里当然选更方便�
 				<p>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://shankisme.com/tags/ctf">ctf</a></span><span class="tag"><a href="https://shankisme.com/tags/misc">misc</a></span><span class="tag"><a href="https://shankisme.com/tags/php">php</a></span>
 				</p>
-				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>38 Words</p>
+				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>40 Words</p>
 				<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-02-20 17:07 &#43;0000</p>
 			</footer>
 		</article>
@@ -166,9 +166,9 @@ request是两种数据上传方式post和get的统称 这里当然选更方便�
 
 
 
-	<script src="https://shankisme.com/js/bundle.min.a0bd26cee39afcbb1504c0ffa991736f16c2439e577a925a0a9a3d0650cef15c.js" integrity="sha256-oL0mzuOa/LsVBMD/qZFzbxbCQ55XepJaCpo9BlDO8Vw=" crossorigin="anonymous"></script>
+	<script src="https://shankisme.com/js/bundle.min.85c1ea774c975b7667d2561aba385b9ea6db4df796d327b4adcce8222a092535.js" integrity="sha256-hcHqd0yXW3Zn0lYaujhbnqbbTfeW0ye0rczoIioJJTU=" crossorigin="anonymous"></script>
 	
-	<script src="https://shankisme.com/js/theme-control.min.03a2a6e81dcb3d6cd8e354efdca3cff8a51eb0685d8805c580acb9e0de51efda.js" integrity="sha256-A6Km6B3LPWzY41Tv3KPP+KUesGhdiAXFgKy54N5R79o=" crossorigin="anonymous"></script>
+	<script src="https://shankisme.com/js/theme-control.min.57826e365f2f9ee43c90b7d00ea1d564293c338d68cc0ddf1cd8d654d4815d09.js" integrity="sha256-V4JuNl8vnuQ8kLfQDqHVZCk8M41ozA3fHNjWVNSBXQk=" crossorigin="anonymous"></script>
 
 </body>
 

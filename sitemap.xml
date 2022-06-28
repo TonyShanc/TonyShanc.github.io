@@ -2,19 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://shankisme.com/tags/golang/</loc>
-    <lastmod>2021-12-13T15:35:21+08:00</lastmod>
+    <loc>https://shankisme.com/tags/can/</loc>
+    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</loc>
+    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/tags/container/</loc>
+    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/kubernetes/</loc>
-    <lastmod>2021-12-13T15:35:21+08:00</lastmod>
+    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/posts/</loc>
-    <lastmod>2021-12-13T15:35:21+08:00</lastmod>
+    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/</loc>
-    <lastmod>2021-12-13T15:35:21+08:00</lastmod>
+    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/</loc>
+    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/tags/golang/</loc>
     <lastmod>2021-12-13T15:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/posts/clientset/</loc>
