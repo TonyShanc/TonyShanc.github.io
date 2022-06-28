@@ -112,7 +112,7 @@ spec:
 <p>也为了方便list这些label，打算用label: <code>shankisme.com/net_device: can</code> 作为pod标记。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// controller.go
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">targetPodLabel</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;apps.robocloud.io/net_device&#34;</span><span class="p">:</span> <span class="s">&#34;can&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">targetPodLabel</span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;shankisme.com/net_device&#34;</span><span class="p">:</span> <span class="s">&#34;can&#34;</span><span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">PodController</span> <span class="kd">struct</span> <span class="p">{</span>
