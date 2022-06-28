@@ -8,7 +8,7 @@
 	<meta name="theme-color" content="#494f5c">
 	<meta name="msapplication-TileColor" content="#494f5c">
 <meta itemprop="name" content="CAN网络设备在k8s集群内的管理方式">
-<meta itemprop="description" content="背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败。
+<meta itemprop="description" content="背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。
 已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。
 yaml例如：
 apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。
@@ -24,7 +24,7 @@ linux should support vxcan kernel module(sudo modprobe vxcan to check and load)"
 <meta itemprop="dateModified" content="2022-06-28T10:56:02+08:00" />
 <meta itemprop="wordCount" content="636">
 <meta itemprop="keywords" content="CAN,kubernetes,container," /><meta property="og:title" content="CAN网络设备在k8s集群内的管理方式" />
-<meta property="og:description" content="背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败。
+<meta property="og:description" content="背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。
 已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。
 yaml例如：
 apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。
@@ -44,7 +44,7 @@ linux should support vxcan kernel module(sudo modprobe vxcan to check and load)"
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="CAN网络设备在k8s集群内的管理方式"/>
-<meta name="twitter:description" content="背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败。
+<meta name="twitter:description" content="背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。
 已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。
 yaml例如：
 apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。
@@ -110,7 +110,7 @@ linux should support vxcan kernel module(sudo modprobe vxcan to check and load)"
 			</header>
 			<div class="content">
 				<h1 id="背景">背景<a href="#背景" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
-<p>车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败。</p>
+<p>车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。</p>
 <h1 id="已知开源方案">已知开源方案<a href="#已知开源方案" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
 <ul>
 <li><a href="https://github.com/mpreu/k8s-device-plugin-socketcan">k8s-device-plugin-socketcan for docker</a></li>
@@ -374,7 +374,7 @@ spec:
 <p>4cpu的节点上无labeled pod时执行top:
 <img src="/img/CAN%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/cpu_load_1.png" alt="cpu load 1"></p>
 <p>4cpu的节点上10个labeled pod时执行top:
-<img src="/img/CAN%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/cpu_load_2.png" alt="cpu load 1"></p>
+<img src="/img/CAN%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/cpu_load_2.png" alt="cpu load 2"></p>
 <p>cpu内核进程负载占比并没有明显区别，说明vxcan+cangw方案的cpu负载很低</p>
 <h3 id="转发效率">转发效率<a href="#转发效率" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
 <p>由于太懒，借用搜索引擎了点相关讨论和实验</p>
