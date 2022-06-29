@@ -24,7 +24,7 @@ CAN接口资源是唯一的，意味着使用CAN的项目只能有一个副本�
 方案 平滑升级项目版本是有必要的，k8s deployment的滚动更新必然要求同时有多个CAN，单纯移动CAN的想法似乎应该被抛弃。
 流量转发 学习docker网络原理的时候，我们会了解到一些特殊的网络设备：veth pair、bridge。
 docker的默认网络模式bridge，使用docker0(bridge网络设备)作为host的ethX与其他netns的ethX流量转发中枢，使用veth为容器网络提供ethX接口与外界通信。
-CAN网络设备也有类似的网桥cangw和连接两个netns的vxcan实现上面的流量转发方案。
+CAN网络设备也有类似的网桥cangw和连接两个netns的vxcan实现上面的流量转发方案, 不过区别是bridge根据ip转发，cangw是分发相同流量。
 环境要求 linux should support can kernel module(sudo modprobe can to check and load)
 linux should support vxcan kernel module(sudo modprobe vxcan to check and load)</description>
     </item>
