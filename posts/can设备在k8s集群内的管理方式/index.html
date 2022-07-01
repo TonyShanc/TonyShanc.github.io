@@ -188,7 +188,7 @@ spec:
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">// 将vxcan0_1写入流量转发到can0
 </span></span><span class="line"><span class="cl">cangw -A -s vxcan0_1 -d can0 -e
-</span></span></code></pre></div><h2 id="基于k8s-controller的pod创建事件通知">基于k8s controller的pod创建事件通知<a href="#基于k8s-controller的pod创建事件通知" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+</span></span></code></pre></div><h2 id="使用k8s-controller通知pod创建事件">使用k8s controller通知pod创建事件<a href="#使用k8s-controller通知pod创建事件" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
 <p>既然基于vxcan和cangw能够为多个容器创建CAN网络设备，并且不需要关心设备数量的问题，咱只需要使用某种标记给pod打上，在labeld pod创建时，controller就能知道需要给哪些pod创建CAN网络设备并分发流量。</p>
 <p>也为了方便list这些label，打算用label: <code>shankisme.com/net_device: can</code> 作为pod标记。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// controller.go
@@ -421,7 +421,7 @@ spec:
         <li><a href="#等价shell命令">等价shell命令</a></li>
       </ul>
     </li>
-    <li><a href="#基于k8s-controller的pod创建事件通知">基于k8s controller的pod创建事件通知</a></li>
+    <li><a href="#使用k8s-controller通知pod创建事件">使用k8s controller通知pod创建事件</a></li>
     <li><a href="#daemon-pod运行环境和权限">daemon pod运行环境和权限</a></li>
     <li><a href="#资源生命周期管理">资源生命周期管理</a>
       <ul>
