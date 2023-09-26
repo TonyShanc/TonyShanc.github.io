@@ -7,7 +7,25 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Tue, 28 Jun 2022 10:56:02 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 25 Sep 2023 00:07:00 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ubuntu20.04 DNS troubeshooting</title>
+      <link>https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/</link>
+      <pubDate>Mon, 25 Sep 2023 00:07:00 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/</guid>
+      <description>前言 ubnutu20.04主流的网络配置方案为netplan，本文将从日常工作中使用netplan配置网口dns nameserver遇到的各种问题，以及知识的梳理
+ubuntu域名解析流程 不请求DNS，遍历本机/etc/hosts域名到ip的映射，匹配到域名时，返回对应的ip，未匹配到时走2匹配DNS
+获取/etc/resolv.conf内的nameservers, 自上而下请求，返回解析到的ip，未解析到时报错unknown domain or service
+细说/etc/resolv.conf ubuntu20.04有多种工具配置DNS nameserver：
+netplan命令 + /etc/netplan/00-xxx.yml配置文件 systemd-resolved.service + /etc/systemd/resolved.conf配置文件中配置全局DNS resolvconf命令 + /etc/resolvconf/resolv.conf.d/配置目录 重点来了:
+netplan apply、systemd-resolved.service restart后最新的dns nameserver会自动聚合在/run/systemd/resolve/resolv.conf，其中/etc/systemd/resolved.conf中的全局DNS配置会放在第一个，之后的nameserver以netplan配置文件中nameservers填写顺序排列。
+resolvconf -u执行后，/etc/resolvconf/resolv.conf.d下的文件 head base tail中填入的nameserver会拼接合并到/run/resolvconf/resolv.conf内。
+其实最终应用到的nameserver配置只会有一套。ubuntu系统最终信任的dns nameserver文件为/etc/resolv.conf，创建/etc/resolv.conf的软链接指向工具生成的某个resolv.conf文件表示应用了某套nameserver工具
+应用示例：
+$ sudo unlink /etc/resolv.conf $ sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf </description>
+    </item>
+    
     <item>
       <title>CAN网络设备在k8s集群内的管理方式</title>
       <link>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</link>
@@ -167,22 +185,6 @@ from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shell
 0x03 pwntools不适合装在32位系统中 该坑是我在ubuntu 32安装pwntools遇到的，执行exp会有警告，pwntools仍然会起作用，但是具体会产生什么影响我也不清楚，因为当时还在写最简单的exp, 栈溢出攻击，ret2shellcode攻击。
 另外，pwntools真的是非常好的工具，接口很齐全，谁用谁知道。
 完。</description>
-    </item>
-    
-    <item>
-      <title>ctf水题---传感器</title>
-      <link>https://shankisme.com/posts/%E4%BC%A0%E6%84%9F%E5%99%A8/</link>
-      <pubDate>Fri, 21 Feb 2020 01:07:00 +0800</pubDate>
-      
-      <guid>https://shankisme.com/posts/%E4%BC%A0%E6%84%9F%E5%99%A8/</guid>
-      <description>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。
-题目出自 i春秋CTF大本营: 2017届全国大学生信息安全竞赛
-已知 A传感器的ID和它的输出， 以及B的输出。 求另一个传感器B的ID。
-大致思路是从输出中寻找输出和ID的联系，而A的ID和输出就是线索。
-发现输出是16进制，遇到进制问题首先做的肯定是比对进制转换后的数字。
-先用在线工具转换一下A的输出 发现最有规律的是2进制和8进制数据 但是考虑到8进制不常用，并且它的规律集中在52上，没法利用 所以接下来看2进制： 2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合 我们需要的是有规律的数， 所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中) 继续观察余下的二进制数 发现很像数字逻辑中的电平跳变，0代表低位，1代表高位 该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码 查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律
-曼切斯特编码： data用跳变表示，0和1对应01和10 至于谁对应谁有两种标准： 差分曼切斯特编码： 数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。 知识回顾的差不多了，回到题目，开始撸代码 由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。 思路很简单 直接贴代码：
-import re def bintohex(s1): s = re.findall(&amp;#39;.{4}&amp;#39;, s1) s2 = &amp;#39;&amp;#39; for i in s: s2 += str(hex(int(i, 2))).replace(&amp;#39;0x&amp;#39;,&amp;#39;&amp;#39;) return s2 def diffmqst(s1): #差分曼切斯特 pre = &amp;#39;01&amp;#39; rst = &amp;#39;&amp;#39; s = re.findall(&amp;#39;.{2}&amp;#39;,s1) for i in s: if i==pre: rst += &amp;#39;0&amp;#39; else : rst+=&amp;#39;1&amp;#39; pre = i return rst if __name__ == &amp;#39;__main__&amp;#39;: hex1 = &amp;#39;AAAAA56A69AA55A95995A569AA95565556&amp;#39; hex2 = &amp;#39;0x8893CA58&amp;#39; bin1 = bin(int(hex1, 16)).</description>
     </item>
     
   </channel>

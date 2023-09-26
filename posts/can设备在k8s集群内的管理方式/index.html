@@ -41,7 +41,6 @@ linux should support vxcan kernel module(sudo modprobe vxcan to check and load)"
 <meta property="og:url" content="https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-06-28T10:56:02+08:00" />
 <meta property="article:modified_time" content="2022-06-28T10:56:02+08:00" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="CAN网络设备在k8s集群内的管理方式"/>
 <meta name="twitter:description" content="背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。
@@ -444,6 +443,9 @@ spec:
 			<i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></i>
 		</div>
 		<div class="post-nav thin">
+			<a class="next-post" href="https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/">
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;Newer</span><br><span>ubuntu20.04 DNS troubeshooting</span>
+			</a>
 			<a class="prev-post" href="https://shankisme.com/posts/clientset/">
 				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>面向API server CRUD的探索</span>
 			</a>
@@ -457,9 +459,10 @@ spec:
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2022 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>&copy; 2023 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
 		<p>
-			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a> &#183; <a href="https://shankisme.com/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a>
+			 &#183; <a href="https://shankisme.com/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
 		</p>
 	</footer>
 

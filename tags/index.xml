@@ -7,7 +7,25 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Tue, 28 Jun 2022 10:56:02 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 25 Sep 2023 00:07:00 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>dns</title>
+      <link>https://shankisme.com/tags/dns/</link>
+      <pubDate>Mon, 25 Sep 2023 00:07:00 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/dns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ubuntu</title>
+      <link>https://shankisme.com/tags/ubuntu/</link>
+      <pubDate>Mon, 25 Sep 2023 00:07:00 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/ubuntu/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>CAN</title>
       <link>https://shankisme.com/tags/can/</link>
@@ -77,24 +95,6 @@
       <pubDate>Sun, 22 Nov 2020 13:40:56 +0800</pubDate>
       
       <guid>https://shankisme.com/tags/%E7%BD%91%E5%85%B3/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ctf</title>
-      <link>https://shankisme.com/tags/ctf/</link>
-      <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
-      
-      <guid>https://shankisme.com/tags/ctf/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>pwn</title>
-      <link>https://shankisme.com/tags/pwn/</link>
-      <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
-      
-      <guid>https://shankisme.com/tags/pwn/</guid>
       <description></description>
     </item>
     
