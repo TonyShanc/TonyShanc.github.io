@@ -23,7 +23,8 @@ netplan apply、systemd-resolved.service restart后最新的dns nameserver会自
 resolvconf -u执行后，/etc/resolvconf/resolv.conf.d下的文件 head base tail中填入的nameserver会拼接合并到/run/resolvconf/resolv.conf内。
 其实最终应用到的nameserver配置只会有一套。ubuntu系统最终信任的dns nameserver文件为/etc/resolv.conf，创建/etc/resolv.conf的软链接指向工具生成的某个resolv.conf文件表示应用了某套nameserver工具
 应用示例：
-$ sudo unlink /etc/resolv.conf $ sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf </description>
+$ sudo unlink /etc/resolv.conf $ sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf troubeshooting trouble 1: ping域名的ip不符合期望。 很可能/etc/hosts内写死了域名对应的ip。
+trouble 2: nslookup等工具请求的nameserver未在netplan、resolvconf的配置文件中 查看/etc/resolv.conf，发现请求的nameserver在内，若文件头几行没有注释说明该文件为自动生成的，说明该文件未软链接到自动生成的resolv.conf中（ll 可查看具体文件路径），且该文件有独立inode，被人为修改并加入nameserver，导致无论怎么改其他地方的配置也不生效，无法变更请求的nameserver。</description>
     </item>
     
   </channel>
