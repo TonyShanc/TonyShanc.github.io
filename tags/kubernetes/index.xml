@@ -14,7 +14,7 @@
       <link>https://shankisme.com/posts/infra/</link>
       <pubDate>Sat, 17 Feb 2024 15:35:21 +0800</pubDate>
       <guid>https://shankisme.com/posts/infra/</guid>
-      <description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 计算存储资源限额 边缘集群网络高负载(大于1Gbps流量) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 边缘容器网络方案迭代 v1 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：k3s内置flannel(vxlan) v2 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：flannel pod(vxlan) v3 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router v4 pod网络分配：在kubelet注册node前，在node中预置pod cidr 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router </description>
+      <description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 资源限额（cpu、内存、GPU） 边缘集群网络高负载(流量大于1Gbps) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 边缘容器网络方案迭代 v1 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：k3s内置flannel(vxlan) v2 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：flannel pod(vxlan) v3 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router v4 pod网络分配：在kubelet注册node前，在node中预置pod cidr 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router </description>
     </item>
     <item>
       <title>CAN网络设备在k8s集群内的管理方式</title>
