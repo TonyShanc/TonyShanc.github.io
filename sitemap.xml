@@ -2,16 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://shankisme.com/tags/dns/</loc>
-    <lastmod>2023-09-25T00:07:00+08:00</lastmod>
+    <loc>https://shankisme.com/tags/infra/</loc>
+    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/posts/infra/</loc>
+    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/tags/kubernetes/</loc>
+    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/posts/</loc>
-    <lastmod>2023-09-25T00:07:00+08:00</lastmod>
+    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/</loc>
-    <lastmod>2023-09-25T00:07:00+08:00</lastmod>
+    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/</loc>
+    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/tags/dns/</loc>
     <lastmod>2023-09-25T00:07:00+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/ubuntu/</loc>
@@ -27,9 +36,6 @@
     <lastmod>2022-06-28T10:56:02+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/container/</loc>
-    <lastmod>2022-06-28T10:56:02+08:00</lastmod>
-  </url><url>
-    <loc>https://shankisme.com/tags/kubernetes/</loc>
     <lastmod>2022-06-28T10:56:02+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/golang/</loc>

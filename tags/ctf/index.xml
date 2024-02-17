@@ -7,72 +7,35 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 07 Mar 2020 21:43:55 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/ctf/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Mar 2020 21:43:55 +0800</lastBuildDate>
+    <atom:link href="https://shankisme.com/tags/ctf/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>pwn实践记录--rop入门</title>
       <link>https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
-      
       <guid>https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</guid>
-      <description>前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
-本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
-0x00 return2shellcode 文件：level1 习惯性查看保护机制：
-很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&amp;quot;/bin/sh&amp;quot;)。因此我们从payload的开始位置存shellcode，剩下的用&amp;rsquo;A&amp;rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
-接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令
-ulimit -c unlimited 执行level1:
-./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。
-from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shellcode = &amp;#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&amp;#34; shellcode += &amp;#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&amp;#34; shellcode += &amp;#34;\x0b\xcd\x80&amp;#34; payload = shellcode + &amp;#39;A&amp;#39; * (140 - len(shellcode)) + p32(ret) p.</description>
+      <description>前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。&#xA;本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。&#xA;0x00 return2shellcode 文件：level1 习惯性查看保护机制：&#xA;很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&amp;quot;/bin/sh&amp;quot;)。因此我们从payload的开始位置存shellcode，剩下的用&amp;rsquo;A&amp;rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。&#xA;接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令&#xA;ulimit -c unlimited 执行level1:&#xA;./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。&#xA;from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shellcode = &amp;#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&amp;#34; shellcode += &amp;#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&amp;#34; shellcode += &amp;#34;\x0b\xcd\x80&amp;#34; payload = shellcode + &amp;#39;A&amp;#39; * (140 - len(shellcode)) + p32(ret) p.</description>
     </item>
-    
     <item>
       <title>pwntools下踩的坑</title>
       <link>https://shankisme.com/posts/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/</link>
       <pubDate>Tue, 25 Feb 2020 19:03:01 +0800</pubDate>
-      
       <guid>https://shankisme.com/posts/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/</guid>
-      <description>纯pwn小白在疫情期间无聊，于是开始玩起了pwn。期间在i春秋,freebuf，知乎上随便看了几篇入门手册，难受的是技术活什么都看不懂。。距离上次接触汇编是大一下学期吧，当时计算机系统的实践课程要求做某常青藤的bomblab,当时跟着大佬的步骤勉强完成三关。探索的过程很累，尤其是在汇编知识还没消化完，就去做ret2somefunc的题，一个字：难，两个字：难顶。
-废话不多说，下面记录配pwntools环境踩的坑。当然踩坑还是因为没有先好好读官方文档。
-0x00 介绍 pwntools(v2.0)是编写漏洞利用脚本的python库，设计者将它分为两个模块：pwnlib与pwn。 pwnlib是个干净的模块，适合初学者快速入门。而pwn是打CTF专用的工具箱，是pwnlib的超集，功能更多，也更难入门。具体介绍请看pwntools文档。
-0x01 pwntools不适配windows中的python。 我先尝试在windows环境下pip install pwn。很快就装好了，本以为直接运行python脚本就大功告成了，结果编译器告诉我：
-行吧，缺东西，咱用pip补上，但是发现_curses仅支持linux，巧的是在win平台上有对应轮子。然后还是会有问题，就开始无限打补丁。。当然最后脑子没抽到底，换到了linux内,这里推荐ubuntu linux 64。
-0x02 要想方便流畅写exp，最好装在python2内。 为什么？因为从python3开始，str和bytes的边界不再模糊。python2中 str+bytes能合并成bytes，默认将str以ascii编码解码，而python3中，除非加法重定向，否则无法合并成统一格式。所以在python3中要想合并str和bytes。只能str.encode(&#39;ascii&#39;)+bytes或者str.encode+bytes.decode(&#39;ascii&#39;)
-0x03 pwntools不适合装在32位系统中 该坑是我在ubuntu 32安装pwntools遇到的，执行exp会有警告，pwntools仍然会起作用，但是具体会产生什么影响我也不清楚，因为当时还在写最简单的exp, 栈溢出攻击，ret2shellcode攻击。
-另外，pwntools真的是非常好的工具，接口很齐全，谁用谁知道。
-完。</description>
+      <description>纯pwn小白在疫情期间无聊，于是开始玩起了pwn。期间在i春秋,freebuf，知乎上随便看了几篇入门手册，难受的是技术活什么都看不懂。。距离上次接触汇编是大一下学期吧，当时计算机系统的实践课程要求做某常青藤的bomblab,当时跟着大佬的步骤勉强完成三关。探索的过程很累，尤其是在汇编知识还没消化完，就去做ret2somefunc的题，一个字：难，两个字：难顶。&#xA;废话不多说，下面记录配pwntools环境踩的坑。当然踩坑还是因为没有先好好读官方文档。&#xA;0x00 介绍 pwntools(v2.0)是编写漏洞利用脚本的python库，设计者将它分为两个模块：pwnlib与pwn。 pwnlib是个干净的模块，适合初学者快速入门。而pwn是打CTF专用的工具箱，是pwnlib的超集，功能更多，也更难入门。具体介绍请看pwntools文档。&#xA;0x01 pwntools不适配windows中的python。 我先尝试在windows环境下pip install pwn。很快就装好了，本以为直接运行python脚本就大功告成了，结果编译器告诉我：&#xA;行吧，缺东西，咱用pip补上，但是发现_curses仅支持linux，巧的是在win平台上有对应轮子。然后还是会有问题，就开始无限打补丁。。当然最后脑子没抽到底，换到了linux内,这里推荐ubuntu linux 64。&#xA;0x02 要想方便流畅写exp，最好装在python2内。 为什么？因为从python3开始，str和bytes的边界不再模糊。python2中 str+bytes能合并成bytes，默认将str以ascii编码解码，而python3中，除非加法重定向，否则无法合并成统一格式。所以在python3中要想合并str和bytes。只能str.encode(&#39;ascii&#39;)+bytes或者str.encode+bytes.decode(&#39;ascii&#39;)&#xA;0x03 pwntools不适合装在32位系统中 该坑是我在ubuntu 32安装pwntools遇到的，执行exp会有警告，pwntools仍然会起作用，但是具体会产生什么影响我也不清楚，因为当时还在写最简单的exp, 栈溢出攻击，ret2shellcode攻击。&#xA;另外，pwntools真的是非常好的工具，接口很齐全，谁用谁知道。&#xA;完。</description>
     </item>
-    
     <item>
       <title>ctf水题---传感器</title>
       <link>https://shankisme.com/posts/%E4%BC%A0%E6%84%9F%E5%99%A8/</link>
       <pubDate>Fri, 21 Feb 2020 01:07:00 +0800</pubDate>
-      
       <guid>https://shankisme.com/posts/%E4%BC%A0%E6%84%9F%E5%99%A8/</guid>
-      <description>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。
-题目出自 i春秋CTF大本营: 2017届全国大学生信息安全竞赛
-已知 A传感器的ID和它的输出， 以及B的输出。 求另一个传感器B的ID。
-大致思路是从输出中寻找输出和ID的联系，而A的ID和输出就是线索。
-发现输出是16进制，遇到进制问题首先做的肯定是比对进制转换后的数字。
-先用在线工具转换一下A的输出 发现最有规律的是2进制和8进制数据 但是考虑到8进制不常用，并且它的规律集中在52上，没法利用 所以接下来看2进制： 2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合 我们需要的是有规律的数， 所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中) 继续观察余下的二进制数 发现很像数字逻辑中的电平跳变，0代表低位，1代表高位 该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码 查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律
-曼切斯特编码： data用跳变表示，0和1对应01和10 至于谁对应谁有两种标准： 差分曼切斯特编码： 数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。 知识回顾的差不多了，回到题目，开始撸代码 由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。 思路很简单 直接贴代码：
-import re def bintohex(s1): s = re.findall(&amp;#39;.{4}&amp;#39;, s1) s2 = &amp;#39;&amp;#39; for i in s: s2 += str(hex(int(i, 2))).replace(&amp;#39;0x&amp;#39;,&amp;#39;&amp;#39;) return s2 def diffmqst(s1): #差分曼切斯特 pre = &amp;#39;01&amp;#39; rst = &amp;#39;&amp;#39; s = re.findall(&amp;#39;.{2}&amp;#39;,s1) for i in s: if i==pre: rst += &amp;#39;0&amp;#39; else : rst+=&amp;#39;1&amp;#39; pre = i return rst if __name__ == &amp;#39;__main__&amp;#39;: hex1 = &amp;#39;AAAAA56A69AA55A95995A569AA95565556&amp;#39; hex2 = &amp;#39;0x8893CA58&amp;#39; bin1 = bin(int(hex1, 16)).</description>
+      <description>本着入门的想法，在writeup的帮助下，试做人生中第一道CTF赛题, 本文目的是还原脱离wp的写题思路。&#xA;题目出自 i春秋CTF大本营: 2017届全国大学生信息安全竞赛&#xA;已知 A传感器的ID和它的输出， 以及B的输出。 求另一个传感器B的ID。&#xA;大致思路是从输出中寻找输出和ID的联系，而A的ID和输出就是线索。&#xA;发现输出是16进制，遇到进制问题首先做的肯定是比对进制转换后的数字。&#xA;先用在线工具转换一下A的输出 发现最有规律的是2进制和8进制数据 但是考虑到8进制不常用，并且它的规律集中在52上，没法利用 所以接下来看2进制： 2进制数据除了前5个1，后面的数据都以二进制对01，10的形式在做排列组合 我们需要的是有规律的数， 所以可以舍弃掉输出中的前两位(3E , 5个1包含在其中) 继续观察余下的二进制数 发现很像数字逻辑中的电平跳变，0代表低位，1代表高位 该二进制数据可能是在传输数据。但是没有连续的0和1，因此该数据很有可能经过编码 查找各编码形式后发现只有曼切斯特编码和差分曼切斯特编码符合这个规律&#xA;曼切斯特编码： data用跳变表示，0和1对应01和10 至于谁对应谁有两种标准： 差分曼切斯特编码： 数字信号对应电平跳变，存在初始电平跳变cc=01, 当前的信号为0意味着当前跳变和上一个跳变相同，为1意味着当前跳变和前一个跳变不同。 知识回顾的差不多了，回到题目，开始撸代码 由于涉及到各种进制转换和划分，c++和java过于反人类，啥都要自己写，不如用python,python很多内嵌方法就能进行进制转换和划分了。 思路很简单 直接贴代码：&#xA;import re def bintohex(s1): s = re.findall(&amp;#39;.{4}&amp;#39;, s1) s2 = &amp;#39;&amp;#39; for i in s: s2 += str(hex(int(i, 2))).replace(&amp;#39;0x&amp;#39;,&amp;#39;&amp;#39;) return s2 def diffmqst(s1): #差分曼切斯特 pre = &amp;#39;01&amp;#39; rst = &amp;#39;&amp;#39; s = re.findall(&amp;#39;.{2}&amp;#39;,s1) for i in s: if i==pre: rst += &amp;#39;0&amp;#39; else : rst+=&amp;#39;1&amp;#39; pre = i return rst if __name__ == &amp;#39;__main__&amp;#39;: hex1 = &amp;#39;AAAAA56A69AA55A95995A569AA95565556&amp;#39; hex2 = &amp;#39;0x8893CA58&amp;#39; bin1 = bin(int(hex1, 16)).</description>
     </item>
-    
     <item>
       <title>ctf水题---爆破</title>
       <link>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</link>
       <pubDate>Fri, 21 Feb 2020 01:07:00 +0800</pubDate>
-      
       <guid>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</guid>
-      <description>实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
-这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
-&amp;lt;?php include &amp;#34;flag.php&amp;#34;; $a = @$_REQUEST[&amp;#39;hello&amp;#39;]; if(!preg_match(&amp;#39;/^\w*$/&amp;#39;,$a )){ die(&amp;#39;ERROR&amp;#39;); } eval(&amp;#34;var_dump($$a);&amp;#34;); show_source(__FILE__); ?&amp;gt; @$_REQUEST[&amp;lsquo;hello&amp;rsquo;] 提示我们上传的变量名为hello
-request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：
-1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS
-2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&amp;quot;flag.php&amp;quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。
-做到这里再看提示，说真的，应该只有高手和做完的人能推出其中意思，我这样的菜鸡很有可能去猜文件里的六位变量值。
-后面陆续把爆破二，爆破三做掉了（偷偷参考了下WP 嘿嘿）
-总结的话就是：web题解决的关键的熟悉php以及理解php的脆弱方面；2 php是直接上最好的语言（狗头）</description>
+      <description>实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。&#xA;这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：&#xA;&amp;lt;?php include &amp;#34;flag.php&amp;#34;; $a = @$_REQUEST[&amp;#39;hello&amp;#39;]; if(!preg_match(&amp;#39;/^\w*$/&amp;#39;,$a )){ die(&amp;#39;ERROR&amp;#39;); } eval(&amp;#34;var_dump($$a);&amp;#34;); show_source(__FILE__); ?&amp;gt; @$_REQUEST[&amp;lsquo;hello&amp;rsquo;] 提示我们上传的变量名为hello&#xA;request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：&#xA;1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS&#xA;2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&amp;quot;flag.php&amp;quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。&#xA;做到这里再看提示，说真的，应该只有高手和做完的人能推出其中意思，我这样的菜鸡很有可能去猜文件里的六位变量值。&#xA;后面陆续把爆破二，爆破三做掉了（偷偷参考了下WP 嘿嘿）&#xA;总结的话就是：web题解决的关键的熟悉php以及理解php的脆弱方面；2 php是直接上最好的语言（狗头）</description>
     </item>
-    
   </channel>
 </rss>

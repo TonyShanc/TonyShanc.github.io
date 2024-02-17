@@ -6,8 +6,66 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-		<lastBuildDate>Mon, 25 Sep 2023 00:07:00 +0800</lastBuildDate>
+		<lastBuildDate>Sat, 17 Feb 2024 15:35:21 +0800</lastBuildDate>
 		<atom:link href="https://shankisme.com/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>infra cv</title>
+			<link>https://shankisme.com/posts/infra/</link>
+			<pubDate>Sat, 17 Feb 2024 15:35:21 +0800</pubDate>
+			
+			<guid>https://shankisme.com/posts/infra/</guid>
+			<description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 计算存储资源限额 边缘集群网络高负载(大于1Gbps流量) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 </description>
+			<content type="html"><![CDATA[<h2 id="业务关键词">业务关键词</h2>
+<ul>
+<li>环卫领域</li>
+<li>自动驾驶清扫车</li>
+<li>城市街道/园区/隧道</li>
+<li>摄像头/激光雷达/车辆运行数据</li>
+<li>路线规划</li>
+<li>远程操控</li>
+<li>手自动模式切换</li>
+</ul>
+<h2 id="需求关键词">需求关键词</h2>
+<ul>
+<li>业务/算法部门项目独立部署</li>
+<li>项目版本管理</li>
+<li>版本迭代方便</li>
+<li>计算存储资源限额</li>
+<li>边缘集群网络高负载(大于1Gbps流量)</li>
+</ul>
+<h2 id="技术关键词">技术关键词</h2>
+<ul>
+<li>边缘计算</li>
+<li>弱网环境</li>
+<li>边缘部署轻量k8s集群(k3s)</li>
+<li>边缘混合架构(ARM + X86)</li>
+<li>多集群管理</li>
+<li>项目管理</li>
+</ul>
+<h1 id="基于k8s的多集群管理平台cloud">基于k8s的多集群管理平台cloud</h1>
+<h2 id="cloud架构">cloud架构</h2>
+<figure><img src="/img/infra/cloud.png"
+         alt="image"/>
+</figure>
+
+<h2 id="边缘集群架构">边缘集群架构</h2>
+<figure><img src="/img/infra/edge-cluster.png"
+         alt="image"/>
+</figure>
+
+<h2 id="network-server架构">Network Server架构</h2>
+<figure><img src="/img/infra/network-server.png"
+         alt="image"/>
+</figure>
+
+<h2 id="集群注册流程图">集群注册流程图</h2>
+<figure><img src="/img/infra/register-flowchart.png"
+         alt="image"/>
+</figure>
+
+]]></content>
+		</item>
 		
 		<item>
 			<title>ubuntu20.04 DNS troubeshooting</title>

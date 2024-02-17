@@ -7,25 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Mon, 25 Sep 2023 00:07:00 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/ubuntu/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 25 Sep 2023 00:07:00 +0800</lastBuildDate>
+    <atom:link href="https://shankisme.com/tags/ubuntu/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ubuntu20.04 DNS troubeshooting</title>
       <link>https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/</link>
       <pubDate>Mon, 25 Sep 2023 00:07:00 +0800</pubDate>
-      
       <guid>https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/</guid>
-      <description>前言 ubnutu20.04主流的网络配置方案为netplan，本文将从日常工作中使用netplan配置网口dns nameserver遇到的各种问题，以及知识的梳理
-ubuntu域名解析流程 不请求DNS，遍历本机/etc/hosts域名到ip的映射，匹配到域名时，返回对应的ip，未匹配到时走2匹配DNS
-获取/etc/resolv.conf内的nameservers, 自上而下请求，返回解析到的ip，未解析到时报错unknown domain or service
-细说/etc/resolv.conf ubuntu20.04有多种工具配置DNS nameserver：
-netplan命令 + /etc/netplan/00-xxx.yml配置文件 systemd-resolved.service + /etc/systemd/resolved.conf配置文件中配置全局DNS resolvconf命令 + /etc/resolvconf/resolv.conf.d/配置目录 重点来了:
-netplan apply、systemd-resolved.service restart后最新的dns nameserver会自动聚合在/run/systemd/resolve/resolv.conf，其中/etc/systemd/resolved.conf中的全局DNS配置会放在第一个，之后的nameserver以netplan配置文件中nameservers填写顺序排列。
-resolvconf -u执行后，/etc/resolvconf/resolv.conf.d下的文件 head base tail中填入的nameserver会拼接合并到/run/resolvconf/resolv.conf内。
-其实最终应用到的nameserver配置只会有一套。ubuntu系统最终信任的dns nameserver文件为/etc/resolv.conf，创建/etc/resolv.conf的软链接指向工具生成的某个resolv.conf文件表示应用了某套nameserver工具
-应用示例：
-$ sudo unlink /etc/resolv.conf $ sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf troubeshooting trouble 1: ping域名的ip不符合期望。 很可能/etc/hosts内写死了域名对应的ip。
-trouble 2: nslookup等工具请求的nameserver未在netplan、resolvconf的配置文件中 查看/etc/resolv.conf，发现请求的nameserver在内，若文件头几行没有注释说明该文件为自动生成的，说明该文件未软链接到自动生成的resolv.conf中（ll 可查看具体文件路径），且该文件有独立inode，被人为修改并加入nameserver，导致无论怎么改其他地方的配置也不生效，无法变更请求的nameserver。</description>
+      <description>前言 ubnutu20.04主流的网络配置方案为netplan，本文将从日常工作中使用netplan配置网口dns nameserver遇到的各种问题，以及知识的梳理&#xA;ubuntu域名解析流程 不请求DNS，遍历本机/etc/hosts域名到ip的映射，匹配到域名时，返回对应的ip，未匹配到时走2匹配DNS&#xA;获取/etc/resolv.conf内的nameservers, 自上而下请求，返回解析到的ip，未解析到时报错unknown domain or service&#xA;细说/etc/resolv.conf ubuntu20.04有多种工具配置DNS nameserver：&#xA;netplan命令 + /etc/netplan/00-xxx.yml配置文件 systemd-resolved.service + /etc/systemd/resolved.conf配置文件中配置全局DNS resolvconf命令 + /etc/resolvconf/resolv.conf.d/配置目录 重点来了:&#xA;netplan apply、systemd-resolved.service restart后最新的dns nameserver会自动聚合在/run/systemd/resolve/resolv.conf，其中/etc/systemd/resolved.conf中的全局DNS配置会放在第一个，之后的nameserver以netplan配置文件中nameservers填写顺序排列。&#xA;resolvconf -u执行后，/etc/resolvconf/resolv.conf.d下的文件 head base tail中填入的nameserver会拼接合并到/run/resolvconf/resolv.conf内。&#xA;其实最终应用到的nameserver配置只会有一套。ubuntu系统最终信任的dns nameserver文件为/etc/resolv.conf，创建/etc/resolv.conf的软链接指向工具生成的某个resolv.conf文件表示应用了某套nameserver工具&#xA;应用示例：&#xA;$ sudo unlink /etc/resolv.conf $ sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf troubeshooting trouble 1: ping域名的ip不符合期望。 很可能/etc/hosts内写死了域名对应的ip。&#xA;trouble 2: nslookup等工具请求的nameserver未在netplan、resolvconf的配置文件中 查看/etc/resolv.conf，发现请求的nameserver在内，若文件头几行没有注释说明该文件为自动生成的，说明该文件未软链接到自动生成的resolv.conf中（ll 可查看具体文件路径），且该文件有独立inode，被人为修改并加入nameserver，导致无论怎么改其他地方的配置也不生效，无法变更请求的nameserver。</description>
     </item>
-    
   </channel>
 </rss>

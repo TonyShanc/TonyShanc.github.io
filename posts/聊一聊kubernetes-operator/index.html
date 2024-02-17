@@ -53,8 +53,8 @@ reconcile方法中的业务逻辑会根据资源的期望状态，对外部世�
 <meta property="og:url" content="https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-12-07T20:13:53+08:00" />
 <meta property="article:modified_time" content="2021-12-07T20:13:53+08:00" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="聊一聊kubernetes operator"/>
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="聊一聊kubernetes operator"/>
 <meta name="twitter:description" content="前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师🤣。
 这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
 当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。
@@ -263,7 +263,7 @@ reconcile方法中的业务逻辑会根据资源的期望状态，对外部世�
 	</main>
 
 	<footer id="site-footer" class="section-inner thin animated fadeIn faster">
-		<p>&copy; 2023 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
+		<p>&copy; 2024 <a href="https://shankisme.com">shank</a> &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></p>
 		<p>
 			Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &#183; Theme <a href="https://github.com/Track3/hermit" target="_blank" rel="noopener">Hermit</a>
 			 &#183; <a href="https://shankisme.com/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>

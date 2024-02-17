@@ -7,27 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Tue, 28 Jun 2022 10:56:02 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/can/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 28 Jun 2022 10:56:02 +0800</lastBuildDate>
+    <atom:link href="https://shankisme.com/tags/can/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CAN网络设备在k8s集群内的管理方式</title>
       <link>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</link>
       <pubDate>Tue, 28 Jun 2022 10:56:02 +0800</pubDate>
-      
       <guid>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</guid>
-      <description>背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。
-已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。
-yaml例如：
-apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。
-问题 没有管理好CAN的生命周期，当CAN所在的netns被删除时，CAN也会被删除，需要CAN相关的驱动或守护进程兜底，重新创建出新的CAN接口。
-CAN接口资源是唯一的，意味着使用CAN的项目只能有一个副本，deployment滚动更新时需要保证老pod稳定运行，不能移除CAN，又要保证新pod拿到CAN达到healthy状态才能完成滚动更新，直接导致死锁。
-一般来说k8s device plugin适合分配像gpu、cpu、内存这类分配数可大于1的整数计算资源，而CAN网络接口pod内存在即可，和数量无关，所以基于k8s device plugin的方案不合适。
-方案 平滑升级项目版本是有必要的，k8s deployment的滚动更新必然要求同时有多个CAN，单纯移动CAN的想法似乎应该被抛弃。
-流量转发 学习docker网络原理的时候，我们会了解到一些特殊的网络设备：veth pair、bridge。
-docker的默认网络模式bridge，使用docker0(bridge网络设备)作为host的ethX与其他netns的ethX流量转发中枢，使用veth为容器网络提供ethX接口与外界通信。
-CAN网络设备也有类似的网桥cangw和连接两个netns的vxcan实现上面的流量转发方案, 不过区别是bridge根据ip转发，cangw是分发相同流量。
-环境要求 linux should support can kernel module(sudo modprobe can to check and load)
-linux should support vxcan kernel module(sudo modprobe vxcan to check and load)</description>
+      <description>背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。&#xA;已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。&#xA;yaml例如：&#xA;apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。&#xA;问题 没有管理好CAN的生命周期，当CAN所在的netns被删除时，CAN也会被删除，需要CAN相关的驱动或守护进程兜底，重新创建出新的CAN接口。&#xA;CAN接口资源是唯一的，意味着使用CAN的项目只能有一个副本，deployment滚动更新时需要保证老pod稳定运行，不能移除CAN，又要保证新pod拿到CAN达到healthy状态才能完成滚动更新，直接导致死锁。&#xA;一般来说k8s device plugin适合分配像gpu、cpu、内存这类分配数可大于1的整数计算资源，而CAN网络接口pod内存在即可，和数量无关，所以基于k8s device plugin的方案不合适。&#xA;方案 平滑升级项目版本是有必要的，k8s deployment的滚动更新必然要求同时有多个CAN，单纯移动CAN的想法似乎应该被抛弃。&#xA;流量转发 学习docker网络原理的时候，我们会了解到一些特殊的网络设备：veth pair、bridge。&#xA;docker的默认网络模式bridge，使用docker0(bridge网络设备)作为host的ethX与其他netns的ethX流量转发中枢，使用veth为容器网络提供ethX接口与外界通信。&#xA;CAN网络设备也有类似的网桥cangw和连接两个netns的vxcan实现上面的流量转发方案, 不过区别是bridge根据ip转发，cangw是分发相同流量。&#xA;环境要求 linux should support can kernel module(sudo modprobe can to check and load)&#xA;linux should support vxcan kernel module(sudo modprobe vxcan to check and load)</description>
     </item>
-    
   </channel>
 </rss>
