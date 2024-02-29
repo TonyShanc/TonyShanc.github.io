@@ -33,8 +33,8 @@ request是两种数据上传方式post和get的统称 这里当然选更方便�
 <meta property="og:url" content="https://shankisme.com/posts/%E7%88%86%E7%A0%B4/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-02-21T01:07:00+08:00" />
 <meta property="article:modified_time" content="2020-02-21T01:07:00+08:00" />
-
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="ctf水题---爆破"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ctf水题---爆破"/>
 <meta name="twitter:description" content="实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
 这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C&#43;python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
 &lt;?php include &#34;flag.php&#34;; $a = @$_REQUEST[&#39;hello&#39;]; if(!preg_match(&#39;/^\w*$/&#39;,$a )){ die(&#39;ERROR&#39;); } eval(&#34;var_dump($$a);&#34;); show_source(__FILE__); ?&gt; @$_REQUEST[&lsquo;hello&rsquo;] 提示我们上传的变量名为hello

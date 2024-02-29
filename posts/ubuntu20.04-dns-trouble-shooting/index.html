@@ -37,8 +37,8 @@ trouble 2: nslookup等工具请求的nameserver未在netplan、resolvconf的配�
 <meta property="og:url" content="https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-25T00:07:00+08:00" />
 <meta property="article:modified_time" content="2023-09-25T00:07:00+08:00" />
-
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="ubuntu20.04 DNS troubeshooting"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ubuntu20.04 DNS troubeshooting"/>
 <meta name="twitter:description" content="前言 ubnutu20.04主流的网络配置方案为netplan，本文将从日常工作中使用netplan配置网口dns nameserver遇到的各种问题，以及知识的梳理
 ubuntu域名解析流程 不请求DNS，遍历本机/etc/hosts域名到ip的映射，匹配到域名时，返回对应的ip，未匹配到时走2匹配DNS
 获取/etc/resolv.conf内的nameservers, 自上而下请求，返回解析到的ip，未解析到时报错unknown domain or service

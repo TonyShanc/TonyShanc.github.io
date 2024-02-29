@@ -7,77 +7,178 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 17 Feb 2024 15:35:21 +0800</lastBuildDate>
-    <atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Feb 2024 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>infra intro</title>
       <link>https://shankisme.com/posts/infra/</link>
       <pubDate>Sat, 17 Feb 2024 15:35:21 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/infra/</guid>
       <description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 资源限额（cpu、内存、GPU） 边缘集群网络高负载(流量大于1Gbps) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 边缘容器网络方案迭代 v1 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：k3s内置flannel(vxlan) v2 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：flannel pod(vxlan) v3 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router v4 pod网络分配：在kubelet注册node前，在node中预置pod cidr 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router </description>
     </item>
+    
     <item>
       <title>ubuntu20.04 DNS troubeshooting</title>
       <link>https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/</link>
       <pubDate>Mon, 25 Sep 2023 00:07:00 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/ubuntu20.04-dns-trouble-shooting/</guid>
-      <description>前言 ubnutu20.04主流的网络配置方案为netplan，本文将从日常工作中使用netplan配置网口dns nameserver遇到的各种问题，以及知识的梳理&#xA;ubuntu域名解析流程 不请求DNS，遍历本机/etc/hosts域名到ip的映射，匹配到域名时，返回对应的ip，未匹配到时走2匹配DNS&#xA;获取/etc/resolv.conf内的nameservers, 自上而下请求，返回解析到的ip，未解析到时报错unknown domain or service&#xA;细说/etc/resolv.conf ubuntu20.04有多种工具配置DNS nameserver：&#xA;netplan命令 + /etc/netplan/00-xxx.yml配置文件 systemd-resolved.service + /etc/systemd/resolved.conf配置文件中配置全局DNS resolvconf命令 + /etc/resolvconf/resolv.conf.d/配置目录 重点来了:&#xA;netplan apply、systemd-resolved.service restart后最新的dns nameserver会自动聚合在/run/systemd/resolve/resolv.conf，其中/etc/systemd/resolved.conf中的全局DNS配置会放在第一个，之后的nameserver以netplan配置文件中nameservers填写顺序排列。&#xA;resolvconf -u执行后，/etc/resolvconf/resolv.conf.d下的文件 head base tail中填入的nameserver会拼接合并到/run/resolvconf/resolv.conf内。&#xA;其实最终应用到的nameserver配置只会有一套。ubuntu系统最终信任的dns nameserver文件为/etc/resolv.conf，创建/etc/resolv.conf的软链接指向工具生成的某个resolv.conf文件表示应用了某套nameserver工具&#xA;应用示例：&#xA;$ sudo unlink /etc/resolv.conf $ sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf troubeshooting trouble 1: ping域名的ip不符合期望。 很可能/etc/hosts内写死了域名对应的ip。&#xA;trouble 2: nslookup等工具请求的nameserver未在netplan、resolvconf的配置文件中 查看/etc/resolv.conf，发现请求的nameserver在内，若文件头几行没有注释说明该文件为自动生成的，说明该文件未软链接到自动生成的resolv.conf中（ll 可查看具体文件路径），且该文件有独立inode，被人为修改并加入nameserver，导致无论怎么改其他地方的配置也不生效，无法变更请求的nameserver。</description>
+      <description>前言 ubnutu20.04主流的网络配置方案为netplan，本文将从日常工作中使用netplan配置网口dns nameserver遇到的各种问题，以及知识的梳理
+ubuntu域名解析流程 不请求DNS，遍历本机/etc/hosts域名到ip的映射，匹配到域名时，返回对应的ip，未匹配到时走2匹配DNS
+获取/etc/resolv.conf内的nameservers, 自上而下请求，返回解析到的ip，未解析到时报错unknown domain or service
+细说/etc/resolv.conf ubuntu20.04有多种工具配置DNS nameserver：
+netplan命令 + /etc/netplan/00-xxx.yml配置文件 systemd-resolved.service + /etc/systemd/resolved.conf配置文件中配置全局DNS resolvconf命令 + /etc/resolvconf/resolv.conf.d/配置目录 重点来了:
+netplan apply、systemd-resolved.service restart后最新的dns nameserver会自动聚合在/run/systemd/resolve/resolv.conf，其中/etc/systemd/resolved.conf中的全局DNS配置会放在第一个，之后的nameserver以netplan配置文件中nameservers填写顺序排列。
+resolvconf -u执行后，/etc/resolvconf/resolv.conf.d下的文件 head base tail中填入的nameserver会拼接合并到/run/resolvconf/resolv.conf内。
+其实最终应用到的nameserver配置只会有一套。ubuntu系统最终信任的dns nameserver文件为/etc/resolv.conf，创建/etc/resolv.conf的软链接指向工具生成的某个resolv.conf文件表示应用了某套nameserver工具
+应用示例：
+$ sudo unlink /etc/resolv.conf $ sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf troubeshooting trouble 1: ping域名的ip不符合期望。 很可能/etc/hosts内写死了域名对应的ip。
+trouble 2: nslookup等工具请求的nameserver未在netplan、resolvconf的配置文件中 查看/etc/resolv.conf，发现请求的nameserver在内，若文件头几行没有注释说明该文件为自动生成的，说明该文件未软链接到自动生成的resolv.conf中（ll 可查看具体文件路径），且该文件有独立inode，被人为修改并加入nameserver，导致无论怎么改其他地方的配置也不生效，无法变更请求的nameserver。</description>
     </item>
+    
     <item>
       <title>CAN网络设备在k8s集群内的管理方式</title>
       <link>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</link>
       <pubDate>Tue, 28 Jun 2022 10:56:02 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/can%E8%AE%BE%E5%A4%87%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E5%86%85%E7%9A%84%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</guid>
-      <description>背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。&#xA;已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。&#xA;yaml例如：&#xA;apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。&#xA;问题 没有管理好CAN的生命周期，当CAN所在的netns被删除时，CAN也会被删除，需要CAN相关的驱动或守护进程兜底，重新创建出新的CAN接口。&#xA;CAN接口资源是唯一的，意味着使用CAN的项目只能有一个副本，deployment滚动更新时需要保证老pod稳定运行，不能移除CAN，又要保证新pod拿到CAN达到healthy状态才能完成滚动更新，直接导致死锁。&#xA;一般来说k8s device plugin适合分配像gpu、cpu、内存这类分配数可大于1的整数计算资源，而CAN网络接口pod内存在即可，和数量无关，所以基于k8s device plugin的方案不合适。&#xA;方案 平滑升级项目版本是有必要的，k8s deployment的滚动更新必然要求同时有多个CAN，单纯移动CAN的想法似乎应该被抛弃。&#xA;流量转发 学习docker网络原理的时候，我们会了解到一些特殊的网络设备：veth pair、bridge。&#xA;docker的默认网络模式bridge，使用docker0(bridge网络设备)作为host的ethX与其他netns的ethX流量转发中枢，使用veth为容器网络提供ethX接口与外界通信。&#xA;CAN网络设备也有类似的网桥cangw和连接两个netns的vxcan实现上面的流量转发方案, 不过区别是bridge根据ip转发，cangw是分发相同流量。&#xA;环境要求 linux should support can kernel module(sudo modprobe can to check and load)&#xA;linux should support vxcan kernel module(sudo modprobe vxcan to check and load)</description>
+      <description>背景 车上的CAN网络接口通常在host网络中创建，使用CAN接口的项目需要在host网络中运行，因此可能会产生网络栈资源使用冲突，导致项目启动失败，所以需要使用某种技术能让容器网络中的项目访问CAN网络设备。
+已知开源方案 k8s-device-plugin-socketcan for docker k8s-socketcan for containerd 这两种方案基于k8s device plugin监听pod的期望资源并分配实际资源。
+yaml例如：
+apiVersion: v1 kind: Pod metadata: name: demo-pod spec: containers: - name: demo-container-1 image: k8s.gcr.io/pause:2.0 resources: limits: shankisme.com/can: 1 //max is 1 如果某pod配置了指定资源，就将CAN的netns设置成该pod的netns，两个项目间的区别仅仅在于容器运行时一个只支持docker,另一个只支持containerd。
+问题 没有管理好CAN的生命周期，当CAN所在的netns被删除时，CAN也会被删除，需要CAN相关的驱动或守护进程兜底，重新创建出新的CAN接口。
+CAN接口资源是唯一的，意味着使用CAN的项目只能有一个副本，deployment滚动更新时需要保证老pod稳定运行，不能移除CAN，又要保证新pod拿到CAN达到healthy状态才能完成滚动更新，直接导致死锁。
+一般来说k8s device plugin适合分配像gpu、cpu、内存这类分配数可大于1的整数计算资源，而CAN网络接口pod内存在即可，和数量无关，所以基于k8s device plugin的方案不合适。
+方案 平滑升级项目版本是有必要的，k8s deployment的滚动更新必然要求同时有多个CAN，单纯移动CAN的想法似乎应该被抛弃。
+流量转发 学习docker网络原理的时候，我们会了解到一些特殊的网络设备：veth pair、bridge。
+docker的默认网络模式bridge，使用docker0(bridge网络设备)作为host的ethX与其他netns的ethX流量转发中枢，使用veth为容器网络提供ethX接口与外界通信。
+CAN网络设备也有类似的网桥cangw和连接两个netns的vxcan实现上面的流量转发方案, 不过区别是bridge根据ip转发，cangw是分发相同流量。
+环境要求 linux should support can kernel module(sudo modprobe can to check and load)
+linux should support vxcan kernel module(sudo modprobe vxcan to check and load)</description>
     </item>
+    
     <item>
       <title>面向API server CRUD的探索</title>
       <link>https://shankisme.com/posts/clientset/</link>
       <pubDate>Mon, 13 Dec 2021 15:35:21 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/clientset/</guid>
-      <description>前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。&#xA;前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。&#xA;k8s将资源分组和版本化，形成了:&#xA;Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念 k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。&#xA;资源组、资源版本、资源、子资源的完整表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;/&amp;lt;resource&amp;gt;/&amp;lt;subresource&amp;gt;&#xA;如Deployment资源，完整表现形式为：apps/v1/deployments/status&#xA;资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;,Kind=&amp;lt;kind&amp;gt;&#xA;如Deployment, 完整表现形式为apps/v1,Kind=Deployment&#xA;client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。&#xA;client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient&#xA;RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。&#xA;RESTClient package main import ( &amp;#34;context&amp;#34; &amp;#34;fmt&amp;#34; corev1 &amp;#34;k8s.io/api/core/v1&amp;#34; metav1 &amp;#34;k8s.io/apimachinery/pkg/apis/meta/v1&amp;#34; &amp;#34;k8s.io/client-go/kubernetes/scheme&amp;#34; &amp;#34;k8s.io/client-go/rest&amp;#34; &amp;#34;k8s.io/client-go/tools/clientcmd&amp;#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&amp;#34;&amp;#34;, &amp;#34;/etc/rancher/k3s/k3s.yaml&amp;#34;) if err != nil { panic(err) } config.APIPath = &amp;#34;api&amp;#34; // group core version v1 config.GroupVersion = &amp;amp;corev1.SchemeGroupVersion // set codec config.</description>
+      <description>前言 某些场景下，我们可能不需要operator的那种运维能力，能对资源CRUD就够了，client-go中的client就是非常不错的选择。
+前置知识 GVR、GVK 在整个kubernetes架构中，资源是最重要的概念，可以说k8s的生态系统都围绕资源运作，它本质上是一个资源控制系统：注册、管理、调度资源并维护资源状态。
+k8s将资源分组和版本化，形成了:
+Group: 资源组 Version: 资源版本 Resource: 资源 Kind: 资源种类, 与resource为同级概念 k8s系统支持多个Group，每个Group支持多个Version，每个Version支持多个Resource，其中部分资源会拥有子资源，如Deployment会拥有Status子资源。
+资源组、资源版本、资源、子资源的完整表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;/&amp;lt;resource&amp;gt;/&amp;lt;subresource&amp;gt;
+如Deployment资源，完整表现形式为：apps/v1/deployments/status
+资源实例化后为一个资源对象，拥有资源组、资源版本、资源种类，表现形式为：&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;,Kind=&amp;lt;kind&amp;gt;
+如Deployment, 完整表现形式为apps/v1,Kind=Deployment
+client-go k8s使用client-go作为go语言官方编程式交互客户端库，提供对k8s API server的交互式访问。
+client-go支持4种client对象与k8s交互，分别是ClientSet、DynamicClient、DiscoveryClient、RESTClient
+RESTClient最基础，它封装了HTTPRequest,实现了RESTful风格的API，ClientSet、DynamicClinet以及DiscoveryClient都是基于RESTfulClient实现的。
+RESTClient package main import ( &amp;#34;context&amp;#34; &amp;#34;fmt&amp;#34; corev1 &amp;#34;k8s.io/api/core/v1&amp;#34; metav1 &amp;#34;k8s.io/apimachinery/pkg/apis/meta/v1&amp;#34; &amp;#34;k8s.io/client-go/kubernetes/scheme&amp;#34; &amp;#34;k8s.io/client-go/rest&amp;#34; &amp;#34;k8s.io/client-go/tools/clientcmd&amp;#34; ) func main() { config, err := clientcmd.BuildConfigFromFlags(&amp;#34;&amp;#34;, &amp;#34;/etc/rancher/k3s/k3s.yaml&amp;#34;) if err != nil { panic(err) } config.APIPath = &amp;#34;api&amp;#34; // group core version v1 config.GroupVersion = &amp;amp;corev1.SchemeGroupVersion // set codec config.</description>
     </item>
+    
     <item>
       <title>聊一聊kubernetes operator</title>
       <link>https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/</link>
       <pubDate>Tue, 07 Dec 2021 20:13:53 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/%E8%81%8A%E4%B8%80%E8%81%8Akubernetes-operator/</guid>
-      <description>前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师🤣。&#xA;这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。&#xA;当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。&#xA;得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。&#xA;为了让看官更好的了解operator（controller + crd + cr），咱们从k8s两大设计思想：声明式API、控制循环说起。&#xA;声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。&#xA;看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性。&#xA;提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。&#xA;而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。&#xA;这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。&#xA;type Pod struct { metav1.TypeMeta `json:&amp;#34;,inline&amp;#34;` metav1.ObjectMeta `json:&amp;#34;metadata,omitempty&amp;#34; protobuf:&amp;#34;bytes,1,opt,name=metadata&amp;#34;` Spec PodSpec `json:&amp;#34;spec,omitempty&amp;#34; protobuf:&amp;#34;bytes,2,opt,name=spec&amp;#34;` Status PodStatus `json:&amp;#34;status,omitempty&amp;#34; protobuf:&amp;#34;bytes,3,opt,name=status&amp;#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。&#xA;执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。&#xA;kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。&#xA;还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。&#xA;然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。&#xA;crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化实现，与对象，对象实例之间区别类似。&#xA;我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：&#xA;依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化&#xA;reconcile方法中的业务逻辑会根据资源的期望状态，对外部世界作出改变，如果处理失败，就重新入队，按某种规则到某个时间继续进入reconcile, 直到处理完成。</description>
+      <description>前言 微服务兴起，许多业务被部署在了k8s上，大多数业务开发人员日常接触到的基本是build-in资源(ingress service deployment replicaset pod hpa)，因此会认为kubernetes(以下简称k8s)是一个设计优秀的paas平台，在k8s中创建资源的人员会被称为yaml工程师🤣。
+这么说显得k8s很无聊, 资源只是对象状态的描述，实际执行动作的是k8s的组件(kubelet kube-proxy等)，可以说k8s的执行能力足够强大，能在存储、网络、容器上玩出花，你完全可以组织自己的资源格式(crd)，利用k8s的能力做自己想做的事，k8s本质上是带有强大执行力的分布式资源管理平台，这种动词-名词分离的解释应该能让你更好地理解k8s。
+当今许多对扩展性可用性要求高的项目（TiDB等），更青睐于使用k8s作为基座，这样的深度结合只会让k8s越来越流行。
+得益于强大的插件机制，k8s还能自定义资源(crd/cr)，自定义controller，自定义api server, 自定义admission webhook，他们让你能有效组合k8s的执行力，做一些有逻辑的事。当下最流行的莫过于玩crd+controller了。
+为了让看官更好的了解operator（controller + crd + cr），咱们从k8s两大设计思想：声明式API、控制循环说起。
+声明式API 声明式与之相对的是命令式, 命令式顾名思义，让目标按指定命令做事；而声明式则是提供目标一个期望状态，让目标朝期望状态去变更。
+看得出来，命令式够简洁，但要花费巨大代价保证命令执行拥有原子性幂等性。
+提供期望状态看似冗余，但只要期望状态能被执行者获取到，执行者就能不断尝试着去达成期望状态，过程简单。
+而API嘛，指的是k8s apiserver提供的RESTful http接口，创建资源接口需要接收完整的资源期望状态定义, 期望状态指的就是spec中的描述，与之对应的实际状态由执行者（controller）记录在status中。
+这也是为啥我们在用kubectl查看资源信息的时候后出现额外的status字段，这实际上是执行者帮我们记录的，专业点的叫法是规约(spec) - 状态(status)分离。比如pod, 除了元信息外，状态从spec和status字段开始展开。
+type Pod struct { metav1.TypeMeta `json:&amp;#34;,inline&amp;#34;` metav1.ObjectMeta `json:&amp;#34;metadata,omitempty&amp;#34; protobuf:&amp;#34;bytes,1,opt,name=metadata&amp;#34;` Spec PodSpec `json:&amp;#34;spec,omitempty&amp;#34; protobuf:&amp;#34;bytes,2,opt,name=spec&amp;#34;` Status PodStatus `json:&amp;#34;status,omitempty&amp;#34; protobuf:&amp;#34;bytes,3,opt,name=status&amp;#34;` } 控制循环（control loop） 资源的理想状态存储在k8s的apiserver中，为了让资源由实际状态向期望状态靠拢, 执行者需要监听资源期望状态的增删改事件，这些事件会触发执行者以定时重复执行方式调用对应的handler处理事件, 直到满足期望状态为止，之后执行者再把操作结果记录到实际状态中。
+执行者 我们知道，kubelet是k8s自带组件，主要功能通过监听pod期望状态变化事件并做一些事确保本地的pod处于期望状态。
+kube-proxy同样也会处理pod的增删改事件，它不断地刷新本机linux网络设备的配置，来确保pod网络通畅。
+还有我们常用的deployment、cronJob、statefulset等，它们拥有自己的controller做控制循环，这些controller 运行在组件controller-manager内。
+然而不像上面提到的处理k8s原生资源的执行者，这次我们聊的operator,由crd(custom resource definition)、cr(custom resource)、controller组成。
+crd用来描述你想创建的资源应该有哪些字段，cr是crd的具体化实现，与对象，对象实例之间区别类似。
+我们自己实现的controller控制的目标就是cr, 它的实现原理等同controller-manager中的原生controller：
+依靠informer的ListAndWatch方法将指定资源的状态缓存在内存中，并不断监控状态变化
+reconcile方法中的业务逻辑会根据资源的期望状态，对外部世界作出改变，如果处理失败，就重新入队，按某种规则到某个时间继续进入reconcile, 直到处理完成。</description>
     </item>
+    
     <item>
       <title>About</title>
       <link>https://shankisme.com/about/</link>
       <pubDate>Sat, 27 Nov 2021 01:11:42 +0800</pubDate>
+      
       <guid>https://shankisme.com/about/</guid>
-      <description>你好呀&amp;#x1f604; ，我叫shank&#xA;苏州人，2021年本科毕业于华东师范大学，软件工程专业，gopher，对云原生感兴趣&#xA;目前在上海某互联网公司从事infra相关工作&#xA;如有任何问题欢迎通过发邮件或留言方式和我交流</description>
+      <description>你好呀😄 ，我叫shank
+苏州人，2021年本科毕业于华东师范大学，软件工程专业，gopher，对云原生感兴趣
+目前在上海某互联网公司从事infra相关工作
+如有任何问题欢迎通过发邮件或留言方式和我交流</description>
     </item>
+    
     <item>
       <title>go-mock初探</title>
       <link>https://shankisme.com/posts/go-mock%E5%88%9D%E6%8E%A2/</link>
       <pubDate>Fri, 22 Jan 2021 01:41:04 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/go-mock%E5%88%9D%E6%8E%A2/</guid>
-      <description>go mock 用于虚拟接口。一般只要提供interface，无论有没有实现该interface的类型，gomock会根据接口的输入输出提供一个实现了该interface的mock实例，同时在自定义mock实例的输入输出前，可以根据期望过滤输入，产生想要的输出或调用某些函数。说的很晦涩，看点代码吧。&#xA;目录结构：&#xA;trymock/ /db |--db.go |--db_test.go /mock |--db_mock.go // generated by mockgen //db.go type DB interface { Get(key string) (int, error) } func GetFromDB(db DB, key string) int { if value, err := db.Get(key); err == nil { return value } return -1 } gomock中，DB实例只能通过传参传入生成mock文件&#xA;mockgen -source=db.go -destination=db_mock.go -package=mock gomock生成的db_mock.go如下&#xA;//db_mock.go // Code generated by MockGen. DO NOT EDIT. // Source: db.go // Package mock_db is a generated GoMock package.</description>
+      <description>go mock 用于虚拟接口。一般只要提供interface，无论有没有实现该interface的类型，gomock会根据接口的输入输出提供一个实现了该interface的mock实例，同时在自定义mock实例的输入输出前，可以根据期望过滤输入，产生想要的输出或调用某些函数。说的很晦涩，看点代码吧。
+目录结构：
+trymock/ /db |--db.go |--db_test.go /mock |--db_mock.go // generated by mockgen //db.go type DB interface { Get(key string) (int, error) } func GetFromDB(db DB, key string) int { if value, err := db.Get(key); err == nil { return value } return -1 } gomock中，DB实例只能通过传参传入生成mock文件
+mockgen -source=db.go -destination=db_mock.go -package=mock gomock生成的db_mock.go如下
+//db_mock.go // Code generated by MockGen. DO NOT EDIT. // Source: db.go // Package mock_db is a generated GoMock package.</description>
     </item>
+    
     <item>
       <title>汽车CAN总线复习笔记</title>
       <link>https://shankisme.com/posts/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%B1%BD%E8%BD%A6can%E6%80%BB%E7%BA%BF%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
       <pubDate>Sat, 16 Jan 2021 20:45:02 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%B1%BD%E8%BD%A6can%E6%80%BB%E7%BA%BF%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>CAN总线使用总线技术，取代了传统的点对点布线方式连接汽车电子控制单元（ECU）, 解决了传统布线方式中线束多，布线难，成本高等问题。&#xA;figure-normal (without any classes)&#xA;CAN总线标准 CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。&#xA;CAN网络物理层 连接在CAN总线上的设备叫做节点设备（CAN Node），CAN网络的拓扑一般为线型。线束最常用的是双绞线，线上传输为对称的差分电平信号。</description>
+      <description>CAN总线使用总线技术，取代了传统的点对点布线方式连接汽车电子控制单元（ECU）, 解决了传统布线方式中线束多，布线难，成本高等问题。
+figure-normal (without any classes)
+CAN总线标准 CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。
+CAN网络物理层 连接在CAN总线上的设备叫做节点设备（CAN Node），CAN网络的拓扑一般为线型。线束最常用的是双绞线，线上传输为对称的差分电平信号。</description>
     </item>
+    
     <item>
       <title>kong网关consumer service route plugin 理解与实践</title>
       <link>https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sun, 22 Nov 2020 13:40:56 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/</guid>
-      <description>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。&#xA;传送门：&#xA;kong网关中文文档&#xA;kong官网&#xA;kong官方文档&#xA;前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。&#xA;理论 Consumer The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.&#xA;（官方原文解释中的消费者和数据库的映射这里暂时不涉及）&#xA;consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。&#xA;Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。&#xA;请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。&#xA;kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT&#xA;他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT&#xA;（这里使用kong图形界面KONGA实践）&#xA;JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</description>
+      <description>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+传送门：
+kong网关中文文档
+kong官网
+kong官方文档
+前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
+理论 Consumer The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
+（官方原文解释中的消费者和数据库的映射这里暂时不涉及）
+consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
+Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
+请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
+kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
+他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT
+（这里使用kong图形界面KONGA实践）
+JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</description>
     </item>
+    
     <item>
       <title>pwn实践记录--rop入门</title>
       <link>https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</guid>
-      <description>前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。&#xA;本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。&#xA;0x00 return2shellcode 文件：level1 习惯性查看保护机制：&#xA;很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&amp;quot;/bin/sh&amp;quot;)。因此我们从payload的开始位置存shellcode，剩下的用&amp;rsquo;A&amp;rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。&#xA;接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令&#xA;ulimit -c unlimited 执行level1:&#xA;./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。&#xA;from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shellcode = &amp;#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&amp;#34; shellcode += &amp;#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&amp;#34; shellcode += &amp;#34;\x0b\xcd\x80&amp;#34; payload = shellcode + &amp;#39;A&amp;#39; * (140 - len(shellcode)) + p32(ret) p.</description>
+      <description>前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
+本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
+0x00 return2shellcode 文件：level1 习惯性查看保护机制：
+很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&amp;quot;/bin/sh&amp;quot;)。因此我们从payload的开始位置存shellcode，剩下的用&amp;rsquo;A&amp;rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
+接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令
+ulimit -c unlimited 执行level1:
+./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。
+from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shellcode = &amp;#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&amp;#34; shellcode += &amp;#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&amp;#34; shellcode += &amp;#34;\x0b\xcd\x80&amp;#34; payload = shellcode + &amp;#39;A&amp;#39; * (140 - len(shellcode)) + p32(ret) p.</description>
     </item>
+    
   </channel>
 </rss>

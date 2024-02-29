@@ -7,14 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Fri, 21 Feb 2020 01:07:00 +0800</lastBuildDate>
-    <atom:link href="https://shankisme.com/tags/misc/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Feb 2020 01:07:00 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/misc/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ctf水题---爆破</title>
       <link>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</link>
       <pubDate>Fri, 21 Feb 2020 01:07:00 +0800</pubDate>
+      
       <guid>https://shankisme.com/posts/%E7%88%86%E7%A0%B4/</guid>
-      <description>实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。&#xA;这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：&#xA;&amp;lt;?php include &amp;#34;flag.php&amp;#34;; $a = @$_REQUEST[&amp;#39;hello&amp;#39;]; if(!preg_match(&amp;#39;/^\w*$/&amp;#39;,$a )){ die(&amp;#39;ERROR&amp;#39;); } eval(&amp;#34;var_dump($$a);&amp;#34;); show_source(__FILE__); ?&amp;gt; @$_REQUEST[&amp;lsquo;hello&amp;rsquo;] 提示我们上传的变量名为hello&#xA;request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：&#xA;1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS&#xA;2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&amp;quot;flag.php&amp;quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。&#xA;做到这里再看提示，说真的，应该只有高手和做完的人能推出其中意思，我这样的菜鸡很有可能去猜文件里的六位变量值。&#xA;后面陆续把爆破二，爆破三做掉了（偷偷参考了下WP 嘿嘿）&#xA;总结的话就是：web题解决的关键的熟悉php以及理解php的脆弱方面；2 php是直接上最好的语言（狗头）</description>
+      <description>实践证明，提示也有不可靠的时候，出题人也会鸡贼。 爆破一题目地址 这道题有时间限制，必须在一小时内完成，否则页面会失效，说白了是为了杜绝签到题互相抄袭hhh。 进去后给的是php后端源码。
+这是本菜鸡第一次接触拍黄片 php, 会了几招后发现php的语法简直像是C+python的私生子，带基因缺陷的那种。它很多函数方法都能轻易地获得文件地所有信息，还有大堆地全局变量魔术变量，配上eval()方法地缺陷，简直是爆破对象的上上之选啊。。 废话不多说，来看看代码：
+&amp;lt;?php include &amp;#34;flag.php&amp;#34;; $a = @$_REQUEST[&amp;#39;hello&amp;#39;]; if(!preg_match(&amp;#39;/^\w*$/&amp;#39;,$a )){ die(&amp;#39;ERROR&amp;#39;); } eval(&amp;#34;var_dump($$a);&amp;#34;); show_source(__FILE__); ?&amp;gt; @$_REQUEST[&amp;lsquo;hello&amp;rsquo;] 提示我们上传的变量名为hello
+request是两种数据上传方式post和get的统称 这里当然选更方便的get, 直接在url后加hello变量 下面的判断语句中的正则提示我们变量必须为[A-Za-z0-9_] 以及$$a告诉咱$a的值不能乱输，值要符合变量命名规则：开头字母下划线，之后只能字母下划线或数字。 继续往下看, 就发现神圣的选择开始了：
+1：利用var_dump()输出变量内容，前提是得知道有个变量名是输入的值。其实不可能给你猜的，这种情况下只能全局变量或魔术变量。保险起见，选个超集：$GLOABALS
+2: 类似sql注入，绕开var_dump()直接执行命令，这要求咱输入的命令包括“flag.php”，但是正则不允许吖，该思路失败。 最后按照1思路，直接把include&amp;quot;flag.php&amp;quot;后的全局变量全打印出来了。 发现flag在一个六位的全局变量里。
+做到这里再看提示，说真的，应该只有高手和做完的人能推出其中意思，我这样的菜鸡很有可能去猜文件里的六位变量值。
+后面陆续把爆破二，爆破三做掉了（偷偷参考了下WP 嘿嘿）
+总结的话就是：web题解决的关键的熟悉php以及理解php的脆弱方面；2 php是直接上最好的语言（狗头）</description>
     </item>
+    
   </channel>
 </rss>

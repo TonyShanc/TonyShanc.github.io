@@ -33,8 +33,8 @@
 <meta property="og:url" content="https://shankisme.com/posts/pwntools%E4%B8%8B%E8%B8%A9%E7%9A%84%E5%9D%91/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-02-25T19:03:01+08:00" />
 <meta property="article:modified_time" content="2020-02-25T19:03:01+08:00" />
-
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="pwntools下踩的坑"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="pwntools下踩的坑"/>
 <meta name="twitter:description" content="纯pwn小白在疫情期间无聊，于是开始玩起了pwn。期间在i春秋,freebuf，知乎上随便看了几篇入门手册，难受的是技术活什么都看不懂。。距离上次接触汇编是大一下学期吧，当时计算机系统的实践课程要求做某常青藤的bomblab,当时跟着大佬的步骤勉强完成三关。探索的过程很累，尤其是在汇编知识还没消化完，就去做ret2somefunc的题，一个字：难，两个字：难顶。
 废话不多说，下面记录配pwntools环境踩的坑。当然踩坑还是因为没有先好好读官方文档。
 0x00 介绍 pwntools(v2.0)是编写漏洞利用脚本的python库，设计者将它分为两个模块：pwnlib与pwn。 pwnlib是个干净的模块，适合初学者快速入门。而pwn是打CTF专用的工具箱，是pwnlib的超集，功能更多，也更难入门。具体介绍请看pwntools文档。
