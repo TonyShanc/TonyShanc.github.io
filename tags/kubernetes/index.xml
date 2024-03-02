@@ -7,7 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 17 Feb 2024 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 Mar 2024 01:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kubernetes故障排查</title>
+      <link>https://shankisme.com/posts/kubernetes%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</link>
+      <pubDate>Fri, 01 Mar 2024 01:35:21 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/kubernetes%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</guid>
+      <description>本文整理了在工作过程中经历的部分kubernetes故障排查记录。
+1. k8s网络直接路由模式下网卡流量异常 起因：node 1到node 2的通信延迟比其他集群高，经过vnstat监听node 2 网卡发现eth0几乎没流量，eth1流量高达几百Mbps，几乎打满带宽。
+确认问题：k8s节点node 1 eth0到node 2的流量预期经过node 2 eth0，但是却在node 2的eth1网卡监听到，流量链路异常。
+分析：在和运维同学沟通确认了接线和路由配置没问题后，画出简易网络拓扑：
+确认三层网络正常，问题发生在二层数据链路层，而二层使用MAC地址定位出口网卡，查看node 1记录的目标ip 192.168.4.112对应的MAC地址发现是192.168.3.112的MAC地址，说明node 1 arp洪泛学习了错误的MAC地址。
+解决方案： ip neighbour删除arp记录让node 1重新学习。学习错误MAC地址的原因待观察。
+2. internal ip在集群安装和投产时不一致导致API Server向kubelet的请求返回x509 ip非法错误。 组建k3s/k8s集群时，kubelet初始化会经历两个步骤：
+选择默认路由的网卡ip作为节点internal ip 主节点将kubelet设置的当前节点internal ip，加入kubelet服务端证书的ip白名单, 签发并下发证书，供节点的kubelet作为服务端tls证书使用 背景: 我们的k3s/k8s集群主要用于边缘计算，使用物联网卡接入公网，流量费用较贵，因此为了在投产前能更经济更快地把基础服务的镜像拉下来，我们上游运维人员会在初始化集群时给gateway节点/主节点接入网线，其他从节点将主节点作为默认网关拉镜像。因此在初始化集群时，gateway节点会多出来个网卡，作为访问默认网关的网卡使用。
+问题：集群的基础服务的容器全部running后，运维人员给集群断开办公室网络，交付使用。发现在gateway节点使用kubectl工具无法访问pod的日志，返回报错:
+Error from server: Get &amp;#34;https://192.168.3.123:10250/containerLogs/&amp;lt;NAMESPACE&amp;gt;/&amp;lt;POD_NAME&amp;gt;/&amp;lt;CONTAINER_NAME&amp;gt;&amp;#34;: x509 certificate is valid for 127.0.0.1, 172.29.1.100, not 192.168.3.123 分析： 日志请求的链路上遇到了TLS双向验证失败的问题，具体原因是某个服务在TLS握手阶段拒绝了请求方，因为请求方的ip未在该服务ip白名单内，而白名单是写进x509证书中的，进一步根据10250端口定位该服务是kubelet，也就是说，使用serving-kubelet.crt作为服务端证书的kubelet没有放行API Server的访问容器日志的请求。
+询问运维同学，了解了初始化集群到投入使用的过程：
+定位到问题后，找到机器上serving-kubelet.crt证书的位置，openssl x509命令查看证书内容：
+$ sudo openssl x509 -in serving-kube-apiserver.crt -text Certificate: ... X509v3 Subject Alternative Name: DNS:kubernetes, DNS:kubernetes.</description>
+    </item>
+    
     <item>
       <title>infra intro</title>
       <link>https://shankisme.com/posts/infra/</link>

@@ -7,7 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Sat, 17 Feb 2024 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 Mar 2024 01:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kubernetes故障排查</title>
+      <link>https://shankisme.com/posts/kubernetes%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</link>
+      <pubDate>Fri, 01 Mar 2024 01:35:21 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/kubernetes%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</guid>
+      <description>本文整理了在工作过程中经历的部分kubernetes故障排查记录。
+1. k8s网络直接路由模式下网卡流量异常 起因：node 1到node 2的通信延迟比其他集群高，经过vnstat监听node 2 网卡发现eth0几乎没流量，eth1流量高达几百Mbps，几乎打满带宽。
+确认问题：k8s节点node 1 eth0到node 2的流量预期经过node 2 eth0，但是却在node 2的eth1网卡监听到，流量链路异常。
+分析：在和运维同学沟通确认了接线和路由配置没问题后，画出简易网络拓扑：
+确认三层网络正常，问题发生在二层数据链路层，而二层使用MAC地址定位出口网卡，查看node 1记录的目标ip 192.168.4.112对应的MAC地址发现是192.168.3.112的MAC地址，说明node 1 arp洪泛学习了错误的MAC地址。
+解决方案： ip neighbour删除arp记录让node 1重新学习。学习错误MAC地址的原因待观察。
+2. internal ip在集群安装和投产时不一致导致API Server向kubelet的请求返回x509 ip非法错误。 组建k3s/k8s集群时，kubelet初始化会经历两个步骤：
+选择默认路由的网卡ip作为节点internal ip 主节点将kubelet设置的当前节点internal ip，加入kubelet服务端证书的ip白名单, 签发并下发证书，供节点的kubelet作为服务端tls证书使用 背景: 我们的k3s/k8s集群主要用于边缘计算，使用物联网卡接入公网，流量费用较贵，因此为了在投产前能更经济更快地把基础服务的镜像拉下来，我们上游运维人员会在初始化集群时给gateway节点/主节点接入网线，其他从节点将主节点作为默认网关拉镜像。因此在初始化集群时，gateway节点会多出来个网卡，作为访问默认网关的网卡使用。
+问题：集群的基础服务的容器全部running后，运维人员给集群断开办公室网络，交付使用。发现在gateway节点使用kubectl工具无法访问pod的日志，返回报错:
+Error from server: Get &amp;#34;https://192.168.3.123:10250/containerLogs/&amp;lt;NAMESPACE&amp;gt;/&amp;lt;POD_NAME&amp;gt;/&amp;lt;CONTAINER_NAME&amp;gt;&amp;#34;: x509 certificate is valid for 127.0.0.1, 172.29.1.100, not 192.168.3.123 分析： 日志请求的链路上遇到了TLS双向验证失败的问题，具体原因是某个服务在TLS握手阶段拒绝了请求方，因为请求方的ip未在该服务ip白名单内，而白名单是写进x509证书中的，进一步根据10250端口定位该服务是kubelet，也就是说，使用serving-kubelet.crt作为服务端证书的kubelet没有放行API Server的访问容器日志的请求。
+询问运维同学，了解了初始化集群到投入使用的过程：
+定位到问题后，找到机器上serving-kubelet.crt证书的位置，openssl x509命令查看证书内容：
+$ sudo openssl x509 -in serving-kube-apiserver.crt -text Certificate: ... X509v3 Subject Alternative Name: DNS:kubernetes, DNS:kubernetes.</description>
+    </item>
+    
     <item>
       <title>infra intro</title>
       <link>https://shankisme.com/posts/infra/</link>
@@ -162,22 +183,6 @@ kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
 他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT
 （这里使用kong图形界面KONGA实践）
 JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</description>
-    </item>
-    
-    <item>
-      <title>pwn实践记录--rop入门</title>
-      <link>https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</link>
-      <pubDate>Sat, 07 Mar 2020 21:43:55 +0800</pubDate>
-      
-      <guid>https://shankisme.com/posts/%E5%85%A5%E9%97%A8pwn%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/</guid>
-      <description>前言 回过来记录入门历程主要是为了复习巩固pwn的分析思路。因为写的很详细，篇幅很长，未写完的会第二天写。全部内容包括：ret2shellcode、ret2libc(绕过NX)、ret2libc(绕过ASLR)、格式化字符串漏洞。若理解有错误，请在评论区指正。
-本次回顾涉及到的elf文件以及exp都能在这里获取到。 环境准备：linux(32位程序运行环境)、IDA Pro、gdb插件、python+pwntools、不屈意志:) 知识回顾：操作系统预防二进制漏洞的保护机制、elf文件组成、栈机制、大小端。
-0x00 return2shellcode 文件：level1 习惯性查看保护机制：
-很好全关，接下来利用IDA Pro F5大法查看反汇编结果： 发现该二进制文件main函数入口直接调用vulnerable_function()函数，然后调用了write函数。这里提个醒，反汇编遇到write()、read()、puts()、gets()一定留个心眼，这些函数对任意变量的处理都可能造成栈溢出，不过本题输出的是字符串常量，忽略，直接查看vulnerable_function()。 看到该函数创建了个局部变量（数组指针），位置距离ebp-0x88的位置，也就是距离基指针136字节位置。read()函数读取了该函数的局部变量，上文提到read()函数不检查读取限制，并且局部变量存放在栈中，因此我们可以构造payload长度=136+4(存储ebp指针地址大小)+4(返回地址大小), 来改变函数返回地址。考虑到PIE已关，并且140字节的长度足够存储一个shellcode执行execve(&amp;quot;/bin/sh&amp;quot;)。因此我们从payload的开始位置存shellcode，剩下的用&amp;rsquo;A&amp;rsquo;补全，返回地址指向payload起始地址，也就是局部变量的起始地址。但是地址我们还不知道，因为它是在栈里面加载的。考虑到栈的动态变化，IDAPro的静态分析无法展示（它的动态分析比较麻烦），接下来用gdb配合peta插件进行动态分析： 在入口函数下断点： run/start 执行到main函数入口停下： 依次 next next 在汇编下一步执行vulnerable_function()函数的时候，step命令进入函数内部： 进入之后，我们就能看到该函数的栈情况了 接下来依次next 执行到read()函数的时候，象征性输入字符： 可以看到栈区0xffffd060地址上存放了该局部变量（上面的0xffffd060是文字常量区（常量池）范围内的地址，主要存储字符串常量），至此所有的分析工作就完成了。
-接下来最最最关键的地方来了，很多初学者都会落进去的坑：其实gdb调试和实际执行程序的栈位置相比会有些偏移，为了提供buf更精确的位置，我们需要开启core dump功能来收集实际运行环境下的变量分布情况。 暂时开启core dump命令
-ulimit -c unlimited 执行level1:
-./level1 输入字符使栈溢出。 可以看到目录下多出来了个core文件。 接下来用gdb 配合core文件再次调试level1 然后输入 x $esp-144查看buf的位置, 这里的esp指的是实际环境下程序执行出错的时候的esp, 执行返回命令时，esp退回到main函数的栈顶，因此buf的位置 = esp指针存的位置 - payload的长度(144)。 得到buf实际地址：0xffffd0c0 接下来我们就能安心的写exp了。
-from pwn import * p = process(&amp;#39;./level1&amp;#39;) ret = 0xffffd0c0 shellcode = &amp;#34;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&amp;#34; shellcode += &amp;#34;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&amp;#34; shellcode += &amp;#34;\x0b\xcd\x80&amp;#34; payload = shellcode + &amp;#39;A&amp;#39; * (140 - len(shellcode)) + p32(ret) p.</description>
     </item>
     
   </channel>

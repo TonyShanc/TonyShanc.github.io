@@ -3,21 +3,24 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://shankisme.com/tags/infra/</loc>
-    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
-  </url><url>
-    <loc>https://shankisme.com/posts/infra/</loc>
-    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
+    <lastmod>2024-03-01T01:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/kubernetes/</loc>
-    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
+    <lastmod>2024-03-01T01:35:21+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/posts/kubernetes%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</loc>
+    <lastmod>2024-03-01T01:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/posts/</loc>
-    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
+    <lastmod>2024-03-01T01:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/</loc>
-    <lastmod>2024-02-17T15:35:21+08:00</lastmod>
+    <lastmod>2024-03-01T01:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/</loc>
+    <lastmod>2024-03-01T01:35:21+08:00</lastmod>
+  </url><url>
+    <loc>https://shankisme.com/posts/infra/</loc>
     <lastmod>2024-02-17T15:35:21+08:00</lastmod>
   </url><url>
     <loc>https://shankisme.com/tags/dns/</loc>
