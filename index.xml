@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Fri, 01 Mar 2024 01:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Mar 2024 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>infra intro</title>
+      <link>https://shankisme.com/posts/infra/</link>
+      <pubDate>Sat, 02 Mar 2024 15:35:21 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/infra/</guid>
+      <description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 资源限额（cpu、内存、GPU） 边缘集群网络高负载(流量大于1Gbps) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 边缘容器网络方案迭代 v1 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：k3s内置flannel(vxlan) v2 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：flannel pod(vxlan) v3 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router v4 pod网络分配：在kubelet注册node前，在node中预置pod cidr 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router </description>
+    </item>
+    
     <item>
       <title>kubernetes故障排查记录</title>
       <link>https://shankisme.com/posts/kubernetes%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/</link>
@@ -30,12 +39,30 @@ $ sudo openssl x509 -in serving-kube-apiserver.crt -text Certificate: ... X509v3
     </item>
     
     <item>
-      <title>infra intro</title>
-      <link>https://shankisme.com/posts/infra/</link>
-      <pubDate>Sat, 17 Feb 2024 15:35:21 +0800</pubDate>
+      <title>ArgoCD核心组件源码分析</title>
+      <link>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Thu, 29 Feb 2024 18:32:21 +0800</pubDate>
       
-      <guid>https://shankisme.com/posts/infra/</guid>
-      <description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 资源限额（cpu、内存、GPU） 边缘集群网络高负载(流量大于1Gbps) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 边缘容器网络方案迭代 v1 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：k3s内置flannel(vxlan) v2 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：flannel pod(vxlan) v3 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router v4 pod网络分配：在kubelet注册node前，在node中预置pod cidr 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router </description>
+      <guid>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>在上一章ArgoCD的设计与功能中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server
+由于API Server的功能在于提供RPC/REST接口和UI界面展示集群资源状态，与GitOps的实现关系不大（正如Core部署模式去掉了API Server），本文将从源码角度分析ArgoCD组件Application Controller、Repository Server的功能实现。
+Application Controller Application(以下简称App)是ArgoCD在K8S中注册的自定义资源(CRD)，App Controller是ArgoCD实现的K8S控制器，它连续监视App CR, 并将CR中描述的期望状态和集群实际状态对比，若不一致，将采取纠正措施将二者同步。ArgoCD将集群连接信息和部署的项目信息以及资源清单渲染参数存入了Application CR中，一个最小化的App如下：
+apiVersion: argoproj.io/v1alpha1 kind: Application metadata: name: guestbook namespace: argocd spec: project: default source: repoURL: https://github.com/argoproj/argocd-example-apps.git targetRevision: HEAD path: guestbook destination: server: https://kubernetes.default.svc namespace: guestbook 其中source表示git仓库和部署项目路径分析信息，destination表示部署的目标集群，在argocd中，可以有多个项目和集群被管理，他们的信息以k8s资源secret的形式存储在etcd中：
+// cluster info apiVersion: v1 data: config: ... // 身份信息、用于TLS双向验证的对端CA证书 name: cluster-1 // 集群名 server: ... // 目标集群API Server的URL kind: Secret metadata: annotations: managed-by: argocd.argoproj.io creationTimestamp: &amp;#34;2022-08-05T03:14:07Z&amp;#34; labels: argocd.argoproj.io/secret-type: cluster name: cluster-1 namespace: argocd resourceVersion: &amp;#34;443946&amp;#34; selfLink: /api/v1/namespaces/argocd/secrets/cluster-1 uid: b6f3ff89-782d-426e-aeaf-0c431f7f84bb type: Opaque // project info apiVersion: v1 data: name: Zmxhbm5lbA== sshPrivateKey: .</description>
+    </item>
+    
+    <item>
+      <title>ArgoCD的设计和功能</title>
+      <link>https://shankisme.com/posts/argocd%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%8A%9F%E8%83%BD/</link>
+      <pubDate>Wed, 28 Feb 2024 21:32:21 +0800</pubDate>
+      
+      <guid>https://shankisme.com/posts/argocd%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%8A%9F%E8%83%BD/</guid>
+      <description>GitOps 基础设施即代码 在理解GitOps前，我们需要先理解什么是基础设施即代码(Infrastructure as Code, IaC)。基础设施即代码表示使用代码来定义基础设施，研发人员可以像对待应用软件一样对待基础设施，例如：
+可以创建包含基础架构规范的声明式配置文件，从而便于编辑和分发配置 可以确保每次配置的环境都完全相同 可以进行版本控制 可以将基础设施划分未若干个模块化组件。，并通过自动化以不同的方式进行组合 什么是GitOps GitOps = IaC + Git + CI/CD，即基于IaC的版本化CD/CD。它的核心是使用Git仓库管理基础设施和应用的配置，并且以Git仓库作为基础设施和应用的单一事实来源。Git仓库中的声明式配置描述了目标环境当前所需基础设施地期望状态，借助于GitOps，如果集群地市级状态与Git仓库中的定义与期望状态不匹配，Kubernetes reconcilers会根据期望撞他ilai调整当前地状态，最终使实际状态符合期望状态。
+GitOps vs DevOps 从广义上来看，GitOps与DevOps并不冲突，GitOps是一种技术手段，而DevOps是一种文化。GitOps是一种实现持续交付、持续部署和基础设施即代码地工具和框架，它是支持DevOps文化的。 GitOps和DevOps主要区别
+GitOps以目标为导向，使用Git维护期望状态，并不断调整实际状态，最终与期望状态相匹配。而DevOps更多关注的是最佳实践，这些实践可以应用于企业每一个流程。 GitOps采取声明式的操作方法，而DevOps同时接受声明式和命令式的方法。 ArgoCD的优势 Git作为应用的唯一真实来源：期望状态的唯一存储 快速回滚：通过Git History切换commit将应用状态快速恢复到上一个可用的状态 集群灾备：若集群A出现故障，可以直接创建新集群，然后将ArgoCD连接到包含集群A所有配置声明的Git仓库，最终新集群B的状态会与旧集群状态一致，无需人工干预 ArgoCD架构 从功能架构来看，Argo CD 主要有三个组件：API Server、Repository Server 和 Application Controller。从 GitOps 工作流的角度来看，总共分为 3 个阶段：检索、调谐和呈现
+检索 - Repo Server 检索阶段会克隆应用声明式配置清单所在的 Git 仓库，并将其缓存到本地存储。包含 Kubernetes 原生的配置清单、Helm Chart 以及 Kustomize 配置清单。履行这些职责的组件就是 Repository Server。
+调谐 - Application Controller 调谐（Reconcile）阶段是最复杂的，这个阶段会将 Repository Server 获得的配置清单与反映集群当前状态的实时配置清单进行对比，一旦检测到应用处于 OutOfSync 状态，Application Controller 就会采取修正措施，使集群的实际状态与期望状态保持一致。</description>
     </item>
     
     <item>
@@ -148,41 +175,6 @@ reconcile方法中的业务逻辑会根据资源的期望状态，对外部世�
 trymock/ /db |--db.go |--db_test.go /mock |--db_mock.go // generated by mockgen //db.go type DB interface { Get(key string) (int, error) } func GetFromDB(db DB, key string) int { if value, err := db.Get(key); err == nil { return value } return -1 } gomock中，DB实例只能通过传参传入生成mock文件
 mockgen -source=db.go -destination=db_mock.go -package=mock gomock生成的db_mock.go如下
 //db_mock.go // Code generated by MockGen. DO NOT EDIT. // Source: db.go // Package mock_db is a generated GoMock package.</description>
-    </item>
-    
-    <item>
-      <title>汽车CAN总线复习笔记</title>
-      <link>https://shankisme.com/posts/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%B1%BD%E8%BD%A6can%E6%80%BB%E7%BA%BF%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sat, 16 Jan 2021 20:45:02 +0800</pubDate>
-      
-      <guid>https://shankisme.com/posts/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6%E6%B1%BD%E8%BD%A6can%E6%80%BB%E7%BA%BF%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>CAN总线使用总线技术，取代了传统的点对点布线方式连接汽车电子控制单元（ECU）, 解决了传统布线方式中线束多，布线难，成本高等问题。
-figure-normal (without any classes)
-CAN总线标准 CAN总线标准规定了物理层和数据链路层（参考计算机网络OSI七层网络模型），应用层需要用户自定义，不同的CAN标准中，对物理层的要求不同，对数据链路层的要求是相同的。
-CAN网络物理层 连接在CAN总线上的设备叫做节点设备（CAN Node），CAN网络的拓扑一般为线型。线束最常用的是双绞线，线上传输为对称的差分电平信号。</description>
-    </item>
-    
-    <item>
-      <title>kong网关consumer service route plugin 理解与实践</title>
-      <link>https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/</link>
-      <pubDate>Sun, 22 Nov 2020 13:40:56 +0800</pubDate>
-      
-      <guid>https://shankisme.com/posts/kong%E7%BD%91%E5%85%B3consumer-service-route-plugin-%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/</guid>
-      <description>近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
-传送门：
-kong网关中文文档
-kong官网
-kong官方文档
-前言 近几天在学习api网关kong，发现中文网基本没人发表关于kong的consumer、plugin、route、service的进一步探索和使用相关文章，只是分开描述了单独的概念和做简单配置，因此为了补全这个缺失，我尽量详细记录这几天的摸索历程，以及对这些概念的理解和实践。
-理论 Consumer The Consumer object represents a consumer - or a user - of an API. You can either rely on Kong as the primary datastore, or you can map the consumer list with your database to keep consistency between Kong and your existing primary datastore.
-（官方原文解释中的消费者和数据库的映射这里暂时不涉及）
-consumer直译消费者。它是个抽象概念，代表一类事物。例如你可以创建一组consumer代表api版本号v1、v2、v3， 也可以代表请求来源类型，来自客户端请求可标记为android/iOS， web前端请求标记为web frontend，IoT设备请求标记为IoT device。
-Kong所在的架构好比一家公司，kong consumer 就代表公司员工种类，普通员工、主管、经理、老板等。当然，标记这些人员需要工牌，工牌上具有员工认证信息，无工牌社会人员无法进入。
-请求未认证情况下不为consumer， 只会根据请求的customIP标记，因此请求被kong标记为consumer前需要进行认证。
-kong提供了多种认证方式：BASIC AUTH、API KEYS、HMAC、OAUTH2、JWT
-他们适合的使用场景都不同，按需设置，我这里需要用kong搭建分布式场景应用，因此选择JWT
-（这里使用kong图形界面KONGA实践）
-JWT验证需要key识别用户，secret为kong保存的私钥，algorithm为最终签名算法。</description>
     </item>
     
   </channel>

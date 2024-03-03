@@ -7,11 +7,11 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-    <lastBuildDate>Fri, 01 Mar 2024 01:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Mar 2024 15:35:21 +0800</lastBuildDate><atom:link href="https://shankisme.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>infra</title>
       <link>https://shankisme.com/tags/infra/</link>
-      <pubDate>Fri, 01 Mar 2024 01:35:21 +0800</pubDate>
+      <pubDate>Sat, 02 Mar 2024 15:35:21 +0800</pubDate>
       
       <guid>https://shankisme.com/tags/infra/</guid>
       <description></description>
@@ -20,9 +20,27 @@
     <item>
       <title>kubernetes</title>
       <link>https://shankisme.com/tags/kubernetes/</link>
-      <pubDate>Fri, 01 Mar 2024 01:35:21 +0800</pubDate>
+      <pubDate>Sat, 02 Mar 2024 15:35:21 +0800</pubDate>
       
       <guid>https://shankisme.com/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ArgoCD</title>
+      <link>https://shankisme.com/tags/argocd/</link>
+      <pubDate>Thu, 29 Feb 2024 18:32:21 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/argocd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>GitOps</title>
+      <link>https://shankisme.com/tags/gitops/</link>
+      <pubDate>Thu, 29 Feb 2024 18:32:21 +0800</pubDate>
+      
+      <guid>https://shankisme.com/tags/gitops/</guid>
       <description></description>
     </item>
     
@@ -77,24 +95,6 @@
       <pubDate>Sat, 27 Nov 2021 01:11:42 +0800</pubDate>
       
       <guid>https://shankisme.com/tags/untagged/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>CAN总线</title>
-      <link>https://shankisme.com/tags/can%E6%80%BB%E7%BA%BF/</link>
-      <pubDate>Sat, 16 Jan 2021 20:45:02 +0800</pubDate>
-      
-      <guid>https://shankisme.com/tags/can%E6%80%BB%E7%BA%BF/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>微服务</title>
-      <link>https://shankisme.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
-      <pubDate>Sun, 22 Nov 2020 13:40:56 +0800</pubDate>
-      
-      <guid>https://shankisme.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
       <description></description>
     </item>
     

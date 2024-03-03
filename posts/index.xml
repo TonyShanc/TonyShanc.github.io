@@ -6,8 +6,95 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-		<lastBuildDate>Fri, 01 Mar 2024 01:35:21 +0800</lastBuildDate>
+		<lastBuildDate>Sat, 02 Mar 2024 15:35:21 +0800</lastBuildDate>
 		<atom:link href="https://shankisme.com/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>infra intro</title>
+			<link>https://shankisme.com/posts/infra/</link>
+			<pubDate>Sat, 02 Mar 2024 15:35:21 +0800</pubDate>
+			
+			<guid>https://shankisme.com/posts/infra/</guid>
+			<description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 资源限额（cpu、内存、GPU） 边缘集群网络高负载(流量大于1Gbps) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 边缘容器网络方案迭代 v1 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：k3s内置flannel(vxlan) v2 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：flannel pod(vxlan) v3 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router v4 pod网络分配：在kubelet注册node前，在node中预置pod cidr 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router </description>
+			<content type="html"><![CDATA[<h2 id="业务关键词">业务关键词</h2>
+<ul>
+<li>环卫领域</li>
+<li>自动驾驶清扫车</li>
+<li>城市街道/园区/隧道</li>
+<li>摄像头/激光雷达/车辆运行数据</li>
+<li>路线规划</li>
+<li>远程操控</li>
+<li>手自动模式切换</li>
+</ul>
+<h2 id="需求关键词">需求关键词</h2>
+<ul>
+<li>业务/算法部门项目独立部署</li>
+<li>项目版本管理</li>
+<li>版本迭代方便</li>
+<li>资源限额（cpu、内存、GPU）</li>
+<li>边缘集群网络高负载(流量大于1Gbps)</li>
+</ul>
+<h2 id="技术关键词">技术关键词</h2>
+<ul>
+<li>边缘计算</li>
+<li>弱网环境</li>
+<li>边缘部署轻量k8s集群(k3s)</li>
+<li>边缘混合架构(ARM + X86)</li>
+<li>多集群管理</li>
+<li>项目管理</li>
+</ul>
+<h1 id="基于k8s的多集群管理平台cloud">基于k8s的多集群管理平台cloud</h1>
+<h2 id="cloud架构">cloud架构</h2>
+<figure><img src="/img/infra/cloud.png"
+         alt="image"/>
+</figure>
+
+<h2 id="边缘集群架构">边缘集群架构</h2>
+<figure><img src="/img/infra/edge-cluster.png"
+         alt="image"/>
+</figure>
+
+<h2 id="network-server架构">Network Server架构</h2>
+<figure><img src="/img/infra/network-server.png"
+         alt="image"/>
+</figure>
+
+<h2 id="集群注册流程图">集群注册流程图</h2>
+<figure><img src="/img/infra/register-flowchart.png"
+         alt="image"/>
+</figure>
+
+<h2 id="边缘容器网络方案迭代">边缘容器网络方案迭代</h2>
+<h3 id="v1">v1</h3>
+<ul>
+<li>pod网络分配：k8s.controller-manager.ipam-controller</li>
+<li>本机pod ip管理：host-local</li>
+<li>同主机pod通信：bridge</li>
+<li>跨主机pod通信：k3s内置flannel(vxlan)</li>
+</ul>
+<h3 id="v2">v2</h3>
+<ul>
+<li>pod网络分配：k8s.controller-manager.ipam-controller</li>
+<li>本机pod ip管理：host-local</li>
+<li>同主机pod通信：bridge</li>
+<li>跨主机pod通信：flannel pod(vxlan)</li>
+</ul>
+<h3 id="v3">v3</h3>
+<ul>
+<li>pod网络分配：k8s.controller-manager.ipam-controller</li>
+<li>本机pod ip分配：host-local</li>
+<li>同主机pod通信：bridge</li>
+<li>跨主机pod通信：自研静态路由配置工具router</li>
+</ul>
+<h3 id="v4">v4</h3>
+<ul>
+<li>pod网络分配：在kubelet注册node前，在node中预置pod cidr</li>
+<li>本机pod ip分配：host-local</li>
+<li>同主机pod通信：bridge</li>
+<li>跨主机pod通信：自研静态路由配置工具router</li>
+</ul>
+]]></content>
+		</item>
 		
 		<item>
 			<title>kubernetes故障排查记录</title>
@@ -206,89 +293,580 @@ systemctl restart k3s
 		</item>
 		
 		<item>
-			<title>infra intro</title>
-			<link>https://shankisme.com/posts/infra/</link>
-			<pubDate>Sat, 17 Feb 2024 15:35:21 +0800</pubDate>
+			<title>ArgoCD核心组件源码分析</title>
+			<link>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+			<pubDate>Thu, 29 Feb 2024 18:32:21 +0800</pubDate>
 			
-			<guid>https://shankisme.com/posts/infra/</guid>
-			<description>业务关键词 环卫领域 自动驾驶清扫车 城市街道/园区/隧道 摄像头/激光雷达/车辆运行数据 路线规划 远程操控 手自动模式切换 需求关键词 业务/算法部门项目独立部署 项目版本管理 版本迭代方便 资源限额（cpu、内存、GPU） 边缘集群网络高负载(流量大于1Gbps) 技术关键词 边缘计算 弱网环境 边缘部署轻量k8s集群(k3s) 边缘混合架构(ARM + X86) 多集群管理 项目管理 基于k8s的多集群管理平台cloud cloud架构 边缘集群架构 Network Server架构 集群注册流程图 边缘容器网络方案迭代 v1 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：k3s内置flannel(vxlan) v2 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip管理：host-local 同主机pod通信：bridge 跨主机pod通信：flannel pod(vxlan) v3 pod网络分配：k8s.controller-manager.ipam-controller 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router v4 pod网络分配：在kubelet注册node前，在node中预置pod cidr 本机pod ip分配：host-local 同主机pod通信：bridge 跨主机pod通信：自研静态路由配置工具router </description>
-			<content type="html"><![CDATA[<h2 id="业务关键词">业务关键词</h2>
+			<guid>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+			<description>在上一章ArgoCD的设计与功能中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server
+由于API Server的功能在于提供RPC/REST接口和UI界面展示集群资源状态，与GitOps的实现关系不大（正如Core部署模式去掉了API Server），本文将从源码角度分析ArgoCD组件Application Controller、Repository Server的功能实现。
+Application Controller Application(以下简称App)是ArgoCD在K8S中注册的自定义资源(CRD)，App Controller是ArgoCD实现的K8S控制器，它连续监视App CR, 并将CR中描述的期望状态和集群实际状态对比，若不一致，将采取纠正措施将二者同步。ArgoCD将集群连接信息和部署的项目信息以及资源清单渲染参数存入了Application CR中，一个最小化的App如下：
+apiVersion: argoproj.io/v1alpha1 kind: Application metadata: name: guestbook namespace: argocd spec: project: default source: repoURL: https://github.com/argoproj/argocd-example-apps.git targetRevision: HEAD path: guestbook destination: server: https://kubernetes.default.svc namespace: guestbook 其中source表示git仓库和部署项目路径分析信息，destination表示部署的目标集群，在argocd中，可以有多个项目和集群被管理，他们的信息以k8s资源secret的形式存储在etcd中：
+// cluster info apiVersion: v1 data: config: ... // 身份信息、用于TLS双向验证的对端CA证书 name: cluster-1 // 集群名 server: ... // 目标集群API Server的URL kind: Secret metadata: annotations: managed-by: argocd.argoproj.io creationTimestamp: &amp;#34;2022-08-05T03:14:07Z&amp;#34; labels: argocd.argoproj.io/secret-type: cluster name: cluster-1 namespace: argocd resourceVersion: &amp;#34;443946&amp;#34; selfLink: /api/v1/namespaces/argocd/secrets/cluster-1 uid: b6f3ff89-782d-426e-aeaf-0c431f7f84bb type: Opaque // project info apiVersion: v1 data: name: Zmxhbm5lbA== sshPrivateKey: .</description>
+			<content type="html"><![CDATA[<p>在上一章<a href="/posts/argocd%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%8A%9F%E8%83%BD/">ArgoCD的设计与功能</a>中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server</p>
+<p>由于API Server的功能在于提供RPC/REST接口和UI界面展示集群资源状态，与GitOps的实现关系不大（正如Core部署模式去掉了API Server），本文将从源码角度分析ArgoCD组件Application Controller、Repository Server的功能实现。</p>
+<h2 id="application-controller">Application Controller</h2>
+<p>Application(以下简称App)是ArgoCD在K8S中注册的自定义资源(CRD)，App Controller是ArgoCD实现的K8S控制器，它连续监视App CR, 并将CR中描述的期望状态和集群实际状态对比，若不一致，将采取纠正措施将二者同步。ArgoCD将集群连接信息和部署的项目信息以及资源清单渲染参数存入了Application CR中，一个最小化的App如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">argoproj.io/v1alpha1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Application</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">guestbook</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">argocd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">source</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">repoURL</span><span class="p">:</span><span class="w"> </span><span class="l">https://github.com/argoproj/argocd-example-apps.git</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">targetRevision</span><span class="p">:</span><span class="w"> </span><span class="l">HEAD</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">guestbook</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">destination</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l">https://kubernetes.default.svc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">guestbook</span><span class="w">
+</span></span></span></code></pre></div><p>其中source表示git仓库和部署项目路径分析信息，destination表示部署的目标集群，在argocd中，可以有多个项目和集群被管理，他们的信息以k8s资源secret的形式存储在etcd中：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">// cluster info</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l">... // 身份信息、用于TLS双向验证的对端CA证书</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster-1   // 集群名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l">... // 目标集群API Server的URL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Secret</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">managed-by</span><span class="p">:</span><span class="w"> </span><span class="l">argocd.argoproj.io</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2022-08-05T03:14:07Z&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">argocd.argoproj.io/secret-type</span><span class="p">:</span><span class="w"> </span><span class="l">cluster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster-1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">argocd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">resourceVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;443946&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selfLink</span><span class="p">:</span><span class="w"> </span><span class="l">/api/v1/namespaces/argocd/secrets/cluster-1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l">b6f3ff89-782d-426e-aeaf-0c431f7f84bb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Opaque</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">// project info</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Zmxhbm5lbA==</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">sshPrivateKey</span><span class="p">:</span><span class="w"> </span><span class="l">... // 拉取 ssh repo的私钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Z2l0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">... // repo ssh url</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Secret</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">managed-by</span><span class="p">:</span><span class="w"> </span><span class="l">argocd.argoproj.io</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2022-09-26T07:25:33Z&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">argocd.argoproj.io/secret-type</span><span class="p">:</span><span class="w"> </span><span class="l">repository</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">flannel</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">argocd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ownerReferences</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps.robocloud.autowise.ai/v1alpha1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">blockOwnerDeletion</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">controller</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Project</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">flannel</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l">6f98130d-8e32-4ddb-9e56-02586e5debbd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">resourceVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;121649320&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selfLink</span><span class="p">:</span><span class="w"> </span><span class="l">/api/v1/namespaces/argocd/secrets/flannel</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l">06cfa628-c0a0-4a0e-b15e-ec3cca97e281</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Opaque</span><span class="w">
+</span></span></span></code></pre></div><p>Argocd的Application Controller Run方法一些重要的步骤我以注释的形式解释：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// Run starts the Application CRD controller.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">ctrl</span> <span class="o">*</span><span class="nx">ApplicationController</span><span class="p">)</span> <span class="nf">Run</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">statusProcessors</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">operationProcessors</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appRefreshQueue</span><span class="p">.</span><span class="nf">ShutDown</span><span class="p">()</span> <span class="c1">// app 刷新队列，生产者添加待刷新app的key，消费者负责向git repo获取最新的资源期望状态，与集群当前状态做diff，更新app的sync status和health status
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">defer</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appOperationQueue</span><span class="p">.</span><span class="nf">ShutDown</span><span class="p">()</span> <span class="c1">// app 同步队列，生产者添加需要同步的app的key，消费者负责执行同步任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appInformer</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">())</span> <span class="c1">// 运行AppInformer, watch到的app add/update/delete事件会被加入到工作队列appReFreshQueue、appOperationQueue中等待worker处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// argocd 提供启动参数status processors参数配置AppRefreshQueue消费者worker的数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">statusProcessors</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nx">wait</span><span class="p">.</span><span class="nf">Until</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nf">processAppRefreshQueueItem</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 同上，提供operation processors参数配置AppOperationQueue消费者worker数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">operationProcessors</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nx">wait</span><span class="p">.</span><span class="nf">Until</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nf">processAppOperationQueueItem</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>值得一提的是，argocd开发operator与一般k8s二开operator有些不同：前者使用client-go实现了sharedIndexInformer(appInformer)并单独使用workqueue，后者使用operator开发框架kubebuilder结合controller-manager填充Reconcile方法，可能因为argocd项目启动时间早于kubebuilder GA的时间。</p>
+<p>在上面的代码分析中，我们可以得知app对应两个workqueue：appRefreshQueue、appOperationQueue，以及对应的处理方法：processAppRefreshQueueItem()， ctrl.processAppOperationQueueItem()</p>
+<p>下面我们从队列的生产者角度分析，触发生产者向队列添加元素的事件有哪些</p>
+<p>查阅代码可知<code>函数调用链</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// controller/appcontroller.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 1. app有add/update/delete事件时
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">NewApplicationController</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ctrl</span><span class="p">.</span><span class="nx">newApplicationInformerAndLister</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">informer</span><span class="p">.</span><span class="nx">AddEventHandler</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">AddFunc</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appRefreshQueue</span><span class="p">.</span><span class="nx">AddRateLimited</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appOperationQueue</span><span class="p">.</span><span class="nx">AddRateLimited</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">UpdateFunc</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">requestAppRefresh</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appRefreshQueue</span><span class="p">.</span><span class="nx">Add</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appOperationQueue</span><span class="p">.</span><span class="nx">Add</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appOperationQueue</span><span class="p">.</span><span class="nx">AddRateLimited</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">DeleteFunc</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appRefreshQueue</span><span class="p">.</span><span class="nx">Add</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 2. ArgoCD监听的集群状态缓存statecache有变动时,触发对应app key入队
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">NewApplicationController</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">statecache</span><span class="p">.</span><span class="nx">NewLiveStateCache</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ctrl</span><span class="p">.</span><span class="nx">handleObjectUpdated</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">ctrl</span><span class="p">.</span><span class="nx">requestAppRefresh</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appRefreshQueue</span><span class="p">.</span><span class="nx">Add</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appOperationQueue</span><span class="p">.</span><span class="nx">Add</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 3. 开启自动同步的app进入OutOfSync状态尝试同步时
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">NewApplicationController</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ctrl</span><span class="p">.</span><span class="nx">processAppRefreshQueueItem</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ctrl</span><span class="p">.</span><span class="nx">autoSync</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">ctrl</span><span class="p">.</span><span class="nx">requestAppRefresh</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appRefreshQueue</span><span class="p">.</span><span class="nx">Add</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">ctrl</span><span class="p">.</span><span class="nx">appOperationQueue</span><span class="p">.</span><span class="nx">Add</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// server/application/application.go
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 4 ArgoCD API Server实现了GRPC接口Get, 上游方法（ManagedResources getAppResources）调用时直接向云端K8S API Server发送Patch请求更新annotaion，触发App更新，进而触发App调谐
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">server</span><span class="p">.</span><span class="nx">ManagedResources</span>
+</span></span><span class="line"><span class="cl"><span class="nx">server</span><span class="p">.</span><span class="nx">getAppResources</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">server</span><span class="p">.</span><span class="nx">getCachedAppState</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">server</span><span class="p">.</span><span class="nx">Get</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">RefreshApp</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">appIf</span><span class="p">.</span><span class="nx">Patch</span>
+</span></span></code></pre></div><p>总结有以下几个操作会触发app的refresh和sync：</p>
 <ul>
-<li>环卫领域</li>
-<li>自动驾驶清扫车</li>
-<li>城市街道/园区/隧道</li>
-<li>摄像头/激光雷达/车辆运行数据</li>
-<li>路线规划</li>
-<li>远程操控</li>
-<li>手自动模式切换</li>
+<li>ArgoCD UI使用时未找到集群缓存资源、手动refresh、sync</li>
+<li>App资源有Create/Update/Delete事件</li>
+<li>App自动同步重试</li>
+<li>管理的集群资源缓存更新</li>
 </ul>
-<h2 id="需求关键词">需求关键词</h2>
-<ul>
-<li>业务/算法部门项目独立部署</li>
-<li>项目版本管理</li>
-<li>版本迭代方便</li>
-<li>资源限额（cpu、内存、GPU）</li>
-<li>边缘集群网络高负载(流量大于1Gbps)</li>
-</ul>
-<h2 id="技术关键词">技术关键词</h2>
-<ul>
-<li>边缘计算</li>
-<li>弱网环境</li>
-<li>边缘部署轻量k8s集群(k3s)</li>
-<li>边缘混合架构(ARM + X86)</li>
-<li>多集群管理</li>
-<li>项目管理</li>
-</ul>
-<h1 id="基于k8s的多集群管理平台cloud">基于k8s的多集群管理平台cloud</h1>
-<h2 id="cloud架构">cloud架构</h2>
-<figure><img src="/img/infra/cloud.png"
+<h3 id="集群状态缓存">集群状态缓存</h3>
+<p>上文我们提到目标集群资源缓存也会触发app的refresh、sync。也就是说argocd与目标集群建立了长连接，来watch集群内受argocd自身管控的资源的状态，有意思的是，ArgoCD贡献者没有直接实现clusterCache组件，而是引用了一个库<a href="https://github.com/argoproj/gitops-engine.git">gitops-engine</a>的cache类实现，结构的字段数量太多，若有兴趣查阅<a href="https://github.com/argoproj/gitops-engine/blob/master/pkg/cache/cluster.go#L180">ClusterCache struct</a></p>
+<p>经过对gitops-engine的源码梳理，clusterCache同步集群资源状态主要有两个方法 EnsureSynced、Invalidated。EnsureSync先获取目标集群的API Resource, 再为每个API Resource创建dynamic client, 调用List方法初始化缓存，watch方法持续更新缓存，Invalidate关闭channel中止相关协程：</p>
+<figure><img src="/img/argocd%e6%a0%b8%e5%bf%83%e7%bb%84%e4%bb%b6%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90/gitopsengine-clustercache.png"
          alt="image"/>
 </figure>
 
-<h2 id="边缘集群架构">边缘集群架构</h2>
-<figure><img src="/img/infra/edge-cluster.png"
+<p>看的出ArgoCD监听集群资源状态的协程数量大于等于目标集群的API资源的数量，较占用协程资源，好在API Server支持Http2，watch机制支持多路复用，所以本机文件描述符/socket的消耗不算多。</p>
+<p>gitops-engine clusterCache提供了Invalidate方法中止状态同步，但是ArgoCD在使用gitops-engine这套机制的时候没有直接暴露出可以停止clusterCache list&amp;watch协程的api，相关配置就一个app的状态同步最大超时次数，也就是app的refresh retry次数达到指定的最大值时，app便不会继续retry，需要修改Application的字段或者在UI手动触发refresh，这对弱网环境的集群来讲并不友好，因为集群断连后在ArgoCD的refresh retry期间，ArgoCD的refreshQueue会瞬间被塞满大量的key，导致后面一些能正常连接的集群的refresh请求没法及时处理，对应的现象是UI上Refresh button一直在loading，同时资源状态未更新，影响DevOps的效率。</p>
+<h3 id="集群期望状态">集群期望状态</h3>
+<p>GitOps的核心逻辑是比较实际状态和期望状态，根据diff的结果决策资源的更新逻辑，而期望状态需要从git仓库中获取。ArgoCD为git和资源渲染工具helm/kustomize封装成了方法，作为gRPC服务供其他组件调用，这是我们后面要分析的组件Repository Server。</p>
+<p>而App Controller作为Repo Server的gRPC Client端，在该方法中获取并比较了实际状态和期望状态：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// controller/state.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// CompareAppState compares application git state to the live app state, using the specified
+</span></span></span><span class="line"><span class="cl"><span class="c1">// revision and supplied source. If revision or overrides are empty, then compares against
+</span></span></span><span class="line"><span class="cl"><span class="c1">// revision and overrides in the app spec.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">appStateManager</span><span class="p">)</span> <span class="nf">CompareAppState</span><span class="p">(</span><span class="nx">app</span> <span class="o">*</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">Application</span><span class="p">,</span> <span class="nx">project</span> <span class="o">*</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">AppProject</span><span class="p">,</span> <span class="nx">revisions</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="nx">sources</span> <span class="p">[]</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ApplicationSource</span><span class="p">,</span> <span class="nx">noCache</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">noRevisionCache</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">localManifests</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="nx">hasMultipleSources</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">*</span><span class="nx">comparisonResult</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">localManifests</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// If the length of revisions is not same as the length of sources,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// we take the revisions from the sources directly for all the sources.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">revisions</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">sources</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">revisions</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">source</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">sources</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">revisions</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">revisions</span><span class="p">,</span> <span class="nx">source</span><span class="p">.</span><span class="nx">TargetRevision</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="nx">targetObjs</span><span class="p">,</span> <span class="nx">manifestInfos</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">m</span><span class="p">.</span><span class="nf">getRepoObjs</span><span class="p">(</span><span class="nx">app</span><span class="p">,</span> <span class="nx">sources</span><span class="p">,</span> <span class="nx">appLabelKey</span><span class="p">,</span> <span class="nx">revisions</span><span class="p">,</span> <span class="nx">noCache</span><span class="p">,</span> <span class="nx">noRevisionCache</span><span class="p">,</span> <span class="nx">verifySignature</span><span class="p">,</span> <span class="nx">project</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// Prevent applying local manifests for now when signature verification is enabled
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// This is also enforced on API level, but as a last resort, we also enforce it here
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">gpg</span><span class="p">.</span><span class="nf">IsGPGEnabled</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">verifySignature</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">targetObjs</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nf">unmarshalManifests</span><span class="p">(</span><span class="nx">localManifests</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// empty out manifestInfoMap
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">manifestInfos</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="nx">apiclient</span><span class="p">.</span><span class="nx">ManifestResponse</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">liveObjByKey</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">liveStateCache</span><span class="p">.</span><span class="nf">GetManagedLiveObjs</span><span class="p">(</span><span class="nx">app</span><span class="p">,</span> <span class="nx">targetObjs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">reconciliation</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nf">Reconcile</span><span class="p">(</span><span class="nx">targetObjs</span><span class="p">,</span> <span class="nx">liveObjByKey</span><span class="p">,</span> <span class="nx">app</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Destination</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span> <span class="nx">infoProvider</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ts</span><span class="p">.</span><span class="nf">AddCheckpoint</span><span class="p">(</span><span class="s">&#34;live_ms&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">diffResults</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">argodiff</span><span class="p">.</span><span class="nf">StateDiffs</span><span class="p">(</span><span class="nx">reconciliation</span><span class="p">.</span><span class="nx">Live</span><span class="p">,</span> <span class="nx">reconciliation</span><span class="p">.</span><span class="nx">Target</span><span class="p">,</span> <span class="nx">diffConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">diffResults</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">diff</span><span class="p">.</span><span class="nx">DiffResultList</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">failedToLoadObjs</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">msg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Failed to compare desired state to live state: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conditions</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">conditions</span><span class="p">,</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ApplicationCondition</span><span class="p">{</span><span class="nx">Type</span><span class="p">:</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ApplicationConditionComparisonError</span><span class="p">,</span> <span class="nx">Message</span><span class="p">:</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">LastTransitionTime</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">now</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ts</span><span class="p">.</span><span class="nf">AddCheckpoint</span><span class="p">(</span><span class="s">&#34;diff_ms&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">syncCode</span> <span class="o">:=</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">SyncStatusCodeSynced</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">managedResources</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">managedResource</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">reconciliation</span><span class="p">.</span><span class="nx">Target</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">resourceSummaries</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ResourceStatus</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">reconciliation</span><span class="p">.</span><span class="nx">Target</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">targetObj</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">reconciliation</span><span class="p">.</span><span class="nx">Target</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">liveObj</span> <span class="o">:=</span> <span class="nx">reconciliation</span><span class="p">.</span><span class="nx">Live</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">obj</span> <span class="o">:=</span> <span class="nx">liveObj</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">obj</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">obj</span> <span class="p">=</span> <span class="nx">targetObj</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">obj</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">gvk</span> <span class="o">:=</span> <span class="nx">obj</span><span class="p">.</span><span class="nf">GroupVersionKind</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="nx">isSelfReferencedObj</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nf">isSelfReferencedObj</span><span class="p">(</span><span class="nx">liveObj</span><span class="p">,</span> <span class="nx">targetObj</span><span class="p">,</span> <span class="nx">app</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">appLabelKey</span><span class="p">,</span> <span class="nx">trackingMethod</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="nx">resState</span> <span class="o">:=</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ResourceStatus</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Namespace</span><span class="p">:</span>       <span class="nx">obj</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Name</span><span class="p">:</span>            <span class="nx">obj</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Kind</span><span class="p">:</span>            <span class="nx">gvk</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Version</span><span class="p">:</span>         <span class="nx">gvk</span><span class="p">.</span><span class="nx">Version</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Group</span><span class="p">:</span>           <span class="nx">gvk</span><span class="p">.</span><span class="nx">Group</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Hook</span><span class="p">:</span>            <span class="nx">hookutil</span><span class="p">.</span><span class="nf">IsHook</span><span class="p">(</span><span class="nx">obj</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">RequiresPruning</span><span class="p">:</span> <span class="nx">targetObj</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">liveObj</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">isSelfReferencedObj</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">targetObj</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">resState</span><span class="p">.</span><span class="nx">SyncWave</span> <span class="p">=</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">syncwaves</span><span class="p">.</span><span class="nf">Wave</span><span class="p">(</span><span class="nx">targetObj</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="kd">var</span> <span class="nx">diffResult</span> <span class="nx">diff</span><span class="p">.</span><span class="nx">DiffResult</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">diffResults</span><span class="p">.</span><span class="nx">Diffs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">diffResult</span> <span class="p">=</span> <span class="nx">diffResults</span><span class="p">.</span><span class="nx">Diffs</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">diffResult</span> <span class="p">=</span> <span class="nx">diff</span><span class="p">.</span><span class="nx">DiffResult</span><span class="p">{</span><span class="nx">Modified</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">NormalizedLive</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">),</span> <span class="nx">PredictedLive</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="c1">// For the case when a namespace is managed with `managedNamespaceMetadata` AND it has resource tracking
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// enabled (e.g. someone manually adds resource tracking labels or annotations), we need to do some
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// bookkeeping in order to ensure that it&#39;s not considered `OutOfSync` (since it does not exist in source
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// control).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// This is in addition to the bookkeeping we do (see `isManagedNamespace` and its references) to prevent said
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// namespace from being pruned.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">isManagedNs</span> <span class="o">:=</span> <span class="nf">isManagedNamespace</span><span class="p">(</span><span class="nx">targetObj</span><span class="p">,</span> <span class="nx">app</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">liveObj</span> <span class="o">==</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">resState</span><span class="p">.</span><span class="nx">Hook</span> <span class="o">||</span> <span class="nx">ignore</span><span class="p">.</span><span class="nf">Ignore</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">targetObj</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">hookutil</span><span class="p">.</span><span class="nf">Skip</span><span class="p">(</span><span class="nx">targetObj</span><span class="p">))</span> <span class="o">||</span> <span class="p">!</span><span class="nx">isSelfReferencedObj</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">// For resource hooks, skipped resources or objects that may have
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">// been created by another controller with annotations copied from
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">// the source object, don&#39;t store sync status, and do not affect
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">// overall sync status
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">!</span><span class="nx">isManagedNs</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">diffResult</span><span class="p">.</span><span class="nx">Modified</span> <span class="o">||</span> <span class="nx">targetObj</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">liveObj</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">// Set resource state to OutOfSync since one of the following is true:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">// * target and live resource are different
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">// * target resource not defined and live resource is extra
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="c1">// * target resource present but live resource is missing
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">resState</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">SyncStatusCodeOutOfSync</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">// we ignore the status if the obj needs pruning AND we have the annotation
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">needsPruning</span> <span class="o">:=</span> <span class="nx">targetObj</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">liveObj</span> <span class="o">!=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">!(</span><span class="nx">needsPruning</span> <span class="o">&amp;&amp;</span> <span class="nx">resourceutil</span><span class="p">.</span><span class="nf">HasAnnotationOption</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">common</span><span class="p">.</span><span class="nx">AnnotationCompareOptions</span><span class="p">,</span> <span class="s">&#34;IgnoreExtraneous&#34;</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">syncCode</span> <span class="p">=</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">SyncStatusCodeOutOfSync</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">resState</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">SyncStatusCodeSynced</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// set unknown status to all resource that are not permitted in the app project
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">isNamespaced</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">liveStateCache</span><span class="p">.</span><span class="nf">IsNamespaced</span><span class="p">(</span><span class="nx">app</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Destination</span><span class="p">.</span><span class="nx">Server</span><span class="p">,</span> <span class="nx">gvk</span><span class="p">.</span><span class="nf">GroupKind</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">!</span><span class="nx">project</span><span class="p">.</span><span class="nf">IsGroupKindPermitted</span><span class="p">(</span><span class="nx">gvk</span><span class="p">.</span><span class="nf">GroupKind</span><span class="p">(),</span> <span class="nx">isNamespaced</span> <span class="o">&amp;&amp;</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">resState</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">SyncStatusCodeUnknown</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">isNamespaced</span> <span class="o">&amp;&amp;</span> <span class="nx">obj</span><span class="p">.</span><span class="nf">GetNamespace</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">conditions</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">conditions</span><span class="p">,</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ApplicationCondition</span><span class="p">{</span><span class="nx">Type</span><span class="p">:</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ApplicationConditionInvalidSpecError</span><span class="p">,</span> <span class="nx">Message</span><span class="p">:</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Namespace for %s %s is missing.&#34;</span><span class="p">,</span> <span class="nx">obj</span><span class="p">.</span><span class="nf">GetName</span><span class="p">(),</span> <span class="nx">gvk</span><span class="p">.</span><span class="nf">String</span><span class="p">()),</span> <span class="nx">LastTransitionTime</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">now</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="c1">// we can&#39;t say anything about the status if we were unable to get the target objects
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">failedToLoadObjs</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">resState</span><span class="p">.</span><span class="nx">Status</span> <span class="p">=</span> <span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">SyncStatusCodeUnknown</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="nx">resourceVersion</span> <span class="o">:=</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">liveObj</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">resourceVersion</span> <span class="p">=</span> <span class="nx">liveObj</span><span class="p">.</span><span class="nf">GetResourceVersion</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">managedResources</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">managedResource</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Name</span><span class="p">:</span>            <span class="nx">resState</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Namespace</span><span class="p">:</span>       <span class="nx">resState</span><span class="p">.</span><span class="nx">Namespace</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Group</span><span class="p">:</span>           <span class="nx">resState</span><span class="p">.</span><span class="nx">Group</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Kind</span><span class="p">:</span>            <span class="nx">resState</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Version</span><span class="p">:</span>         <span class="nx">resState</span><span class="p">.</span><span class="nx">Version</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Live</span><span class="p">:</span>            <span class="nx">liveObj</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Target</span><span class="p">:</span>          <span class="nx">targetObj</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Diff</span><span class="p">:</span>            <span class="nx">diffResult</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Hook</span><span class="p">:</span>            <span class="nx">resState</span><span class="p">.</span><span class="nx">Hook</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">ResourceVersion</span><span class="p">:</span> <span class="nx">resourceVersion</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">resourceSummaries</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">resState</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">compRes</span> <span class="o">:=</span> <span class="nx">comparisonResult</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">syncStatus</span><span class="p">:</span>           <span class="o">&amp;</span><span class="nx">syncStatus</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">healthStatus</span><span class="p">:</span>         <span class="nx">healthStatus</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">resources</span><span class="p">:</span>            <span class="nx">resourceSummaries</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">managedResources</span><span class="p">:</span>     <span class="nx">managedResources</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">reconciliationResult</span><span class="p">:</span> <span class="nx">reconciliation</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">diffConfig</span><span class="p">:</span>           <span class="nx">diffConfig</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">diffResultList</span><span class="p">:</span>       <span class="nx">diffResults</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">compRes</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>获取CompareResult之后，appController调用SyncAppState方法创建gitops-engine中另一个类SyncContext，为目标集群apply/delete资源。</p>
+<h2 id="repository-server">Repository Server</h2>
+<p>repo server是ArgoCD获取表达期望状态的资源清单数据源，该服务封装了版本控制工具git和一系列资源模板渲染工具helm、kustomize，作为gRPC服务暴露给其他组件调用。repo server实现的接口不多：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="c1">// reposerver/repository/repository.proto
+</span></span></span><span class="line"><span class="cl"><span class="c1">// ManifestService
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">service</span> <span class="nx">RepoServerService</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// GenerateManifest generates manifest for application in specified repo name and revision
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GenerateManifest</span><span class="p">(</span><span class="nx">ManifestRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">ManifestResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// GenerateManifestWithFiles generates manifest for application using provided tarball of files
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GenerateManifestWithFiles</span><span class="p">(</span><span class="nx">stream</span> <span class="nx">ManifestRequestWithFiles</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">ManifestResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Returns a bool val if the repository is valid and has proper access
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">TestRepository</span><span class="p">(</span><span class="nx">TestRepositoryRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">TestRepositoryResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Returns a valid revision
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">ResolveRevision</span><span class="p">(</span><span class="nx">ResolveRevisionRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">ResolveRevisionResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Returns a list of refs (e.g. branches and tags) in the repo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">ListRefs</span><span class="p">(</span><span class="nx">ListRefsRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">Refs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ListApps returns a list of apps in the repo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">ListApps</span><span class="p">(</span><span class="nx">ListAppsRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">AppList</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ListPlugins returns a list of cmp v2 plugins running as sidecar to reposerver
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">ListPlugins</span><span class="p">(</span><span class="nx">google</span><span class="p">.</span><span class="nx">protobuf</span><span class="p">.</span><span class="nx">Empty</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">PluginList</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Generate manifest for application in specified repo name and revision
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GetAppDetails</span><span class="p">(</span><span class="nx">RepoServerAppDetailsQuery</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">RepoAppDetailsResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Get the meta-data (author, date, tags, message) for a specific revision of the repo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GetRevisionMetadata</span><span class="p">(</span><span class="nx">RepoServerRevisionMetadataRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="p">.</span><span class="nx">argoproj</span><span class="p">.</span><span class="nx">argo_cd</span><span class="p">.</span><span class="nx">v2</span><span class="p">.</span><span class="nx">pkg</span><span class="p">.</span><span class="nx">apis</span><span class="p">.</span><span class="nx">application</span><span class="p">.</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">RevisionMetadata</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Get the chart details (author, date, tags, message) for a specific revision of the repo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GetRevisionChartDetails</span><span class="p">(</span><span class="nx">RepoServerRevisionChartDetailsRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="p">.</span><span class="nx">argoproj</span><span class="p">.</span><span class="nx">argo_cd</span><span class="p">.</span><span class="nx">v2</span><span class="p">.</span><span class="nx">pkg</span><span class="p">.</span><span class="nx">apis</span><span class="p">.</span><span class="nx">application</span><span class="p">.</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">ChartDetails</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// GetHelmCharts returns list of helm charts in the specified repository
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GetHelmCharts</span><span class="p">(</span><span class="nx">HelmChartsRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">HelmChartsResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// GetGitFiles returns a set of file paths and their contents for the given repo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GetGitFiles</span><span class="p">(</span><span class="nx">GitFilesRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">GitFilesResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// GetGitDirectories returns a set of directory paths for the given repo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rpc</span> <span class="nf">GetGitDirectories</span><span class="p">(</span><span class="nx">GitDirectoriesRequest</span><span class="p">)</span> <span class="nf">returns</span> <span class="p">(</span><span class="nx">GitDirectoriesResponse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>我比较熟悉的git repo存储资源形式为helm charts，在argocd配置helm的参数后，它会调用repo server的GenerateManifest方法使用helm参数(parameter valueFile等)渲染出可直接部署的k8s资源清单，ArgoCD内置了helm二进制文件，并封装了主要命令helm template:</p>
+<pre tabindex="0"><code>// util/helm/helm.go
+// Helm provides wrapper functionality around the `helm` command.
+type Helm interface {
+	// Template returns a list of unstructured objects from a `helm template` command
+	Template(opts *TemplateOpts) (string, error)
+	// GetParameters returns a list of chart parameters taking into account values in provided YAML files.
+	GetParameters(valuesFiles []pathutil.ResolvedFilePath, appPath, repoRoot string) (map[string]string, error)
+	// DependencyBuild runs `helm dependency build` to download a chart&#39;s dependencies
+	DependencyBuild() error
+	// Init runs `helm init --client-only`
+	Init() error
+	// Dispose deletes temp resources
+	Dispose()
+}
+</code></pre><p>repo server对git则混合使用了git二进制文件和go-git/v5库实现git仓库的本地管理，git client和实现的方法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Client</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Root</span><span class="p">()</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Init</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Fetch</span><span class="p">(</span><span class="nx">revision</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Submodule</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Checkout</span><span class="p">(</span><span class="nx">revision</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">submoduleEnabled</span> <span class="kt">bool</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">LsRefs</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Refs</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">LsRemote</span><span class="p">(</span><span class="nx">revision</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">LsFiles</span><span class="p">(</span><span class="nx">path</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">enableNewGitFileGlobbing</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">LsLargeFiles</span><span class="p">()</span> <span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">CommitSHA</span><span class="p">()</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">RevisionMetadata</span><span class="p">(</span><span class="nx">revision</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">RevisionMetadata</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">VerifyCommitSignature</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">IsAnnotatedTag</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// nativeGitClient implements Client interface using git CLI
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">nativeGitClient</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">EventHandlers</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// URL of the repository
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">repoURL</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Root path of repository
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">root</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Authenticator credentials for private repositories
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">creds</span> <span class="nx">Creds</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Whether to connect insecurely to repository, e.g. don&#39;t verify certificate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">insecure</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Whether the repository is LFS enabled
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">enableLfs</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// gitRefCache knows how to cache git refs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">gitRefCache</span> <span class="nx">gitRefCache</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// indicates if client allowed to load refs from cache
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">loadRefFromCache</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// HTTP/HTTPS proxy used to access repository
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">proxy</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>我们知道，git版本控制有四个区：工作区、暂存区、版本库、远程仓库。我们平时存放代码的地方叫工作区，ArgoCD也需要依赖git checkout命令更新工作区的文件为指定分支。所以在repo server提取资源清单时，只能单线程同步操作不同commit下的文件，所以粗粒度控制本地git repo的方式时为每一个相同的repo增加互斥锁，仅支持同步操作，但是在操作相同commit是可以支持并发的，repo server使用一个stateMap和sync.Cond实现了：</p>
+<pre tabindex="0"><code>func NewRepositoryLock() *repositoryLock {
+	return &amp;repositoryLock{stateByKey: map[string]*repositoryState{}}
+}
+
+type repositoryLock struct {
+	lock       sync.Mutex
+	stateByKey map[string]*repositoryState
+}
+
+// Lock acquires lock unless lock is already acquired with the same commit and allowConcurrent is set to true
+func (r *repositoryLock) Lock(path string, revision string, allowConcurrent bool, init func() (io.Closer, error)) (io.Closer, error) {
+	r.lock.Lock()
+	state, ok := r.stateByKey[path]
+	if !ok {
+		state = &amp;repositoryState{cond: &amp;sync.Cond{L: &amp;sync.Mutex{}}}
+		r.stateByKey[path] = state
+	}
+	r.lock.Unlock()
+
+	closer := ioutil.NewCloser(func() error {
+		state.cond.L.Lock()
+		notify := false
+		state.processCount--
+		var err error
+		if state.processCount == 0 {
+			notify = true
+			state.revision = &#34;&#34;
+			err = state.initCloser.Close()
+		}
+
+		state.cond.L.Unlock()
+		if notify {
+			state.cond.Broadcast()
+		}
+		if err != nil {
+			return fmt.Errorf(&#34;init closer failed: %w&#34;, err)
+		}
+		return nil
+	})
+
+	for {
+		state.cond.L.Lock()
+		if state.revision == &#34;&#34; {
+			// no in progress operation for that repo. Go ahead.
+			initCloser, err := init()
+			if err != nil {
+				state.cond.L.Unlock()
+				return nil, fmt.Errorf(&#34;failed to initialize repository resources: %w&#34;, err)
+			}
+			state.initCloser = initCloser
+			state.revision = revision
+			state.processCount = 1
+			state.allowConcurrent = allowConcurrent
+			state.cond.L.Unlock()
+			return closer, nil
+		} else if state.revision == revision &amp;&amp; state.allowConcurrent &amp;&amp; allowConcurrent {
+			// same revision already processing and concurrent processing allowed. Increment process count and go ahead.
+			state.processCount++
+			state.cond.L.Unlock()
+			return closer, nil
+		} else {
+			state.cond.Wait()
+			// wait when all in-flight processes of this revision complete and try again
+			state.cond.L.Unlock()
+		}
+	}
+}
+
+type repositoryState struct {
+	cond            *sync.Cond
+	revision        string
+	initCloser      io.Closer
+	processCount    int
+	allowConcurrent bool
+}
+</code></pre><h1 id="总结">总结</h1>
+<p>在许久之前阅读ArgoCD源码时画过一张函数调用草图，希望能形象地展示其中函数和组件调用关系：</p>
+<figure><img src="/img/argocd%e6%a0%b8%e5%bf%83%e7%bb%84%e4%bb%b6%e6%ba%90%e7%a0%81%e5%88%86%e6%9e%90/argocd-arch.png"
          alt="image"/>
 </figure>
 
-<h2 id="network-server架构">Network Server架构</h2>
-<figure><img src="/img/infra/network-server.png"
+]]></content>
+		</item>
+		
+		<item>
+			<title>ArgoCD的设计和功能</title>
+			<link>https://shankisme.com/posts/argocd%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%8A%9F%E8%83%BD/</link>
+			<pubDate>Wed, 28 Feb 2024 21:32:21 +0800</pubDate>
+			
+			<guid>https://shankisme.com/posts/argocd%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%8A%9F%E8%83%BD/</guid>
+			<description>GitOps 基础设施即代码 在理解GitOps前，我们需要先理解什么是基础设施即代码(Infrastructure as Code, IaC)。基础设施即代码表示使用代码来定义基础设施，研发人员可以像对待应用软件一样对待基础设施，例如：
+可以创建包含基础架构规范的声明式配置文件，从而便于编辑和分发配置 可以确保每次配置的环境都完全相同 可以进行版本控制 可以将基础设施划分未若干个模块化组件。，并通过自动化以不同的方式进行组合 什么是GitOps GitOps = IaC + Git + CI/CD，即基于IaC的版本化CD/CD。它的核心是使用Git仓库管理基础设施和应用的配置，并且以Git仓库作为基础设施和应用的单一事实来源。Git仓库中的声明式配置描述了目标环境当前所需基础设施地期望状态，借助于GitOps，如果集群地市级状态与Git仓库中的定义与期望状态不匹配，Kubernetes reconcilers会根据期望撞他ilai调整当前地状态，最终使实际状态符合期望状态。
+GitOps vs DevOps 从广义上来看，GitOps与DevOps并不冲突，GitOps是一种技术手段，而DevOps是一种文化。GitOps是一种实现持续交付、持续部署和基础设施即代码地工具和框架，它是支持DevOps文化的。 GitOps和DevOps主要区别
+GitOps以目标为导向，使用Git维护期望状态，并不断调整实际状态，最终与期望状态相匹配。而DevOps更多关注的是最佳实践，这些实践可以应用于企业每一个流程。 GitOps采取声明式的操作方法，而DevOps同时接受声明式和命令式的方法。 ArgoCD的优势 Git作为应用的唯一真实来源：期望状态的唯一存储 快速回滚：通过Git History切换commit将应用状态快速恢复到上一个可用的状态 集群灾备：若集群A出现故障，可以直接创建新集群，然后将ArgoCD连接到包含集群A所有配置声明的Git仓库，最终新集群B的状态会与旧集群状态一致，无需人工干预 ArgoCD架构 从功能架构来看，Argo CD 主要有三个组件：API Server、Repository Server 和 Application Controller。从 GitOps 工作流的角度来看，总共分为 3 个阶段：检索、调谐和呈现
+检索 - Repo Server 检索阶段会克隆应用声明式配置清单所在的 Git 仓库，并将其缓存到本地存储。包含 Kubernetes 原生的配置清单、Helm Chart 以及 Kustomize 配置清单。履行这些职责的组件就是 Repository Server。
+调谐 - Application Controller 调谐（Reconcile）阶段是最复杂的，这个阶段会将 Repository Server 获得的配置清单与反映集群当前状态的实时配置清单进行对比，一旦检测到应用处于 OutOfSync 状态，Application Controller 就会采取修正措施，使集群的实际状态与期望状态保持一致。</description>
+			<content type="html"><![CDATA[<h1 id="gitops">GitOps</h1>
+<h2 id="基础设施即代码">基础设施即代码</h2>
+<p>在理解GitOps前，我们需要先理解什么是基础设施即代码(Infrastructure as Code, IaC)。基础设施即代码表示使用代码来定义基础设施，研发人员可以像对待应用软件一样对待基础设施，例如：</p>
+<ul>
+<li>可以创建包含基础架构规范的声明式配置文件，从而便于编辑和分发配置</li>
+<li>可以确保每次配置的环境都完全相同</li>
+<li>可以进行版本控制</li>
+<li>可以将基础设施划分未若干个模块化组件。，并通过自动化以不同的方式进行组合</li>
+</ul>
+<h2 id="什么是gitops">什么是GitOps</h2>
+<p>GitOps = IaC + Git + CI/CD，即基于IaC的版本化CD/CD。它的核心是使用Git仓库管理基础设施和应用的配置，并且以Git仓库作为基础设施和应用的单一事实来源。Git仓库中的声明式配置描述了目标环境当前所需基础设施地期望状态，借助于GitOps，如果集群地市级状态与Git仓库中的定义与期望状态不匹配，Kubernetes reconcilers会根据期望撞他ilai调整当前地状态，最终使实际状态符合期望状态。</p>
+<h2 id="gitops-vs-devops">GitOps vs DevOps</h2>
+<p>从广义上来看，GitOps与DevOps并不冲突，GitOps是一种技术手段，而DevOps是一种文化。GitOps是一种实现持续交付、持续部署和基础设施即代码地工具和框架，它是支持DevOps文化的。
+GitOps和DevOps主要区别</p>
+<ul>
+<li>GitOps以目标为导向，使用Git维护期望状态，并不断调整实际状态，最终与期望状态相匹配。而DevOps更多关注的是最佳实践，这些实践可以应用于企业每一个流程。</li>
+<li>GitOps采取声明式的操作方法，而DevOps同时接受声明式和命令式的方法。</li>
+</ul>
+<h2 id="argocd的优势">ArgoCD的优势</h2>
+<ul>
+<li>Git作为应用的唯一真实来源：期望状态的唯一存储</li>
+<li>快速回滚：通过Git History切换commit将应用状态快速恢复到上一个可用的状态</li>
+<li>集群灾备：若集群A出现故障，可以直接创建新集群，然后将ArgoCD连接到包含集群A所有配置声明的Git仓库，最终新集群B的状态会与旧集群状态一致，无需人工干预</li>
+</ul>
+<h2 id="argocd架构">ArgoCD架构</h2>
+<p><figure><img src="/img/argocd%e8%b0%83%e7%a0%94/argocd-arch.png"
          alt="image"/>
 </figure>
 
-<h2 id="集群注册流程图">集群注册流程图</h2>
-<figure><img src="/img/infra/register-flowchart.png"
-         alt="image"/>
-</figure>
-
-<h2 id="边缘容器网络方案迭代">边缘容器网络方案迭代</h2>
-<h3 id="v1">v1</h3>
-<ul>
-<li>pod网络分配：k8s.controller-manager.ipam-controller</li>
-<li>本机pod ip管理：host-local</li>
-<li>同主机pod通信：bridge</li>
-<li>跨主机pod通信：k3s内置flannel(vxlan)</li>
-</ul>
-<h3 id="v2">v2</h3>
-<ul>
-<li>pod网络分配：k8s.controller-manager.ipam-controller</li>
-<li>本机pod ip管理：host-local</li>
-<li>同主机pod通信：bridge</li>
-<li>跨主机pod通信：flannel pod(vxlan)</li>
-</ul>
-<h3 id="v3">v3</h3>
-<ul>
-<li>pod网络分配：k8s.controller-manager.ipam-controller</li>
-<li>本机pod ip分配：host-local</li>
-<li>同主机pod通信：bridge</li>
-<li>跨主机pod通信：自研静态路由配置工具router</li>
-</ul>
-<h3 id="v4">v4</h3>
-<ul>
-<li>pod网络分配：在kubelet注册node前，在node中预置pod cidr</li>
-<li>本机pod ip分配：host-local</li>
-<li>同主机pod通信：bridge</li>
-<li>跨主机pod通信：自研静态路由配置工具router</li>
-</ul>
+从功能架构来看，Argo CD 主要有三个组件：API Server、Repository Server 和 Application Controller。从 GitOps 工作流的角度来看，总共分为 3 个阶段：检索、调谐和呈现</p>
+<h3 id="检索---repo-server">检索 - Repo Server</h3>
+<p>检索阶段会克隆应用声明式配置清单所在的 Git 仓库，并将其缓存到本地存储。包含 Kubernetes 原生的配置清单、Helm Chart 以及 Kustomize 配置清单。履行这些职责的组件就是 Repository Server。</p>
+<h3 id="调谐---application-controller">调谐 - Application Controller</h3>
+<p>调谐（Reconcile）阶段是最复杂的，这个阶段会将 Repository Server 获得的配置清单与反映集群当前状态的实时配置清单进行对比，一旦检测到应用处于 OutOfSync 状态，Application Controller 就会采取修正措施，使集群的实际状态与期望状态保持一致。</p>
+<h3 id="呈现-api-server">呈现 API Server</h3>
+<p>最后一个阶段是呈现阶段，由 Argo CD 的 API Server 负责，它本质上是一个 gRPC/REST Server，提供了一个无状态的可视化界面，用于展示调谐阶段的结果</p>
 ]]></content>
 		</item>
 		
