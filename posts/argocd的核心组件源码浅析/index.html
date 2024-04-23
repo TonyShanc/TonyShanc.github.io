@@ -7,7 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="theme-color" content="#494f5c">
 	<meta name="msapplication-TileColor" content="#494f5c">
-<meta itemprop="name" content="ArgoCD核心组件源码分析">
+<meta itemprop="name" content="ArgoCD核心组件源码浅析">
 <meta itemprop="description" content="在上一章ArgoCD的设计与功能中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server
 由于API Server的功能在于提供RPC/REST接口和UI界面展示集群资源状态，与GitOps的实现关系不大（正如Core部署模式去掉了API Server），本文将从源码角度分析ArgoCD组件Application Controller、Repository Server的功能实现。
 Application Controller Application(以下简称App)是ArgoCD在K8S中注册的自定义资源(CRD)，App Controller是ArgoCD实现的K8S控制器，它连续监视App CR, 并将CR中描述的期望状态和集群实际状态对比，若不一致，将采取纠正措施将二者同步。ArgoCD将集群连接信息和部署的项目信息以及资源清单渲染参数存入了Application CR中，一个最小化的App如下：
@@ -15,18 +15,18 @@ apiVersion: argoproj.io/v1alpha1 kind: Application metadata: name: guestbook nam
 // cluster info apiVersion: v1 data: config: ... // 身份信息、用于TLS双向验证的对端CA证书 name: cluster-1 // 集群名 server: ... // 目标集群API Server的URL kind: Secret metadata: annotations: managed-by: argocd.argoproj.io creationTimestamp: &#34;2022-08-05T03:14:07Z&#34; labels: argocd.argoproj.io/secret-type: cluster name: cluster-1 namespace: argocd resourceVersion: &#34;443946&#34; selfLink: /api/v1/namespaces/argocd/secrets/cluster-1 uid: b6f3ff89-782d-426e-aeaf-0c431f7f84bb type: Opaque // project info apiVersion: v1 data: name: Zmxhbm5lbA== sshPrivateKey: ."><meta itemprop="datePublished" content="2024-02-29T18:32:21+08:00" />
 <meta itemprop="dateModified" content="2024-02-29T18:32:21+08:00" />
 <meta itemprop="wordCount" content="1777">
-<meta itemprop="keywords" content="kubernetes,ArgoCD,GitOps,infra," /><meta property="og:title" content="ArgoCD核心组件源码分析" />
+<meta itemprop="keywords" content="kubernetes,ArgoCD,GitOps,infra," /><meta property="og:title" content="ArgoCD核心组件源码浅析" />
 <meta property="og:description" content="在上一章ArgoCD的设计与功能中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server
 由于API Server的功能在于提供RPC/REST接口和UI界面展示集群资源状态，与GitOps的实现关系不大（正如Core部署模式去掉了API Server），本文将从源码角度分析ArgoCD组件Application Controller、Repository Server的功能实现。
 Application Controller Application(以下简称App)是ArgoCD在K8S中注册的自定义资源(CRD)，App Controller是ArgoCD实现的K8S控制器，它连续监视App CR, 并将CR中描述的期望状态和集群实际状态对比，若不一致，将采取纠正措施将二者同步。ArgoCD将集群连接信息和部署的项目信息以及资源清单渲染参数存入了Application CR中，一个最小化的App如下：
 apiVersion: argoproj.io/v1alpha1 kind: Application metadata: name: guestbook namespace: argocd spec: project: default source: repoURL: https://github.com/argoproj/argocd-example-apps.git targetRevision: HEAD path: guestbook destination: server: https://kubernetes.default.svc namespace: guestbook 其中source表示git仓库和部署项目路径分析信息，destination表示部署的目标集群，在argocd中，可以有多个项目和集群被管理，他们的信息以k8s资源secret的形式存储在etcd中：
 // cluster info apiVersion: v1 data: config: ... // 身份信息、用于TLS双向验证的对端CA证书 name: cluster-1 // 集群名 server: ... // 目标集群API Server的URL kind: Secret metadata: annotations: managed-by: argocd.argoproj.io creationTimestamp: &#34;2022-08-05T03:14:07Z&#34; labels: argocd.argoproj.io/secret-type: cluster name: cluster-1 namespace: argocd resourceVersion: &#34;443946&#34; selfLink: /api/v1/namespaces/argocd/secrets/cluster-1 uid: b6f3ff89-782d-426e-aeaf-0c431f7f84bb type: Opaque // project info apiVersion: v1 data: name: Zmxhbm5lbA== sshPrivateKey: ." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E6%B5%85%E6%9E%90/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2024-02-29T18:32:21+08:00" />
 <meta property="article:modified_time" content="2024-02-29T18:32:21+08:00" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="ArgoCD核心组件源码分析"/>
+<meta name="twitter:title" content="ArgoCD核心组件源码浅析"/>
 <meta name="twitter:description" content="在上一章ArgoCD的设计与功能中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server
 由于API Server的功能在于提供RPC/REST接口和UI界面展示集群资源状态，与GitOps的实现关系不大（正如Core部署模式去掉了API Server），本文将从源码角度分析ArgoCD组件Application Controller、Repository Server的功能实现。
 Application Controller Application(以下简称App)是ArgoCD在K8S中注册的自定义资源(CRD)，App Controller是ArgoCD实现的K8S控制器，它连续监视App CR, 并将CR中描述的期望状态和集群实际状态对比，若不一致，将采取纠正措施将二者同步。ArgoCD将集群连接信息和部署的项目信息以及资源清单渲染参数存入了Application CR中，一个最小化的App如下：
@@ -40,7 +40,7 @@ apiVersion: argoproj.io/v1alpha1 kind: Application metadata: name: guestbook nam
 	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
 	<link rel="shortcut icon" href="/favicon.ico">
 
-	<title>ArgoCD核心组件源码分析</title>
+	<title>ArgoCD核心组件源码浅析</title>
 	<link rel="stylesheet" href="https://shankisme.com/css/style.min.b1b8a0e19eabe0807fd81b41979d5ea6898b9d3e8cc583d45a28ff5f7e79e10d.css" integrity="sha256-sbig4Z6r4IB/2BtBl51epomLnT6MxYPUWij/X3554Q0=" crossorigin="anonymous">
 	
 </head>
@@ -81,7 +81,7 @@ apiVersion: argoproj.io/v1alpha1 kind: Application metadata: name: guestbook nam
 		<article class="thin">
 			<header class="post-header">
 				<div class="post-meta"><span>Feb 29, 2024</span></div>
-				<h1>ArgoCD核心组件源码分析</h1>
+				<h1>ArgoCD核心组件源码浅析</h1>
 			</header>
 			<div class="content">
 				<p>在上一章<a href="/posts/argocd%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%8A%9F%E8%83%BD/">ArgoCD的设计与功能</a>中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server</p>

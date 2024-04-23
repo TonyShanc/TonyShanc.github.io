@@ -39,11 +39,11 @@ $ sudo openssl x509 -in serving-kube-apiserver.crt -text Certificate: ... X509v3
     </item>
     
     <item>
-      <title>ArgoCD核心组件源码分析</title>
-      <link>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <title>ArgoCD核心组件源码浅析</title>
+      <link>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E6%B5%85%E6%9E%90/</link>
       <pubDate>Thu, 29 Feb 2024 18:32:21 +0800</pubDate>
       
-      <guid>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <guid>https://shankisme.com/posts/argocd%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E6%BA%90%E7%A0%81%E6%B5%85%E6%9E%90/</guid>
       <description>在上一章ArgoCD的设计与功能中，我们介绍了与ArgoCD相关的抽象概念：GitOps、IaC、DevOps，并梳理了ArgoCD的核心组件：Application Controller、Repository Server、API Server
 由于API Server的功能在于提供RPC/REST接口和UI界面展示集群资源状态，与GitOps的实现关系不大（正如Core部署模式去掉了API Server），本文将从源码角度分析ArgoCD组件Application Controller、Repository Server的功能实现。
 Application Controller Application(以下简称App)是ArgoCD在K8S中注册的自定义资源(CRD)，App Controller是ArgoCD实现的K8S控制器，它连续监视App CR, 并将CR中描述的期望状态和集群实际状态对比，若不一致，将采取纠正措施将二者同步。ArgoCD将集群连接信息和部署的项目信息以及资源清单渲染参数存入了Application CR中，一个最小化的App如下：
